@@ -1,0 +1,17 @@
+.progressPage {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding-top: 75px;
+}
+
+.progressPage .card {
+  border: none;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.progressPage .table th {
+  border-top: none;
+  font-weight: 600;
+  color: #495057;
+  background-color: #f8f9fa;
+}

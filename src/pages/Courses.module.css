@@ -1,0 +1,930 @@
+.coursesPage {
+  padding: 100px 0 50px;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.pageHeader {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.headerBackground {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 60px 40px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.headerBackground::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+  opacity: 0.3;
+}
+
+.headerContent {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.pageTitle {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.pageSubtitle {
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 700px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.6;
+}
+
+/* Stats Cards Styles */
+.statsCards {
+  margin-top: 30px;
+}
+
+.statCard {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 15px;
+  color: white;
+  text-align: center;
+  height: 100%;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.statCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.statCardBody {
+  padding: 30px 20px;
+}
+
+.statIcon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.statNumber {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: white;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+
+.searchInput {
+  border-radius: 25px;
+  padding: 12px 20px;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.filterSelect {
+  border-radius: 25px;
+  padding: 12px 20px;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.filterSelect:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.resultsInfo {
+  color: var(--light-text);
+  font-weight: 500;
+}
+
+.courseCard {
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  height: 100%;
+  background: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.courseCard:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.courseImage {
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+}
+
+.courseImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 3rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+}
+
+.levelBadge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  font-size: 0.8rem;
+}
+
+.featuredBadge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 0.8rem;
+}
+
+.freeBadge {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  font-size: 0.8rem;
+}
+
+.courseBody {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 200px);
+}
+
+.courseHeader {
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+.courseTitle {
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: var(--primary-color);
+  line-height: 1.4;
+}
+
+.courseDescription {
+  color: var(--light-text);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+.courseMeta {
+  margin-bottom: 20px;
+}
+
+.courseMeta > div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.metaLabel {
+  font-weight: 500;
+  color: var(--light-text);
+  font-size: 0.85rem;
+}
+
+.metaValue {
+  font-weight: 600;
+  color: var(--primary-color);
+  font-size: 0.85rem;
+}
+
+.courseFooter {
+  margin-top: auto;
+}
+
+.priceSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.coursePrice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.currentPrice {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--secondary-color);
+}
+
+.freePrice {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #28a745;
+}
+
+.originalPrice {
+  font-size: 1rem;
+  color: var(--light-text);
+  text-decoration: line-through;
+}
+
+.discountBadge {
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.enrollBtn {
+  width: 100%;
+  padding: 12px;
+  font-weight: 600;
+  border-radius: 25px;
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.enrollBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+.loading {
+  padding: 60px 0;
+  text-align: center;
+  color: var(--light-text);
+}
+
+.noResults {
+  padding: 60px 0;
+  text-align: center;
+}
+
+.noResults h4 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.noResults p {
+  color: var(--light-text);
+  margin-bottom: 2rem;
+}
+
+/* Enroll Modal Styles */
+.enrollModalContent {
+  padding: 10px;
+}
+
+.courseInfo h5 {
+  color: var(--primary-color);
+  margin-bottom: 5px;
+}
+
+.pricingSection {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 15px 0;
+}
+
+.originalPriceLine,
+.couponDiscount,
+.finalPrice {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.couponDiscount {
+  color: #28a745;
+}
+
+.discountText {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.finalPrice {
+  font-size: 1.2rem;
+  color: var(--primary-color);
+}
+
+.couponSection {
+  margin: 20px 0;
+}
+
+.enrollBenefits {
+  margin-top: 20px;
+}
+
+.enrollBenefits h6 {
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.enrollBenefits ul {
+  padding-left: 20px;
+  margin-bottom: 0;
+}
+
+.enrollBenefits li {
+  margin-bottom: 5px;
+  color: var(--light-text);
+}
+
+.confirmEnrollBtn {
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-weight: 600;
+}
+/* Coupon discount style */
+.couponDiscount {
+  display: flex;
+  justify-content: space-between;
+  color: #28a745;
+  font-weight: 500;
+}
+
+.discountText {
+  color: #28a745;
+  font-weight: bold;
+}
+
+/* Final price style */
+.finalPrice {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  padding: 8px 0;
+  border-top: 2px solid #dee2e6;
+  margin-top: 8px;
+}
+
+.freePrice {
+  color: #28a745;
+  font-weight: bold;
+}
+/* Add this to your Courses.module.css */
+.enrolledBadge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 0.7rem;
+}
+
+.buttonIcon {
+  margin-right: 5px;
+}
+
+/* Add these styles to your existing Courses.module.css */
+
+/* Icon-based Meta Grid */
+.iconMetaGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.iconMetaItem {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.iconWrapper {
+  margin-right: 0.75rem;
+}
+
+.metaIcon {
+  font-size: 1.5rem;
+  display: block;
+}
+
+.metaContent {
+  flex: 1;
+}
+
+.metaLabel {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.metaValue {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Section Icons */
+.sectionIcon {
+  font-size: 1.25rem;
+}
+
+/* Steps Section */
+.stepsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stepItem {
+  display: flex;
+  align-items: flex-start;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #007bff;
+}
+
+.stepNumber {
+  background: #007bff;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
+.stepText {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+/* Features List */
+.featuresList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.featureIcon {
+  color: #28a745;
+  font-weight: bold;
+  margin-right: 0.75rem;
+  font-size: 1.1rem;
+}
+
+/* Indicators List */
+.indicatorsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.indicatorItem {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.indicatorHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.indicatorIcon {
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+}
+
+.indicatorName {
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.indicatorDescription {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 0;
+  margin-left: 1.7rem;
+}
+
+/* Notes List */
+.notesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.noteItem {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.noteIcon {
+  font-size: 1.1rem;
+  margin-right: 0.75rem;
+  color: #6c757d;
+}
+
+/* Description Content */
+.descriptionContent {
+  line-height: 1.6;
+  color: #495057;
+}
+
+/* Enroll Button */
+.enrollButton {
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .iconMetaGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .iconMetaItem {
+    padding: 0.5rem;
+  }
+  
+  .metaIcon {
+    font-size: 1.25rem;
+  }
+  
+  .stepItem {
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .modalContent {
+    margin-top: 1rem;
+  }
+  
+  .iconMetaGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Add these styles to your existing Courses.module.css */
+
+/* Button Group */
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.viewDetailsBtn {
+  width: 100%;
+}
+
+.enrollBtn {
+  width: 100%;
+}
+
+/* Modal Styles */
+.modalImage {
+  text-align: center;
+}
+
+.modalPlaceholder {
+  height: 200px;
+  font-size: 4rem;
+}
+
+.modalContent h5 {
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 0.5rem;
+}
+
+.modalMeta {
+  margin-bottom: 1.5rem;
+}
+
+.modalMetaItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.modalMetaItem strong {
+  color: #2c3e50;
+}
+
+.modalDescription,
+.modalObjectives,
+.modalPrerequisites {
+  margin-bottom: 1.5rem;
+}
+
+.modalDescription h6,
+.modalObjectives h6,
+.modalPrerequisites h6 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.modalObjectives ul,
+.modalPrerequisites ul {
+  padding-left: 1.5rem;
+  margin-bottom: 0;
+}
+
+.modalObjectives li,
+.modalPrerequisites li {
+  margin-bottom: 0.25rem;
+  color: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .buttonGroup {
+    flex-direction: column;
+  }
+  
+  .modalMetaItem {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .coursesPage {
+    padding: 80px 0 30px;
+  }
+
+  .headerBackground {
+    padding: 40px 20px;
+  }
+
+  .pageTitle {
+    font-size: 2.2rem;
+  }
+
+  .pageSubtitle {
+    font-size: 1.1rem;
+  }
+
+  .statsCards {
+    gap: 15px;
+  }
+
+  .statCardBody {
+    padding: 20px 15px;
+  }
+
+  .statIcon {
+    font-size: 2rem;
+  }
+
+  .statNumber {
+    font-size: 1.5rem;
+  }
+
+  .courseMeta > div {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .priceSection {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+}
+/* Updated Course Card Styles with Icons */
+
+/* Course Meta with Icons */
+.courseMeta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.courseMetaItem {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.courseMetaIcon {
+  font-size: 1.1rem;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.courseMetaContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.courseMetaLabel {
+  font-size: 0.7rem;
+  color: #6c757d;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 0.1rem;
+  line-height: 1;
+}
+
+.courseMetaValue {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2c3e50;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Price Section with Icons */
+.freePriceContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.freePriceIcon {
+  font-size: 1.2rem;
+}
+
+.freePrice {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #28a745;
+}
+
+.paidPriceContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.priceIcon {
+  font-size: 1.1rem;
+}
+
+.currentPrice {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.originalPrice {
+  font-size: 0.9rem;
+  color: #6c757d;
+  text-decoration: line-through;
+  margin-left: 0.5rem;
+}
+
+/* Discount Badge with Icon */
+.discountBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.discountIcon {
+  font-size: 0.8rem;
+}
+
+/* Button Icons */
+.buttonIcon {
+  margin-right: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.viewDetailsBtn,
+.enrollBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+/* Button Group */
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+/* Responsive Design for Course Cards */
+@media (max-width: 768px) {
+  .courseMeta {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .courseMetaItem {
+    padding: 0.4rem;
+  }
+  
+  .courseMetaIcon {
+    font-size: 1rem;
+    margin-right: 0.4rem;
+  }
+  
+  .courseMetaLabel {
+    font-size: 0.65rem;
+  }
+  
+  .courseMetaValue {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .courseMeta {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Keep all your existing styles and add these new ones */
+/* ... your existing CSS styles ... */
