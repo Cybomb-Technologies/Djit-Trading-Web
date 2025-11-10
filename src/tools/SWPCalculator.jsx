@@ -126,35 +126,51 @@ const SWPCalculator = () => {
   return (
     <div className={styles.swpPage}>
       {/* Hero Section */}
-      <section className={styles.heroSection}>
-        <div className={styles.heroBackground}>
-          <div className={styles.heroOverlay}></div>
+     {/* Hero Section - UPDATED WITH TRADING THEME */}
+<section className={styles.heroSection}>
+  <div className={styles.heroBackground}>
+    <div className={styles.heroOverlay}></div>
+  </div>
+  
+  {/* Animated Elements */}
+  <div className={styles.floatingElement1}></div>
+  <div className={styles.floatingElement2}></div>
+  <div className={styles.floatingElement3}></div>
+  <div className={styles.gridOverlay}></div>
+  
+  <Container>
+    <Row className="justify-content-center text-center">
+      <Col lg={10}>
+        <div className={styles.heroContent}>
+          {/* Small Company Name */}
+          <div className={styles.companyNameSmall}>
+            <span className={styles.companyTextSmall}>
+              <span className={styles.tradingIcon}>📈</span>
+              DJIT TRADING
+            </span>
+          </div>
+
+          <h1 className={styles.heroTitle}>
+            SWP <span className={styles.gradientText}>CALCULATOR</span>
+          </h1>
+          <p className={styles.heroSubtitle}>
+            Calculate your Systematic Withdrawal Plan returns and plan
+            your investments effectively
+          </p>
+          <div className={styles.taglineContainer}>
+            <p className={styles.tagline}>Plan Your Financial Future</p>
+          </div>
+          <p className={styles.description}>
+            Use our advanced SWP calculator to estimate your regular
+            income from mutual fund investments. Plan withdrawals
+            strategically to maximize returns while preserving your
+            capital.
+          </p>
         </div>
-        <Container>
-          <Row className="justify-content-center text-center">
-            <Col lg={10}>
-              <div className={styles.heroContent}>
-                <h1 className={styles.heroTitle}>
-                  SWP <span className={styles.gradientText}>CALCULATOR</span>
-                </h1>
-                <p className={styles.heroSubtitle}>
-                  Calculate your Systematic Withdrawal Plan returns and plan
-                  your investments effectively
-                </p>
-                <div className={styles.taglineContainer}>
-                  <p className={styles.tagline}>Plan Your Financial Future</p>
-                </div>
-                <p className={styles.description}>
-                  Use our advanced SWP calculator to estimate your regular
-                  income from mutual fund investments. Plan withdrawals
-                  strategically to maximize returns while preserving your
-                  capital.
-                </p>
-              </div>
-            </Col>
-          </Row>
-        </Container>
-      </section>
+      </Col>
+    </Row>
+  </Container>
+</section>
 
       {/* Calculator Section */}
       <section className={styles.calculatorSection}>

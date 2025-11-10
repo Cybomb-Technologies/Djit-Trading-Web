@@ -84,34 +84,49 @@ const FDCalculator = () => {
   return (
     <div className={styles.fdPage}>
       {/* Hero Section */}
-      <section className={styles.heroSection}>
-        <div className={styles.heroBackground}>
-          <div className={styles.heroOverlay}></div>
+    <section className={styles.heroSection}>
+  <div className={styles.heroBackground}>
+    <div className={styles.heroOverlay}></div>
+  </div>
+  
+  {/* Animated Elements */}
+  <div className={styles.floatingElement1}></div>
+  <div className={styles.floatingElement2}></div>
+  <div className={styles.floatingElement3}></div>
+  <div className={styles.gridOverlay}></div>
+  
+  <Container>
+    <Row className="justify-content-center text-center">
+      <Col lg={10}>
+        <div className={styles.heroContent}>
+          {/* Small Company Name */}
+          <div className={styles.companyNameSmall}>
+            <span className={styles.companyTextSmall}>
+              <span className={styles.tradingIcon}>📈</span>
+              DJIT TRADING
+            </span>
+          </div>
+
+          <h1 className={styles.heroTitle}>
+            FD <span className={styles.gradientText}>CALCULATOR</span>
+          </h1>
+          <p className={styles.heroSubtitle}>
+            Calculate your Fixed Deposit maturity amount and interest
+            earnings with precision
+          </p>
+          <div className={styles.taglineContainer}>
+            <p className={styles.tagline}>Secure Your Financial Future</p>
+          </div>
+          <p className={styles.description}>
+            Use our advanced FD calculator to estimate your fixed deposit
+            returns. Plan your investments strategically to maximize
+            earnings while ensuring capital safety.
+          </p>
         </div>
-        <Container>
-          <Row className="justify-content-center text-center">
-            <Col lg={10}>
-              <div className={styles.heroContent}>
-                <h1 className={styles.heroTitle}>
-                  FD <span className={styles.gradientText}>CALCULATOR</span>
-                </h1>
-                <p className={styles.heroSubtitle}>
-                  Calculate your Fixed Deposit maturity amount and interest
-                  earnings with precision
-                </p>
-                <div className={styles.taglineContainer}>
-                  <p className={styles.tagline}>Secure Your Financial Future</p>
-                </div>
-                <p className={styles.description}>
-                  Use our advanced FD calculator to estimate your fixed deposit
-                  returns. Plan your investments strategically to maximize
-                  earnings while ensuring capital safety.
-                </p>
-              </div>
-            </Col>
-          </Row>
-        </Container>
-      </section>
+      </Col>
+    </Row>
+  </Container>
+</section>
 
       {/* Calculator Section */}
       <section className={styles.calculatorSection}>

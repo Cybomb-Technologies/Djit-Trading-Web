@@ -14,80 +14,99 @@ const About = () => {
 
   return (
     <div className={styles.aboutPage}>
-      {/* Hero Section */}
-      <section className={styles.heroSection}>
-        <Container>
-          <Row className="justify-content-center text-center">
-            <Col lg={10}>
-              <div className={styles.heroContent}>
-                <div className={styles.trustedBadge}>
-                  <span className={styles.trustedText}>
-                    <span className={styles.checkIcon}>✓</span>
-                    Trusted by 10,000+ traders since 2018
-                  </span>
-                </div>
+   {/* Hero Section - UPDATED WITH TRADING THEME */}
+<section className={styles.heroSection}>
+  <div className={styles.heroBackground}>
+    <div className={styles.heroOverlay}></div>
+  </div>
+  
+  {/* Animated Elements */}
+  <div className={styles.floatingElement1}></div>
+  <div className={styles.floatingElement2}></div>
+  <div className={styles.floatingElement3}></div>
+  <div className={styles.gridOverlay}></div>
+  
+  <Container>
+    <Row className="justify-content-center text-center">
+      <Col lg={10}>
+        <div className={styles.heroContent}>
+          {/* Small Company Name */}
+          <div className={styles.companyNameSmall}>
+            <span className={styles.companyTextSmall}>
+              <span className={styles.tradingIcon}>📈</span>
+              DJIT TRADING
+            </span>
+          </div>
 
-                <h1 className={styles.heroTitle}>
-                  About{" "}
-                  <span className={styles.gradientText}>DJIT TRADING</span>
-                </h1>
-                <p className={styles.heroSubtitle}>
-                  Empowering Traders Through Education and Innovation
-                </p>
-                <div className={styles.taglineContainer}>
-                  <p className={styles.tagline}>
-                    Your Journey to Trading Excellence Starts Here
-                  </p>
-                </div>
-                <p className={styles.description}>
-                  DJIT Trading was founded with a simple mission: to democratize
-                  trading education and make professional-level market knowledge
-                  accessible to everyone in Tamil and English. We believe that
-                  with the right guidance, tools, and community, anyone can
-                  master the art of trading.
-                </p>
-                <div className={styles.heroButtons}>
-                  <Button
-                    as={Link}
-                    to="/courses"
-                    className={styles.primaryBtn}
-                    size="lg"
-                  >
-                    <span className={styles.btnIcon}>📚</span>
-                    Explore Courses
-                  </Button>
-                  <Button
-                    as={Link}
-                    to="/contact"
-                    variant="outline-light"
-                    className={styles.secondaryBtn}
-                    size="lg"
-                  >
-                    <span className={styles.btnIcon}>💬</span>
-                    Get In Touch
-                  </Button>
-                </div>
+          {/* Trusted Badge */}
+          <div className={styles.trustedBadge}>
+            <span className={styles.trustedText}>
+              <span className={styles.checkIcon}>✓</span>
+              Trusted by 10,000+ traders since 2018
+            </span>
+          </div>
 
-                {/* Stats Section */}
-                <div className={styles.heroStats}>
-                  {stats.map((stat, index) => (
-                    <div key={index} className={styles.stat}>
-                      <div className={styles.statIcon}>
-                        {index === 0 && "👥"}
-                        {index === 1 && "📊"}
-                        {index === 2 && "🚀"}
-                        {index === 3 && "📅"}
-                      </div>
-                      <strong>{stat.number}</strong>
-                      <span>{stat.label}</span>
-                    </div>
-                  ))}
+          <h1 className={styles.heroTitle}>
+            About{" "}
+            <span className={styles.gradientText}>DJIT TRADING</span>
+          </h1>
+          <p className={styles.heroSubtitle}>
+            Empowering Traders Through Education and Innovation
+          </p>
+          <div className={styles.taglineContainer}>
+            <p className={styles.tagline}>
+              Your Journey to Trading Excellence Starts Here
+            </p>
+          </div>
+          <p className={styles.description}>
+            DJIT Trading was founded with a simple mission: to democratize
+            trading education and make professional-level market knowledge
+            accessible to everyone in Tamil and English. We believe that
+            with the right guidance, tools, and community, anyone can
+            master the art of trading.
+          </p>
+          <div className={styles.heroButtons}>
+            <Button
+              as={Link}
+              to="/courses"
+              className={styles.primaryBtn}
+              size="lg"
+            >
+              <span className={styles.btnIcon}>📚</span>
+              Explore Courses
+            </Button>
+            <Button
+              as={Link}
+              to="/contact"
+              variant="outline-light"
+              className={styles.secondaryBtn}
+              size="lg"
+            >
+              <span className={styles.btnIcon}>💬</span>
+              Get In Touch
+            </Button>
+          </div>
+
+          {/* Stats Section */}
+          <div className={styles.heroStats}>
+            {stats.map((stat, index) => (
+              <div key={index} className={styles.stat}>
+                <div className={styles.statIcon}>
+                  {index === 0 && "👥"}
+                  {index === 1 && "📊"}
+                  {index === 2 && "🚀"}
+                  {index === 3 && "📅"}
                 </div>
+                <strong>{stat.number}</strong>
+                <span>{stat.label}</span>
               </div>
-            </Col>
-          </Row>
-        </Container>
-      </section>
+            ))}
+          </div>
+        </div>
+      </Col>
+    </Row>
+  </Container>
+</section>
 
       {/* Our Mission & Vision Section */}
       <section className={styles.missionSection}>

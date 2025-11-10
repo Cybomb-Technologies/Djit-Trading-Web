@@ -659,6 +659,66 @@ ${API_URL}/api/courses/${courseId}/details`);
 
   return (
     <div className={styles.coursesPage}>
+       {/* Enhanced Header Section */}
+     <Row className="mb-5">
+  <Col>
+    <div className={styles.pageHeader}>
+      <div className={styles.headerBackground}>
+        <div className={styles.headerContent}>
+          {/* Small Company Name */}
+          <div className={styles.companyNameSmall}>
+            <span className={styles.companyTextSmall}>
+              <span className={styles.tradingIcon}>📈</span>
+              DJIT TRADING
+            </span>
+          </div>
+
+          <h1 className={styles.pageTitle}>
+            Our <span className={styles.gradientText}>Trading</span> Courses
+          </h1>
+          <p className={styles.pageSubtitle}>
+            Master the markets with our comprehensive trading education
+            catalog. From beginner basics to advanced strategies, we
+            have the perfect course for your journey.
+          </p>
+
+          {/* Stats Cards Section */}
+          <Row className={styles.statsCards}>
+            <Col md={4} className="mb-3">
+              <Card className={styles.statCard}>
+                <Card.Body className={styles.statCardBody}>
+                  <div className={styles.statIcon}>📚</div>
+                  <div className={styles.statNumber}>
+                    {courses.length}+
+                  </div>
+                  <div className={styles.statLabel}>Courses</div>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col md={4} className="mb-3">
+              <Card className={styles.statCard}>
+                <Card.Body className={styles.statCardBody}>
+                  <div className={styles.statIcon}>👨‍🏫</div>
+                  <div className={styles.statNumber}>Expert</div>
+                  <div className={styles.statLabel}>Instructors</div>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col md={4} className="mb-3">
+              <Card className={styles.statCard}>
+                <Card.Body className={styles.statCardBody}>
+                  <div className={styles.statIcon}>⚡</div>
+                  <div className={styles.statNumber}>Lifetime</div>
+                  <div className={styles.statLabel}>Access</div>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    </div>
+  </Col>
+</Row>
       <Container>
         {/* Alert */}
         {alert.show && (
@@ -679,57 +739,7 @@ ${API_URL}/api/courses/${courseId}/details`);
           </div>
         )}
 
-        {/* Enhanced Header Section */}
-        <Row className="mb-5">
-          <Col>
-            <div className={styles.pageHeader}>
-              <div className={styles.headerBackground}>
-                <div className={styles.headerContent}>
-                  <h1 className={styles.pageTitle}>Our Trading Courses</h1>
-                  <p className={styles.pageSubtitle}>
-                    Master the markets with our comprehensive trading education
-                    catalog. From beginner basics to advanced strategies, we
-                    have the perfect course for your journey.
-                  </p>
-
-                  {/* Stats Cards Section */}
-                  <Row className={styles.statsCards}>
-                    <Col md={4} className="mb-3">
-                      <Card className={styles.statCard}>
-                        <Card.Body className={styles.statCardBody}>
-                          <div className={styles.statIcon}>📚</div>
-                          <div className={styles.statNumber}>
-                            {courses.length}+
-                          </div>
-                          <div className={styles.statLabel}>Courses</div>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                    <Col md={4} className="mb-3">
-                      <Card className={styles.statCard}>
-                        <Card.Body className={styles.statCardBody}>
-                          <div className={styles.statIcon}>👨‍🏫</div>
-                          <div className={styles.statNumber}>Expert</div>
-                          <div className={styles.statLabel}>Instructors</div>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                    <Col md={4} className="mb-3">
-                      <Card className={styles.statCard}>
-                        <Card.Body className={styles.statCardBody}>
-                          <div className={styles.statIcon}>⚡</div>
-                          <div className={styles.statNumber}>Lifetime</div>
-                          <div className={styles.statLabel}>Access</div>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                  </Row>
-                </div>
-              </div>
-            </div>
-          </Col>
-        </Row>
-
+       
         {/* Search and Filters */}
         <Row className="mb-4">
           <Col lg={6} className="mb-3">

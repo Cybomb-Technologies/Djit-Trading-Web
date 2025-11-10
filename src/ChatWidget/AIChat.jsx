@@ -84,7 +84,7 @@ export default function AIChat() {
           >
             {msg.sender === "bot" && (
               <div className={styles.botAvatar}>
-                <img src={logo} alt="AI" className={styles.botAvatarImage} />
+                <img src={logo} alt="AI" className={styles.botAvatarImage} style={{width:"40px", height:"40px", borderRadius:"50%"}}/>
               </div>
             )}
             <div className={styles.messageBubble}>
@@ -108,7 +108,7 @@ export default function AIChat() {
         {isLoading && (
           <div className={`${styles.message} ${styles.botMessage}`}>
             <div className={styles.botAvatar}>
-              <img src={logo} alt="AI" className={styles.botAvatarImage} />
+              <img src={logo} alt="AI" className={styles.botAvatarImage} style={{width:"40px", height:"40px",borderRadius:"50%"}}/>
             </div>
             <div className={styles.messageBubble}>
               <div className={styles.typingIndicator}>
