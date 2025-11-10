@@ -259,95 +259,158 @@ const Home = () => {
         return "primary";
     }
   };
+   const [currentHeading, setCurrentHeading] = useState(0);
+  const [displayText, setDisplayText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const headings = [
+    "Master the Markets with AI-Powered Insights",
+    "Trade Smarter with Real-Time Analytics",
+    "Learn Professional Trading Strategies",
+    "Join 10,000+ Successful Traders"
+  ];
+
+  useEffect(() => {
+    const typeSpeed = isDeleting ? 50 : 100;
+    const current = headings[currentHeading];
+    
+    const timer = setTimeout(() => {
+      if (!isDeleting) {
+        if (displayText.length < current.length) {
+          setDisplayText(current.substring(0, displayText.length + 1));
+        } else {
+          setTimeout(() => setIsDeleting(true), 2000);
+        }
+      } else {
+        if (displayText.length > 0) {
+          setDisplayText(current.substring(0, displayText.length - 1));
+        } else {
+          setIsDeleting(false);
+          setCurrentHeading((prev) => (prev + 1) % headings.length);
+        }
+      }
+    }, typeSpeed);
+
+    return () => clearTimeout(timer);
+  }, [displayText, isDeleting, currentHeading, headings]);
+
 
   return (
     <div className={styles.homePage}>
       {/* Hero Section with Trading Background */}
-      <section className={styles.heroSection}>
-        <div className={styles.heroBackground}>
-          <div className={styles.heroOverlay}></div>
-        </div>
-        <Container>
-          <Row className="justify-content-center text-center">
-            <Col lg={10}>
-              <div className={styles.heroContent}>
-                {/* Trusted Badge */}
-                <div className={styles.trustedBadge}>
-                  <span className={styles.trustedText}>
-                    <span className={styles.checkIcon}>✓</span>
-                    Trusted by 10,000+ traders
-                  </span>
-                </div>
+  <section className={styles.heroSection}>
+      <div className={styles.heroBackground}>
+        <div className={styles.heroOverlay}></div>
+      </div>
+      <Container>
+        <Row className="justify-content-center text-center">
+          <Col lg={10}>
+            <div className={styles.heroContent}>
+              {/* Small Company Name */}
+              <div className={styles.companyNameSmall}>
+                <span className={styles.companyTextSmall}>
+                  <span className={styles.tradingIcon}>📈</span>
+                  DJIT TRADING
+                </span>
+              </div>
 
-                <h1 className={styles.heroTitle}>
-                  DJIT <span className={styles.gradientText}>TRADING</span>
-                </h1>
-                <p className={styles.heroSubtitle}>
-                  Professional Trading Platform for Modern Investors
-                </p>
-                <div className={styles.taglineContainer}>
-                  <p className={styles.tagline}>
-                    Trade Smarter with Advanced Analytics
-                  </p>
-                </div>
-                <p className={styles.description}>
-                  Access real-time market data, advanced charting tools, and
-                  professional trading features in one powerful platform. Learn
-                  trading in Tamil with expert guidance.
-                </p>
-                <div className={styles.heroButtons}>
-                  <Button
-                    as={Link}
-                    to="/about"
-                    className={styles.primaryBtn}
-                    size="lg"
-                  >
-                    <span className={styles.btnIcon}>🎯</span>
-                    About Us
-                  </Button>
-                  <Button
-                    as={Link}
-                    to="/courses"
-                    variant="outline-light"
-                    className={styles.secondaryBtn}
-                    size="lg"
-                  >
-                    <span className={styles.btnIcon}>📚</span>
-                    View Courses
-                  </Button>
-                </div>
-                <div className={styles.heroStats}>
-                  <div className={styles.stat}>
-                    <div className={styles.statIcon}>👥</div>
-                    <strong>10,000+</strong>
-                    <span>Active Students</span>
-                  </div>
-                  <div className={styles.stat}>
-                    <div className={styles.statIcon}>📊</div>
-                    <strong>25+</strong>
-                    <span>Smart Courses</span>
-                  </div>
-                  <div className={styles.stat}>
-                    <div className={styles.statIcon}>🚀</div>
-                    <strong>95%</strong>
-                    <span>Success Kit</span>
-                  </div>
-                  <div className={styles.stat}>
-                    <div className={styles.statIcon}>🔄</div>
-                    <strong>24/5</strong>
-                    <span>Support Available</span>
-                  </div>
+              {/* Trusted Badge */}
+              <div className={styles.trustedBadge}>
+                <span className={styles.trustedText}>
+                  <span className={styles.checkIcon}>✓</span>
+                  Trusted by 10,000+ Professional Traders
+                </span>
+              </div>
+
+              {/* Terminal Text Animation as Main Heading */}
+              <div className={styles.terminalHeading}>
+                <div className={styles.terminalTextWrapper}>
+                  <span className={styles.prompt}>$ </span>
+                  <span className={styles.typedText}>{displayText}</span>
+                  <span className={styles.cursor}>|</span>
                 </div>
               </div>
-            </Col>
-          </Row>
-        </Container>
 
-        {/* Animated Elements */}
-        <div className={styles.floatingElement1}></div>
-        <div className={styles.floatingElement2}></div>
-        <div className={styles.floatingElement3}></div>
-      </section>
+              <p className={styles.heroSubtitle}>
+                Professional Trading Platform for Modern Investors
+              </p>
+              
+              <div className={styles.taglineContainer}>
+                <p className={styles.tagline}>
+                  Advanced Tools • Real-Time Data • Expert Guidance
+                </p>
+              </div>
+              
+              <p className={styles.description}>
+                Access cutting-edge trading technology with AI-powered analytics, 
+                real-time market insights, and professional-grade charting tools. 
+                Learn trading strategies in Tamil with industry experts.
+              </p>
+              
+              <div className={styles.heroButtons}>
+                <Button
+                  as={Link}
+                  to="/about"
+                  className={styles.primaryBtn}
+                  size="lg"
+                >
+                  <span className={styles.btnIcon}>🚀</span>
+                  Start Trading
+                </Button>
+                <Button
+                  as={Link}
+                  to="/courses"
+                  variant="outline-light"
+                  className={styles.secondaryBtn}
+                  size="lg"
+                >
+                  <span className={styles.btnIcon}>📊</span>
+                  View Courses
+                </Button>
+                <Button
+                  as={Link}
+                  to="/demo"
+                  className={styles.tertiaryBtn}
+                  size="lg"
+                >
+                  <span className={styles.btnIcon}>🎯</span>
+                  Free Demo
+                </Button>
+              </div>
+              
+              <div className={styles.heroStats}>
+                <div className={styles.stat}>
+                  {/* <div className={styles.statIcon}>💹</div> */}
+                  <strong>10K+</strong>
+                  <span>Active Traders</span>
+                </div>
+                <div className={styles.stat}>
+                  {/* <div className={styles.statIcon}>📈</div> */}
+                  <strong>95%</strong>
+                  <span>Success Rate</span>
+                </div>
+                <div className={styles.stat}>
+                  {/* <div className={styles.statIcon}>⚡</div> */}
+                  <strong>50ms</strong>
+                  <span>Execution Speed</span>
+                </div>
+                <div className={styles.stat}>
+                  {/* <div className={styles.statIcon}>🌍</div> */}
+                  <strong>24/5</strong>
+                  <span>Global Markets</span>
+                </div>
+              </div>
+            </div>
+          </Col>
+        </Row>
+      </Container>
+
+      {/* Animated Elements */}
+      <div className={styles.floatingElement1}></div>
+      <div className={styles.floatingElement2}></div>
+      <div className={styles.floatingElement3}></div>
+      <div className={styles.gridOverlay}></div>
+    </section>
 
       {/* Why Choose DJIT Trading Section */}
       <section className={styles.featuresSection}>

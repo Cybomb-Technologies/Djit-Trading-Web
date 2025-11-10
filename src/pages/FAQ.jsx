@@ -258,60 +258,76 @@ const FAQ = () => {
 
   return (
     <div className={styles.faqPage}>
-      {/* Hero Section */}
-      <section className={styles.faqHero}>
-        <div className={styles.heroBackground}>
-          <div className={styles.heroOverlay}></div>
-        </div>
-        <Container>
-          <Row className="justify-content-center text-center">
-            <Col lg={8}>
-              <div className={styles.heroContent}>
-                <div className={styles.trustedBadge}>
-                  <span className={styles.trustedText}>
-                    <span className={styles.checkIcon}>✓</span>
-                    Trusted by 10,000+ Traders
-                  </span>
-                </div>
+     {/* Hero Section - UPDATED WITH TRADING THEME */}
+<section className={styles.faqHero}>
+  <div className={styles.heroBackground}>
+    <div className={styles.heroOverlay}></div>
+  </div>
+  
+  {/* Animated Elements */}
+  <div className={styles.floatingElement1}></div>
+  <div className={styles.floatingElement2}></div>
+  <div className={styles.floatingElement3}></div>
+  <div className={styles.gridOverlay}></div>
+  
+  <Container>
+    <Row className="justify-content-center text-center">
+      <Col lg={8}>
+        <div className={styles.heroContent}>
+          {/* Small Company Name */}
+          <div className={styles.companyNameSmall}>
+            <span className={styles.companyTextSmall}>
+              <span className={styles.tradingIcon}>📈</span>
+              DJIT TRADING
+            </span>
+          </div>
 
-                <h1 className={styles.heroTitle}>
-                  Frequently Asked{" "}
-                  <span className={styles.gradientText}>Questions</span>
-                </h1>
-                <p className={styles.heroSubtitle}>
-                  Get Answers to All Your Trading Questions
-                </p>
-                <p className={styles.description}>
-                  Find comprehensive answers to common questions about our
-                  courses, platform features, payment options, and trading
-                  community. Can't find what you're looking for? Our support
-                  team is here to help!
-                </p>
-                <div className={styles.heroButtons}>
-                  <Button
-                    as={Link}
-                    to="/courses"
-                    className={styles.primaryBtn}
-                    size="lg"
-                  >
-                    <span className={styles.btnIcon}>📚</span>
-                    Explore Courses
-                  </Button>
-                  <Button
-                    href="#contact"
-                    variant="outline-light"
-                    className={styles.secondaryBtn}
-                    size="lg"
-                  >
-                    <span className={styles.btnIcon}>💬</span>
-                    Contact Support
-                  </Button>
-                </div>
-              </div>
-            </Col>
-          </Row>
-        </Container>
-      </section>
+          {/* Trusted Badge */}
+          <div className={styles.trustedBadge}>
+            <span className={styles.trustedText}>
+              <span className={styles.checkIcon}>✓</span>
+              Trusted by 10,000+ Traders
+            </span>
+          </div>
+
+          <h1 className={styles.heroTitle}>
+            Frequently Asked{" "}
+            <span className={styles.gradientText}>Questions</span>
+          </h1>
+          <p className={styles.heroSubtitle}>
+            Get Answers to All Your Trading Questions
+          </p>
+          <p className={styles.description}>
+            Find comprehensive answers to common questions about our
+            courses, platform features, payment options, and trading
+            community. Can't find what you're looking for? Our support
+            team is here to help!
+          </p>
+          <div className={styles.heroButtons}>
+            <Button
+              as={Link}
+              to="/courses"
+              className={styles.primaryBtn}
+              size="lg"
+            >
+              <span className={styles.btnIcon}>📚</span>
+              Explore Courses
+            </Button>
+            <Button
+              href="#contact"
+              variant="outline-light"
+              className={styles.secondaryBtn}
+              size="lg"
+            >
+              <span className={styles.btnIcon}>💬</span>
+              Contact Support
+            </Button>
+          </div>
+        </div>
+      </Col>
+    </Row>
+  </Container>
+</section>
 
       {/* FAQ Categories Section - Redesigned */}
       <section className={styles.categoriesSection}>
