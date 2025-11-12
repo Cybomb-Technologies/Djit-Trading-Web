@@ -66,6 +66,29 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
       setYoutubeApiReady(true);
     }
   }, []);
+    useEffect(() => {
+    const handleContextMenu = (e) => e.preventDefault();
+    const handleKeyDown = (e) => {
+      if (
+        e.ctrlKey &&
+        (e.key === "s" || e.key === "u" || e.key === "p")
+      ) {
+        e.preventDefault();
+      }
+      if (e.key === "F12") {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener("contextmenu", handleContextMenu);
+    document.addEventListener("keydown", handleKeyDown);
+
+    // cleanup when component unmounts
+    return () => {
+      document.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated) {
