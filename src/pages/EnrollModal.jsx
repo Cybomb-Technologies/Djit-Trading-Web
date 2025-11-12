@@ -30,47 +30,51 @@ const EnrollModal = ({ show, onHide, course, onEnrollSuccess, showAlert }) => {
   }, [course]);
 
   // ✅ Apply Coupon
-  const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) {
-      setCouponError("Please enter a coupon code.");
-      return;
-    }
+const handleApplyCoupon = async () => {
+  if (!couponCode.trim()) {
+    setCouponError("Please enter a coupon code.");
+    return;
+  }
 
-    try {
-      setCouponError("");
-      const token = localStorage.getItem("token");
-      const res = await axios.post(`${API_URL}/api/coupons/validate`, {
+  try {
+    setCouponError("");
+    const token = localStorage.getItem("token");
+    
+    // Calculate the course price
+    const basePrice = course.discountedPrice || course.price;
+    
+    const res = await axios.post(`${API_URL}/api/coupons/validate`, {
+      code: couponCode.trim(),
+      totalAmount: basePrice  // ✅ Send totalAmount instead of courseId
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // ✅ Check for success instead of valid
+    if (res.data.success) {
+      const discount = res.data.discountAmount || 0;
+      const newPrice = Math.max(0, basePrice - discount);
+
+      setValidatedCoupon({
         code: couponCode.trim(),
-        courseId: course._id,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        discountAmount: discount
       });
-
-      if (res.data.valid) {
-        const discount = res.data.discountAmount || 0;
-        const basePrice = course.discountedPrice || course.price;
-        const newPrice = Math.max(0, basePrice - discount);
-
-        setValidatedCoupon({
-          code: couponCode.trim(),
-          discountAmount: discount
-        });
-        setFinalPrice(newPrice);
-        showAlert(`Coupon applied! You saved ₹${discount}.`, "success");
-      } else {
-        setCouponError(res.data.message || "Invalid coupon.");
-        setValidatedCoupon(null);
-        setFinalPrice(course.discountedPrice || course.price);
-      }
-    } catch (err) {
-      const errorMsg = err.response?.data?.message || "Coupon validation failed.";
-      setCouponError(errorMsg);
+      setFinalPrice(newPrice);
+      showAlert(`Coupon applied! You saved ₹${discount}.`, "success");
+    } else {
+      setCouponError(res.data.message || "Invalid coupon.");
       setValidatedCoupon(null);
-      setFinalPrice(course.discountedPrice || course.price);
+      setFinalPrice(basePrice);
     }
-  };
+  } catch (err) {
+    const errorMsg = err.response?.data?.message || "Coupon validation failed.";
+    setCouponError(errorMsg);
+    setValidatedCoupon(null);
+    setFinalPrice(course.discountedPrice || course.price);
+  }
+}; 
 
   // ✅ Remove Coupon
   const handleRemoveCoupon = () => {
