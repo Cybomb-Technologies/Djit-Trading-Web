@@ -50,6 +50,8 @@ exports.validateCoupon = async (req, res) => {
       isActive: true 
     });
 
+    console.log('🎯 Found coupon:', coupon ? coupon.code : 'None');
+
     if (!coupon) {
       return res.status(404).json({ 
         success: false, 
@@ -110,7 +112,7 @@ exports.validateCoupon = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      valid: true,  // ✅ Add this for frontend compatibility
+      valid: true,
       coupon: {
         code: coupon.code,
         discountType: coupon.discountType,
@@ -135,7 +137,7 @@ exports.applyCoupon = async (req, res) => {
   try {
     const { code, totalAmount } = req.body;
 
-    console.log('Apply coupon request:', { code, totalAmount });
+    console.log('🟢 Apply coupon request:', { code, totalAmount });
 
     // Validate required fields
     if (!code || !totalAmount) {
@@ -157,6 +159,13 @@ exports.applyCoupon = async (req, res) => {
     // Find the coupon (case insensitive search)
     const coupon = await Coupon.findOne({ 
       code: code.toString().toUpperCase().trim()
+    });
+
+    console.log('🎯 Found coupon before update:', {
+      code: coupon?.code,
+      usedCount: coupon?.usedCount,
+      usageLimit: coupon?.usageLimit,
+      isActive: coupon?.isActive
     });
 
     if (!coupon) {
@@ -216,22 +225,40 @@ exports.applyCoupon = async (req, res) => {
 
     const finalAmount = Math.max(0, numericTotalAmount - discountAmount);
 
-    // Update coupon usage (only if not just validating)
+    // ✅ UPDATE USED COUNT
+    console.log('🔄 Attempting to update coupon usedCount...');
+    
+    const updateData = {
+      $inc: { usedCount: 1 }
+    };
+
+    // Check if we need to deactivate coupon
+    if (coupon.usageLimit && coupon.usedCount + 1 >= coupon.usageLimit) {
+      updateData.$set = { isActive: false };
+      console.log('🔴 Coupon will be deactivated after this use');
+    }
+
     const updatedCoupon = await Coupon.findOneAndUpdate(
       { _id: coupon._id },
-      {
-        $inc: { usedCount: 1 },
-        $set: {
-          ...(coupon.usageLimit && coupon.usedCount + 1 >= coupon.usageLimit && { isActive: false }),
-        },
-      },
-      { new: true }
+      updateData,
+      { new: true, runValidators: true }
     );
 
-    console.log('Coupon applied successfully:', {
+    console.log('✅ Coupon after update:', {
       code: updatedCoupon.code,
+      previousUsedCount: coupon.usedCount,
+      newUsedCount: updatedCoupon.usedCount,
+      isActive: updatedCoupon.isActive,
       discountAmount,
       finalAmount
+    });
+
+    // Verify the update worked
+    const verifiedCoupon = await Coupon.findById(coupon._id);
+    console.log('🔍 Verified coupon from DB:', {
+      code: verifiedCoupon.code,
+      usedCount: verifiedCoupon.usedCount,
+      isActive: verifiedCoupon.isActive
     });
 
     return res.status(200).json({
@@ -242,7 +269,7 @@ exports.applyCoupon = async (req, res) => {
       coupon: updatedCoupon,
     });
   } catch (error) {
-    console.error('Error applying coupon:', error);
+    console.error('❌ Error applying coupon:', error);
     return res.status(500).json({
       success: false,
       message: 'Internal server error while applying coupon',
