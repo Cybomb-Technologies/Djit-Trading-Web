@@ -34,9 +34,9 @@ import UserManagement from "./pages/admin/UserManagement";
 import EnrollmentManagement from "./pages/admin/EnrollmentManagement";
 import NewsletterManagement from "./pages/admin/NewsletterManagement";
 import CouponGenerator from "./pages/admin/CouponGenerator";
-
+import PaymentSuccess from "./pages/payment-success";
 import "./App.css";
-import PaymentSuccess from "./pages/PaymentSuccess";
+
 
 // ✅ ScrollToTop function defined inside App.tsx
 function ScrollToTop() {
@@ -82,6 +82,7 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/progress" element={<Progress />} />
               <Route path="/payment-success" element={<PaymentSuccess/> } />
+              
               <Route path="/payment-callback" element={<PaymentCallback />} />
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
