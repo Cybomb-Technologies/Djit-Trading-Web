@@ -82,9 +82,9 @@
 }
 
 .gradientText {
-  background: linear-gradient(135deg, #ffd700 0%, #ff6b6b 50%, #4caf50 100%);
+  background: #ffffff;
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: #ffffff;
   background-clip: text;
   position: relative;
 }
@@ -117,9 +117,9 @@
   background: linear-gradient(
     90deg,
     transparent,
-    #ffd700,
-    #4caf50,
-    #ff6b6b,
+    #ffffff,
+    #ffffff,
+    #ffffff,
     transparent
   );
   border-radius: 2px;
