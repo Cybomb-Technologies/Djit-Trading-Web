@@ -136,17 +136,73 @@ const handleApplyCoupon = async () => {
   };
 
   // ✅ Free enrollment handler
-  const handleFreeEnrollment = async () => {
-    setEnrolling(true);
+// ✅ Free enrollment handler - UPDATED VERSION
+const handleFreeEnrollment = async () => {
+  setEnrolling(true);
+  try {
+    const token = localStorage.getItem("token");
+    
+    // ✅ APPLY COUPON FOR FREE COURSES TOO
+    if (validatedCoupon) {
+      try {
+        await axios.post(`${API_URL}/api/coupons/apply`, {
+          code: validatedCoupon.code,
+          totalAmount: course.discountedPrice || course.price
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log('✅ Coupon applied for free course');
+      } catch (applyError) {
+        console.error('Coupon apply error:', applyError);
+      }
+    }
+
+    const response = await axios.post(
+      `${API_URL}/api/enrollments`,
+      {
+        courseId: course._id,
+        userId: user?._id || user?.id,
+        price: 0,
+        couponCode: validatedCoupon ? validatedCoupon.code : null,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.data.success) {
+      showAlert("Successfully enrolled in the course!", "success");
+      onEnrollSuccess();
+      navigate(`/learning/${course._id}`);
+    }
+  } catch (error) {
+    console.error("❌ Free Enrollment Error:", error);
+    const errorMsg = error.response?.data?.message || "Enrollment failed";
+    showAlert(errorMsg, "danger");
+  } finally {
+    setEnrolling(false);
+  }
+};
+
+  // ✅ Payment status polling
+// ✅ Payment status polling - UPDATED VERSION
+const startPaymentPolling = (orderId, courseId) => {
+  let pollCount = 0;
+  const maxPolls = 60;
+  const interval = setInterval(async () => {
+    pollCount++;
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        `${API_URL}/api/enrollments`,
-        {
-          courseId: course._id,
-          userId: user?._id || user?.id,
-          price: 0,
-          couponCode: validatedCoupon ? validatedCoupon.code : null,
+        `${API_URL}/api/payment/verify`,
+        { 
+          orderId, 
+          courseId, 
+          userId: user?._id || user?.id 
         },
         {
           headers: {
@@ -156,61 +212,44 @@ const handleApplyCoupon = async () => {
       );
 
       if (response.data.success) {
-        showAlert("Successfully enrolled in the course!", "success");
+        clearInterval(interval);
+        
+        // ✅ APPLY COUPON ONLY WHEN PAYMENT IS SUCCESSFUL
+        if (validatedCoupon) {
+          try {
+            await axios.post(`${API_URL}/api/coupons/apply`, {
+              code: validatedCoupon.code,
+              totalAmount: course.discountedPrice || course.price
+            }, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            console.log('✅ Coupon applied and usedCount updated');
+          } catch (applyError) {
+            console.error('Coupon apply error:', applyError);
+            // Don't fail the enrollment if coupon apply fails
+          }
+        }
+
+        showAlert("Payment successful! Enrollment completed.", "success");
         onEnrollSuccess();
-        navigate(`/learning/${course._id}`);
+        navigate(`/learning/${courseId}`);
       }
-    } catch (error) {
-      console.error("❌ Free Enrollment Error:", error);
-      const errorMsg = error.response?.data?.message || "Enrollment failed";
-      showAlert(errorMsg, "danger");
-    } finally {
+    } catch {
+      console.log("Payment not confirmed yet...");
+    }
+
+    if (pollCount >= maxPolls) {
+      clearInterval(interval);
+      showAlert(
+        "Payment status check timeout. Check your email for confirmation.",
+        "info"
+      );
       setEnrolling(false);
     }
-  };
-
-  // ✅ Payment status polling
-  const startPaymentPolling = (orderId, courseId) => {
-    let pollCount = 0;
-    const maxPolls = 60;
-    const interval = setInterval(async () => {
-      pollCount++;
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.post(
-          `${API_URL}/api/payment/verify`,
-          { 
-            orderId, 
-            courseId, 
-            userId: user?._id || user?.id 
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.data.success) {
-          clearInterval(interval);
-          showAlert("Payment successful! Enrollment completed.", "success");
-          onEnrollSuccess();
-          navigate(`/learning/${courseId}`);
-        }
-      } catch {
-        console.log("Payment not confirmed yet...");
-      }
-
-      if (pollCount >= maxPolls) {
-        clearInterval(interval);
-        showAlert(
-          "Payment status check timeout. Check your email for confirmation.",
-          "info"
-        );
-        setEnrolling(false);
-      }
-    }, 5000);
-  };
+  }, 5000);
+};
 
   // ✅ Modal close handler
   const handleModalClose = () => {
