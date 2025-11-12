@@ -15,7 +15,7 @@ const server = http.createServer(app);
 // Socket.IO configuration
 const io = socketIo(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:5173", "https://cybombadmin.cybomb.com"],
+    origin: ["http://localhost:3000", "http://localhost:5173", "https://cybombadmin.cybomb.com", "https://djittrading.com", "https://www.djittrading.com"],
     credentials: true,
     methods: ["GET", "POST"],
   }
@@ -77,7 +77,7 @@ createUploadDirs();
 // CORS configuration
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5173", "https://cybombadmin.cybomb.com", "https://testing.cybomb.com"],
+    origin: ["http://localhost:3000", "http://localhost:5173", "https://cybombadmin.cybomb.com", "https://testing.cybomb.com","https://djittrading.com", "https://www.djittrading.com"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
@@ -142,7 +142,7 @@ app.use("/api/videos", require("./routes/videoRoutes"));
 app.use("/api/coupons", require("./routes/couponRoutes"));
 app.use("/api/newsletter", require("./routes/newsletterRoutes"));
 app.use("/api/payment", require("./routes/paymentRoutes"));
-app.use("/api/reports", require("./routes/reportRoutes"));
+// app.use("/api/reports", require("./routes/reportRoutes"));
 app.use("/api/admin/auth", require("./routes/adminAuthRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/admin/courses", require("./routes/adminCourseRoutes"));

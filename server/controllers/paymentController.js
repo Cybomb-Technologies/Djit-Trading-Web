@@ -1,95 +1,120 @@
+// server/controllers/paymentController.js
 const axios = require("axios");
-const cashfree = require("../config/cashfree");
+const Enrollment = require("../models/Enrollment");
+const Course = require("../models/Course");
 require("dotenv").config();
 
-// ✅ Create Cashfree Order
+const CASHFREE_BASE_URL = process.env.CASHFREE_BASE_URL;
+
+// ✅ Create Order (called by frontend)
 const createOrder = async (req, res) => {
   try {
-    const { amount, name, email, phone } = req.body;
+    const { amount, name, email, phone, courseId, userId } = req.body;
 
-    if (!amount) {
-      return res.status(400).json({ error: "Amount is missing" });
+    if (!name || !email || !phone || !courseId || !userId) {
+      return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const response = await axios.post(
-      "https://api.cashfree.com/pg/orders", // ✅ LIVE URL
-      {
-        order_id: "ORDER_" + Date.now(),
-        order_amount: amount,
-        order_currency: "INR",
-        customer_details: {
-          customer_id: "CUST_" + Date.now(),
-          customer_name: name || "Guest User",
-          customer_email: email || "test@gmail.com",
-          customer_phone: phone || "9999999999",
-        },
-        order_meta: {
-          // ✅ Your live site return URL (change this to your deployed domain later)
-          return_url: "https://localhost:3000/payment-success?order_id={order_id}",
-        },
-        order_note: "Website Course Enrollment",
+    const orderPayload = {
+      order_id: `ORDER_${Date.now()}`,
+      order_amount: amount,
+      customer_details: {
+        customer_id: userId,        // ✅ added
+        customer_name: name,
+        customer_email: email,
+        customer_phone: phone,
       },
-      {
-        headers: {
-          accept: "application/json",
-          "x-api-version": "2022-09-01",
-          "x-client-id": process.env.CASHFREE_APP_ID,
-          "x-client-secret": process.env.CASHFREE_SECRET_KEY,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+      order_currency: "INR",
+      order_note: `Course Enrollment: ${courseId}`,
+    };
 
-    const { order_id, payment_session_id } = response.data;
-
-    console.log("✅ Order Created:", order_id);
-    console.log("🧾 Full Response:", response.data);
-
-    if (!payment_session_id) {
-      console.error("❌ payment_session_id missing");
-      return res.status(400).json({
-        success: false,
-        message: "Payment session not created",
-        data: response.data,
-      });
-    }
-
-    // ✅ LIVE Payment URL
-   const paymentLink = `https://www.cashfree.com/pg/checkout?payment_session_id=${payment_session_id}`;
-
-
-    console.log("🔗 Payment Link:", paymentLink);
+    const response = await axios.post(CASHFREE_BASE_URL, orderPayload, {
+      headers: {
+        "x-client-id": process.env.CASHFREE_APP_ID,
+        "x-client-secret": process.env.CASHFREE_SECRET_KEY,
+        "x-api-version": "2022-01-01",
+        "Content-Type": "application/json",
+      },
+    });
 
     res.json({
-      success: true,
-      paymentLink,
-      orderId: order_id,
+      paymentLink: response.data.payment_link,
+      orderId: response.data.order_id,
+      paymentSessionId: response.data.order_token, // optional for SDK
     });
-  } catch (error) {
-    console.error("❌ Cashfree order error:", error.response?.data || error.message);
-    res.status(500).json({ error: error.response?.data || error.message });
+  } catch (err) {
+    console.error("Cashfree Create Order Error:", err.response?.data || err.message);
+    res.status(500).json({
+      message: err.response?.data?.message || "Failed to create order",
+    });
   }
 };
 
-// ✅ Verify Cashfree Payment
+
+// ✅ Verify Payment (called by frontend polling)
 const verifyPayment = async (req, res) => {
   try {
-    const { orderId } = req.body;
+    const { orderId, courseId, userId } = req.body;
 
-    const response = await cashfree.get(`/pg/orders/${orderId}`);
-    console.log("✅ Payment verified:", response.data);
+    if (!orderId || !courseId || !userId) {
+      return res.status(400).json({ success: false, message: "Missing required data" });
+    }
 
-    res.status(200).json({
-      success: true,
-      data: response.data,
+    // Get order status from Cashfree
+    const response = await axios.get(`${CASHFREE_BASE_URL}/${orderId}`, {
+      headers: {
+        "x-client-id": process.env.CASHFREE_APP_ID,
+        "x-client-secret": process.env.CASHFREE_SECRET_KEY,
+        "x-api-version": "2022-01-01",
+      },
     });
-  } catch (error) {
-    console.error("❌ Verify error:", error.response?.data || error.message);
-    res.status(500).json({
-      success: false,
-      message: "Failed to verify payment",
-      error: error.response?.data || error.message,
-    });
+
+    const data = response.data;
+
+    if (data.order_status === "PAID") {
+      // Check if already enrolled
+      const existing = await Enrollment.findOne({ user: userId, course: courseId });
+      if (existing) {
+        return res.status(400).json({ success: false, message: "Already enrolled in this course" });
+      }
+
+      const course = await Course.findById(courseId);
+      if (!course) {
+        return res.status(404).json({ success: false, message: "Course not found" });
+      }
+
+      // Create enrollment
+      const enrollment = new Enrollment({
+        user: userId,
+        course: courseId,
+        amountPaid: data.order_amount,
+        paymentMethod: "Cashfree",
+        paymentStatus: "completed",
+        transactionId: orderId,
+        enrolledAt: new Date(),
+      });
+
+      await enrollment.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Payment verified and enrollment successful",
+        enrollment: {
+          id: enrollment._id,
+          course: course.title,
+          enrolledAt: enrollment.enrolledAt,
+        },
+      });
+    } else {
+      return res.status(200).json({
+        success: false,
+        message: "Payment not completed yet",
+        orderStatus: data.order_status,
+      });
+    }
+  } catch (err) {
+    console.error("Cashfree Verify Payment Error:", err.response?.data || err.message);
+    res.status(500).json({ success: false, message: "Failed to verify payment" });
   }
 };
 
