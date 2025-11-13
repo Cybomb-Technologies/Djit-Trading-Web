@@ -185,8 +185,7 @@ const UserManagement = () => {
 
     try {
       setImportLoading(true)
-      const formData = new FormData()
-      formData.append('csvFile', csvFile)
+      const formData = new FormData() 
 
       // FIX: Use the api instance we created with proper timeout and configuration
       const response = await api.post(`${API_URL}/api/admin/users/import`, formData, {

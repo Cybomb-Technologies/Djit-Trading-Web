@@ -145,25 +145,26 @@ const getCourseIdsFromLabels = async (labels) => {
   
   if (!labels || labels.length === 0) return courseIds;
 
-  // Define course mappings based on labels
   const courseMappings = {
-    'Djit Hunter - Master Entry Course': '68f8755ea389a784609d16f6', // Advanced course
-    'Basics of Trading': '68f8740ca389a784609d16ca', // Basic course
-    'Hunters Group member': '68f8755ea389a784609d16f6', // Also maps to advanced course
-    'Basics of Trading Group member': '68f8740ca389a784609d16ca' // Also maps to basic course
+    // Basics Course
+    'Basics of Trading': '691432e3a0d0eb697d30ca7c',
+    'Basics of Trading Group member': '691432e3a0d0eb697d30ca7c',
+    
+    // Djit Hunter Course  
+    'Djit Hunter - Master Entry Course': '6914693bb36796123050b4a8',
+    'Hunters Group member': '6914693bb36796123050b4a8'
   };
 
   for (const label of labels) {
     const trimmedLabel = label.trim();
     if (courseMappings[trimmedLabel]) {
       courseIds.push(courseMappings[trimmedLabel]);
+      console.log(`🎯 Mapped "${trimmedLabel}" → Course ID: ${courseMappings[trimmedLabel]}`);
     }
   }
 
-  // Remove duplicates
   return [...new Set(courseIds)];
 };
-
 // Helper function to enroll user in courses
 const enrollUserInCourses = async (userId, courseIds, results, rowNumber) => {
   const enrollments = [];
