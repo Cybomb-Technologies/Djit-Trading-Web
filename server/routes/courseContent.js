@@ -23,15 +23,40 @@ router.get("/:courseId", auth, courseContentController.getCourseContents);
 router.put("/:id", adminAuth, multiUpload, courseContentController.updateContent);
 router.delete("/:id", adminAuth, courseContentController.deleteContent);
 
-// Secure media access routes
-router.get("/secure-media/video", courseContentController.streamVideo);
-router.get("/secure-media/document", courseContentController.serveDocument);
+// ✅ ENHANCED SECURE MEDIA ACCESS ROUTES
+router.get("/secure-media/video", (req, res) => {
+  // ✅ ADD CONTENT ID VALIDATION AT ROUTE LEVEL
+  const { token, contentId } = req.query;
+  
+  if (!token || !contentId) {
+    return res.status(401).json({ 
+      success: false, 
+      message: "Access token and content ID required" 
+    });
+  }
+  
+  // Pass to controller
+  courseContentController.streamVideo(req, res);
+});
+
+router.get("/secure-media/document", (req, res) => {
+  // ✅ ADD CONTENT ID VALIDATION AT ROUTE LEVEL
+  const { token, contentId } = req.query;
+  
+  if (!token || !contentId) {
+    return res.status(401).json({ 
+      success: false, 
+      message: "Access token and content ID required" 
+    });
+  }
+  
+  // Pass to controller
+  courseContentController.serveDocument(req, res);
+});
+
 router.get("/secure-url/:contentId/:mediaType", auth, courseContentController.getSecureMediaUrl);
 
 // YouTube secure proxy routes
-// router.post("/secure-youtube-proxy", auth, courseContentController.secureYouTubeProxy);
-// router.post("/simple-youtube-proxy", auth, courseContentController.simpleYouTubeProxy);
-// In routes/courseContent.js
 router.post("/simple-youtube-embed", auth, courseContentController.simpleYouTubeEmbed);
 router.post("/direct-youtube-url", auth, courseContentController.getDirectYouTubeUrl);
 
@@ -39,6 +64,51 @@ router.post("/direct-youtube-url", auth, courseContentController.getDirectYouTub
 router.post("/:contentId/complete", auth, courseContentController.markAsCompleted);
 router.get("/progress/:courseId", auth, courseContentController.getUserProgress);
 router.get("/check-enrollment/:courseId", auth, courseContentController.checkEnrollment);
+
+// ✅ NEW: Token refresh endpoint for expired media tokens
+router.post("/refresh-media-token/:contentId/:mediaType", auth, async (req, res) => {
+  try {
+    const { contentId, mediaType } = req.params;
+    const userId = req.user.id;
+
+    const content = await CourseContent.findById(contentId);
+    if (!content) {
+      return res.status(404).json({ success: false, message: "Content not found" });
+    }
+
+    const enrollment = await Enrollment.findOne({
+      user: userId,
+      course: content.course,
+      paymentStatus: "completed",
+    });
+
+    if (!enrollment) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not enrolled in this course",
+      });
+    }
+
+    let secureToken = '';
+    if (mediaType === 'video') {
+      secureToken = courseContentController.generateSecureToken(userId, contentId, '1h');
+    } else if (mediaType === 'document') {
+      secureToken = courseContentController.generateSecureToken(userId, contentId, '2h');
+    }
+
+    const mediaUrl = `/api/course-content/secure-media/${mediaType}?token=${secureToken}&contentId=${contentId}`;
+
+    res.json({
+      success: true,
+      mediaUrl,
+      expiresIn: mediaType === 'video' ? '1 hour' : '2 hours'
+    });
+
+  } catch (error) {
+    console.error("Error refreshing media token:", error);
+    res.status(500).json({ success: false, message: "Error refreshing media token" });
+  }
+});
 
 // Deprecated routes - kept for backward compatibility but will return error
 router.get("/video/:contentId", (req, res) => {

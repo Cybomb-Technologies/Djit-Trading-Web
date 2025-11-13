@@ -18,8 +18,16 @@ const generateSecureToken = (userId, contentId, expiresIn = '1h') => {
 };
 
 // Verify secure token
+const tokenBlacklist = new Set();
+
+// Enhanced token verification (REPLACE your existing verifySecureToken)
 const verifySecureToken = (token) => {
   try {
+    // Check if token is blacklisted
+    if (tokenBlacklist.has(token)) {
+      throw new Error('Token has been revoked');
+    }
+    
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (decoded.accessType !== 'media') {
       throw new Error('Invalid token type');
@@ -28,6 +36,15 @@ const verifySecureToken = (token) => {
   } catch (error) {
     throw new Error('Invalid or expired token');
   }
+};
+
+// Add this function to blacklist tokens (NEW FUNCTION)
+const blacklistToken = (token) => {
+  tokenBlacklist.add(token);
+  // Optional: Remove from blacklist after token expiry
+  setTimeout(() => {
+    tokenBlacklist.delete(token);
+  }, 60 * 60 * 1000); // 1 hour
 };
 
 // Upload content
@@ -358,12 +375,13 @@ const getCourseContents = async (req, res) => {
 };
 
 // Secure video streaming with token validation
+// Enhanced secure video streaming with full protection
 const streamVideo = async (req, res) => {
   try {
-    const { token } = req.query;
+    const { token, contentId } = req.query;
     
-    if (!token) {
-      return res.status(401).json({ success: false, message: "Access token required" });
+    if (!token || !contentId) {
+      return res.status(401).json({ success: false, message: "Access token and content ID required" });
     }
 
     let decoded;
@@ -373,26 +391,41 @@ const streamVideo = async (req, res) => {
       return res.status(401).json({ success: false, message: error.message });
     }
 
-    const { userId, contentId } = decoded;
+    const { userId, contentId: tokenContentId } = decoded;
+
+    // ✅ CRITICAL: Verify token contentId matches query contentId
+    if (contentId !== tokenContentId) {
+      console.warn(`Token mismatch: token=${tokenContentId}, query=${contentId}, user=${userId}`);
+      return res.status(403).json({ success: false, message: "Invalid token for this content" });
+    }
 
     console.log(`Streaming video for content ${contentId}, user ${userId}`);
 
-    // Verify enrollment
+    // Verify content exists
     const content = await CourseContent.findById(contentId);
     if (!content) {
       return res.status(404).json({ success: false, message: "Content not found" });
     }
 
+    // ✅ ENHANCED: Verify enrollment with additional checks
     const enrollment = await Enrollment.findOne({
       user: userId,
       course: content.course,
       paymentStatus: "completed",
-    });
+    }).populate('course');
 
     if (!enrollment) {
       return res.status(403).json({
         success: false,
-        message: "You are not enrolled in this course or payment is pending",
+        message: "You are not enrolled in this course",
+      });
+    }
+
+    // ✅ ADDITIONAL: Check if course is still active
+    if (enrollment.course.status !== 'active') {
+      return res.status(403).json({
+        success: false,
+        message: "This course is no longer available",
       });
     }
 
@@ -406,24 +439,25 @@ const streamVideo = async (req, res) => {
       return res.status(404).json({ success: false, message: "Video file not found on server" });
     }
 
+    // ✅ SECURITY HEADERS - Prevent embedding in other sites
+    const headers = {
+      'Content-Type': content.videoFile.mimetype || 'video/mp4',
+      'Content-Disposition': 'inline',
+      'Content-Security-Policy': "default-src 'none'; frame-ancestors 'self'",
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'SAMEORIGIN', // Prevent embedding in iframes
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
+      'Cache-Control': 'private, no-cache, no-store, must-revalidate, max-age=0',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+      // ✅ PREVENT CACHING OF SENSITIVE MEDIA
+      'Surrogate-Control': 'no-store',
+    };
+
+    // For range requests (video streaming)
     const stat = fs.statSync(videoPath);
     const fileSize = stat.size;
     const range = req.headers.range;
-
-    const headers = {
-      'Content-Type': content.videoFile.mimetype || 'video/mp4',
-      'Accept-Ranges': 'bytes',
-      'Cache-Control': 'no-store, no-cache, must-revalidate, private',
-      'Pragma': 'no-cache',
-      'Expires': '0',
-      'Content-Security-Policy': "default-src 'none'",
-      'X-Content-Type-Options': 'nosniff'
-    };
-
-    // Prevent download
-    if (content.videoFile.mimetype === 'video/mp4') {
-      headers['Content-Disposition'] = 'inline';
-    }
 
     if (range) {
       const parts = range.replace(/bytes=/, "").split("-");
@@ -439,19 +473,26 @@ const streamVideo = async (req, res) => {
       
       headers['Content-Range'] = `bytes ${start}-${end}/${fileSize}`;
       headers['Content-Length'] = chunksize;
+      headers['Accept-Ranges'] = 'bytes';
       
       res.writeHead(206, headers);
       file.pipe(res);
     } else {
       headers['Content-Length'] = fileSize;
+      headers['Accept-Ranges'] = 'bytes';
       res.writeHead(200, headers);
       fs.createReadStream(videoPath).pipe(res);
     }
+
+    // ✅ LOG ACCESS FOR SECURITY MONITORING
+    console.log(`✅ Video accessed: content=${contentId}, user=${userId}, ip=${req.ip}, time=${new Date().toISOString()}`);
+
   } catch (error) {
     console.error("Error streaming video:", error);
     res.status(500).json({ success: false, message: "Error streaming video" });
   }
 };
+
 
 // Secure document serving with token validation (Updated for Excel support)
 const serveDocument = async (req, res) => {
@@ -560,6 +601,7 @@ const serveDocument = async (req, res) => {
 };
 
 // Get secure media URL
+// Update getSecureMediaUrl to include contentId in URL
 const getSecureMediaUrl = async (req, res) => {
   try {
     const { contentId, mediaType } = req.params;
@@ -589,7 +631,7 @@ const getSecureMediaUrl = async (req, res) => {
 
     if (mediaType === 'video' && content.videoFile) {
       mediaExists = true;
-      secureToken = generateSecureToken(userId, contentId);
+      secureToken = generateSecureToken(userId, contentId, '1h'); // Shorter expiry
     } else if (mediaType === 'document' && content.documentFile) {
       mediaExists = true;
       secureToken = generateSecureToken(userId, contentId, '2h');
@@ -599,12 +641,16 @@ const getSecureMediaUrl = async (req, res) => {
       return res.status(404).json({ success: false, message: "Media not found" });
     }
 
-    const mediaUrl = `/api/course-content/secure-media/${mediaType}?token=${secureToken}`;
+    // ✅ IMPORTANT: Include contentId in the URL for double verification
+    const mediaUrl = `${API_URL}/api/course-content/secure-media/${mediaType}?token=${secureToken}&contentId=${contentId}`;
 
     res.json({
       success: true,
       mediaUrl,
-      expiresIn: mediaType === 'video' ? '1 hour' : '2 hours'
+      expiresIn: mediaType === 'video' ? '1 hour' : '2 hours',
+      // ✅ Return token separately for frontend to construct URL
+      token: secureToken,
+      contentId: contentId
     });
 
   } catch (error) {
@@ -1554,3 +1600,4 @@ module.exports = {
   getDirectYouTubeUrl
         // Add this if you want to export it
 };
+

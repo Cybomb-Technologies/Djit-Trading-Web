@@ -203,23 +203,63 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
   };
 
   // Pre-fetch secure URLs for all content
-  const preFetchSecureUrls = async (contents) => {
-    const urls = {};
+// Update preFetchSecureUrls function
+const preFetchSecureUrls = async (contents) => {
+  const urls = {};
+  
+  for (const content of contents) {
+    if (content.type === "video" && !isYouTubeUrl(content.videoUrl) && content.secureVideoToken) {
+      // ✅ IMPORTANT: Include contentId in the URL
+      urls[content._id] = {
+        video: `${API_URL}/api/course-content/secure-media/video?token=${content.secureVideoToken}&contentId=${content._id}`
+      };
+    } else if ((content.type === "document" || content.type === "pdf" || content.type === "excel") && content.secureDocumentToken) {
+      urls[content._id] = {
+        document: `${API_URL}/api/course-content/secure-media/document?token=${content.secureDocumentToken}&contentId=${content._id}`
+      };
+    }
+  }
+  
+  setSecureMediaUrls(urls);
+};
+
+// Add this new function to refresh tokens periodically
+const refreshMediaTokens = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const newUrls = {};
     
-    for (const content of contents) {
-      if (content.type === "video" && !isYouTubeUrl(content.videoUrl) && content.secureVideoToken) {
-        urls[content._id] = {
-          video: `${API_URL}/api/course-content/secure-media/video?token=${content.secureVideoToken}`
-        };
-      } else if ((content.type === "document" || content.type === "pdf" || content.type === "excel") && content.secureDocumentToken) {
-        urls[content._id] = {
-          document: `${API_URL}/api/course-content/secure-media/document?token=${content.secureDocumentToken}`
-        };
+    for (const content of courseContent) {
+      if (content.type === "video" && !isYouTubeUrl(content.videoUrl)) {
+        const response = await axios.get(
+          `${API_URL}/api/course-content/secure-url/${content._id}/video`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        
+        if (response.data.success) {
+          newUrls[content._id] = {
+            video: response.data.mediaUrl
+          };
+        }
       }
     }
     
-    setSecureMediaUrls(urls);
-  };
+    setSecureMediaUrls(prev => ({ ...prev, ...newUrls }));
+  } catch (error) {
+    console.error("Error refreshing media tokens:", error);
+  }
+};
+
+// Add useEffect to refresh tokens every 30 minutes
+useEffect(() => {
+  const interval = setInterval(() => {
+    if (courseContent.length > 0) {
+      refreshMediaTokens();
+    }
+  }, 30 * 60 * 1000); // 30 minutes
+  
+  return () => clearInterval(interval);
+}, [courseContent]);
 
   // ✅ GUARANTEED WORKING YOUTUBE HANDLING
   const createSecureYouTubeBlobUrl = async (contentId, youtubeUrl) => {
