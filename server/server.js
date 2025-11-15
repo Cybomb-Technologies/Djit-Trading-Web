@@ -77,7 +77,7 @@ createUploadDirs();
 // CORS configuration
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5173", "https://cybombadmin.cybomb.com", "https://testing.cybomb.com","https://djittrading.com", "https://www.djittrading.com"],
+    origin: ["http://localhost:3000", "http://localhost:5173", "http://localhost:5173", "https://cybombadmin.cybomb.com", "https://testing.cybomb.com","https://djittrading.com", "https://www.djittrading.com"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
@@ -229,7 +229,7 @@ app.use(require("./middleware/errorHandler"));
 
 // MongoDB Connection
 mongoose.connect(
-  process.env.MONGODB_URI || "mongodb://localhost:27017/course_platform",
+  process.env.MONGODB_URI,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
