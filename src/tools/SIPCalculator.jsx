@@ -359,30 +359,40 @@ const SIPCalculator = () => {
                   <Card.Body
                     className={`${styles.cardBody} ${styles.placeholderBody}`}
                   >
-                    <div className={styles.placeholderContent}>
-                      <div className={styles.placeholderIcon}>📈</div>
-                      <h5 className={styles.placeholderTitle}>
-                        Enter SIP Details
-                      </h5>
-                      <p className={styles.placeholderText}>
-                        Fill in the form to see your investment growth
-                        projections and analysis
-                      </p>
-                      <div className={styles.placeholderFeatures}>
-                        <div className={styles.featureItem}>
-                          <span className={styles.featureIcon}>📊</span>
-                          <span>Detailed Analysis</span>
-                        </div>
-                        <div className={styles.featureItem}>
-                          <span className={styles.featureIcon}>📈</span>
-                          <span>Growth Projections</span>
-                        </div>
-                        <div className={styles.featureItem}>
-                          <span className={styles.featureIcon}>⚡</span>
-                          <span>Instant Results</span>
-                        </div>
-                      </div>
-                    </div>
+                   <div className={styles.placeholderContent}>
+  <div className={styles.placeholderIcon}>
+    <i className="fa-solid fa-chart-line"></i>
+  </div>
+
+  <h5 className={styles.placeholderTitle}>
+    Enter SIP Details
+  </h5>
+  <p className={styles.placeholderText}>
+    Fill in the form to see your investment growth projections and analysis
+  </p>
+
+  <div className={styles.placeholderFeatures}>
+    <div className={styles.featureItem}>
+      <span className={styles.featureIcon}>
+        <i className="fa-solid fa-chart-column"></i>
+      </span>
+      <span>Detailed Analysis</span>
+    </div>
+    <div className={styles.featureItem}>
+      <span className={styles.featureIcon}>
+        <i className="fa-solid fa-chart-line"></i>
+      </span>
+      <span>Growth Projections</span>
+    </div>
+    <div className={styles.featureItem}>
+      <span className={styles.featureIcon}>
+        <i className="fa-solid fa-bolt"></i>
+      </span>
+      <span>Instant Results</span>
+    </div>
+  </div>
+</div>
+
                   </Card.Body>
                 </Card>
               )}
@@ -466,73 +476,88 @@ const SIPCalculator = () => {
                     lump-sum investment.
                   </p>
 
-                  <Row className="mt-4">
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoIcon}>📊</div>
-                        <div>
-                          <h6>Rupee Cost Averaging</h6>
-                          <p>
-                            Buy more units when prices are low and fewer when
-                            prices are high
-                          </p>
-                        </div>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoIcon}>🚀</div>
-                        <div>
-                          <h6>Power of Compounding</h6>
-                          <p>
-                            Earn returns on your returns over time for
-                            exponential growth
-                          </p>
-                        </div>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoIcon}>⚡</div>
-                        <div>
-                          <h6>Disciplined Investing</h6>
-                          <p>
-                            Regular investments regardless of market conditions
-                          </p>
-                        </div>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoIcon}>💎</div>
-                        <div>
-                          <h6>Flexibility</h6>
-                          <p>
-                            Start with as low as ₹500 per month with easy
-                            modifications
-                          </p>
-                        </div>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoIcon}>💰</div>
-                        <div>
-                          <h6>Liquidity</h6>
-                          <p>Easy to redeem your investments when needed</p>
-                        </div>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoIcon}>🛡️</div>
-                        <div>
-                          <h6>Long-term Wealth</h6>
-                          <p>Ideal for achieving long-term financial goals</p>
-                        </div>
-                      </div>
-                    </Col>
-                  </Row>
+                <Row className="mt-4">
+  <Col md={6}>
+    <div className={styles.infoItem}>
+      <div className={styles.infoIcon}>
+        <i className="fa-solid fa-chart-column"></i>
+      </div>
+      <div>
+        <h6>Rupee Cost Averaging</h6>
+        <p>
+          Buy more units when prices are low and fewer when prices are high
+        </p>
+      </div>
+    </div>
+  </Col>
+
+  <Col md={6}>
+    <div className={styles.infoItem}>
+      <div className={styles.infoIcon}>
+        <i className="fa-solid fa-rocket"></i>
+      </div>
+      <div>
+        <h6>Power of Compounding</h6>
+        <p>
+          Earn returns on your returns over time for exponential growth
+        </p>
+      </div>
+    </div>
+  </Col>
+
+  <Col md={6}>
+    <div className={styles.infoItem}>
+      <div className={styles.infoIcon}>
+        <i className="fa-solid fa-bolt"></i>
+      </div>
+      <div>
+        <h6>Disciplined Investing</h6>
+        <p>
+          Regular investments regardless of market conditions
+        </p>
+      </div>
+    </div>
+  </Col>
+
+  <Col md={6}>
+    <div className={styles.infoItem}>
+      <div className={styles.infoIcon}>
+        <i className="fa-solid fa-gem"></i>
+      </div>
+      <div>
+        <h6>Flexibility</h6>
+        <p>
+          Start with as low as ₹500 per month with easy modifications
+        </p>
+      </div>
+    </div>
+  </Col>
+
+  <Col md={6}>
+    <div className={styles.infoItem}>
+      <div className={styles.infoIcon}>
+        <i className="fa-solid fa-coins"></i>
+      </div>
+      <div>
+        <h6>Liquidity</h6>
+        <p>Easy to redeem your investments when needed</p>
+      </div>
+    </div>
+  </Col>
+
+  <Col md={6}>
+    <div className={styles.infoItem}>
+      <div className={styles.infoIcon}>
+        <i className="fa-solid fa-shield-halved"></i>
+      </div>
+      <div>
+        <h6>Long-term Wealth</h6>
+        <p>Ideal for achieving long-term financial goals</p>
+      </div>
+    </div>
+  </Col>
+</Row>
+
                 </Card.Body>
               </Card>
             </Col>

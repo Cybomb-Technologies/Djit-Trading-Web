@@ -20,6 +20,15 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
+  // ✅ Google ID at root level
+  googleId: {
+    type: String,
+    sparse: true
+  },
+  emailVerified: {
+    type: Boolean,
+    default: false
+  },
   role: {
     type: String,
     enum: ['user', 'admin'],
@@ -82,7 +91,6 @@ const userSchema = new mongoose.Schema({
       default: 'Beginner'
     },
     discordId: String,
-    googleId: String,
     labels: [String],
     emailSubscriberStatus: String,
     smsSubscriberStatus: String,

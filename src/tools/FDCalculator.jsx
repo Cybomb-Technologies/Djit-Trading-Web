@@ -84,49 +84,49 @@ const FDCalculator = () => {
   return (
     <div className={styles.fdPage}>
       {/* Hero Section */}
-    <section className={styles.heroSection}>
-  <div className={styles.heroBackground}>
-    <div className={styles.heroOverlay}></div>
-  </div>
-  
-  {/* Animated Elements */}
-  <div className={styles.floatingElement1}></div>
-  <div className={styles.floatingElement2}></div>
-  <div className={styles.floatingElement3}></div>
-  <div className={styles.gridOverlay}></div>
-  
-  <Container>
-    <Row className="justify-content-center text-center">
-      <Col lg={10}>
-        <div className={styles.heroContent}>
-          {/* Small Company Name */}
-          <div className={styles.companyNameSmall}>
-            <span className={styles.companyTextSmall}>
-              <span className={styles.tradingIcon}>📈</span>
-              DJIT TRADING
-            </span>
-          </div>
-
-          <h1 className={styles.heroTitle}>
-            FD <span className={styles.gradientText}>CALCULATOR</span>
-          </h1>
-          <p className={styles.heroSubtitle}>
-            Calculate your Fixed Deposit maturity amount and interest
-            earnings with precision
-          </p>
-          <div className={styles.taglineContainer}>
-            <p className={styles.tagline}>Secure Your Financial Future</p>
-          </div>
-          <p className={styles.description}>
-            Use our advanced FD calculator to estimate your fixed deposit
-            returns. Plan your investments strategically to maximize
-            earnings while ensuring capital safety.
-          </p>
+      <section className={styles.heroSection}>
+        <div className={styles.heroBackground}>
+          <div className={styles.heroOverlay}></div>
         </div>
-      </Col>
-    </Row>
-  </Container>
-</section>
+
+        {/* Animated Elements */}
+        <div className={styles.floatingElement1}></div>
+        <div className={styles.floatingElement2}></div>
+        <div className={styles.floatingElement3}></div>
+        <div className={styles.gridOverlay}></div>
+
+        <Container>
+          <Row className="justify-content-center text-center">
+            <Col lg={10}>
+              <div className={styles.heroContent}>
+                {/* Small Company Name */}
+                <div className={styles.companyNameSmall}>
+                  <span className={styles.companyTextSmall}>
+                    <span className={styles.tradingIcon}>📈</span>
+                    DJIT TRADING
+                  </span>
+                </div>
+
+                <h1 className={styles.heroTitle}>
+                  FD <span className={styles.gradientText}>CALCULATOR</span>
+                </h1>
+                <p className={styles.heroSubtitle}>
+                  Calculate your Fixed Deposit maturity amount and interest
+                  earnings with precision
+                </p>
+                <div className={styles.taglineContainer}>
+                  <p className={styles.tagline}>Secure Your Financial Future</p>
+                </div>
+                <p className={styles.description}>
+                  Use our advanced FD calculator to estimate your fixed deposit
+                  returns. Plan your investments strategically to maximize
+                  earnings while ensuring capital safety.
+                </p>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </section>
 
       {/* Calculator Section */}
       <section className={styles.calculatorSection}>
@@ -270,7 +270,10 @@ const FDCalculator = () => {
                     <div className={styles.resultSummary}>
                       <div className={styles.resultGrid}>
                         <div className={styles.resultItem}>
-                          <div className={styles.resultIcon}>💰</div>
+                          <div className={styles.resultIcon}>
+                            <i className="fa-solid fa-coins"></i>
+                          </div>
+
                           <div className={styles.resultContent}>
                             <span className={styles.resultLabel}>
                               Principal Amount
@@ -408,7 +411,10 @@ const FDCalculator = () => {
                     className={`${styles.cardBody} ${styles.placeholderBody}`}
                   >
                     <div className={styles.placeholderContent}>
-                      <div className={styles.placeholderIcon}>🏦</div>
+                      <div className={styles.placeholderIcon}>
+                        <i className="fa-solid fa-building-columns"></i>
+                      </div>
+
                       <h5 className={styles.placeholderTitle}>
                         Enter FD Details
                       </h5>
@@ -418,15 +424,24 @@ const FDCalculator = () => {
                       </p>
                       <div className={styles.placeholderFeatures}>
                         <div className={styles.featureItem}>
-                          <span className={styles.featureIcon}>💰</span>
+                          <span className={styles.featureIcon}>
+                            <i className="fa-solid fa-coins"></i>
+                          </span>
+
                           <span>Accurate Calculations</span>
                         </div>
                         <div className={styles.featureItem}>
-                          <span className={styles.featureIcon}>📈</span>
+                          <span className={styles.featureIcon}>
+                            <i className="fa-solid fa-chart-line"></i>
+                          </span>
+
                           <span>Interest Projections</span>
                         </div>
                         <div className={styles.featureItem}>
-                          <span className={styles.featureIcon}>⚡</span>
+                          <span className={styles.featureIcon}>
+  <i className="fa-solid fa-bolt"></i>
+</span>
+
                           <span>Instant Results</span>
                         </div>
                       </div>
@@ -458,56 +473,64 @@ const FDCalculator = () => {
                     maturity date.
                   </p>
 
-                  <Row className="mt-4">
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoIcon}>🛡️</div>
-                        <div>
-                          <h6>Safety & Security</h6>
-                          <p>
-                            FDs are considered one of the safest investment
-                            options with guaranteed returns
-                          </p>
-                        </div>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoIcon}>📊</div>
-                        <div>
-                          <h6>Fixed Returns</h6>
-                          <p>
-                            Offers predictable, fixed returns that are not
-                            market-linked
-                          </p>
-                        </div>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoIcon}>⚡</div>
-                        <div>
-                          <h6>Flexible Tenure</h6>
-                          <p>
-                            Choose tenure from 7 days to 10 years as per your
-                            financial goals
-                          </p>
-                        </div>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoIcon}>🏦</div>
-                        <div>
-                          <h6>Loan Facility</h6>
-                          <p>
-                            Can avail loans against FDs up to 75-90% of the
-                            deposit value
-                          </p>
-                        </div>
-                      </div>
-                    </Col>
-                  </Row>
+                <Row className="mt-4">
+  <Col md={6}>
+    <div className={styles.infoItem}>
+      <div className={styles.infoIcon}>
+        <i className="fa-solid fa-shield-halved"></i>
+      </div>
+      <div>
+        <h6>Safety & Security</h6>
+        <p>
+          FDs are considered one of the safest investment options with guaranteed returns
+        </p>
+      </div>
+    </div>
+  </Col>
+
+  <Col md={6}>
+    <div className={styles.infoItem}>
+      <div className={styles.infoIcon}>
+        <i className="fa-solid fa-chart-column"></i>
+      </div>
+      <div>
+        <h6>Fixed Returns</h6>
+        <p>
+          Offers predictable, fixed returns that are not market-linked
+        </p>
+      </div>
+    </div>
+  </Col>
+
+  <Col md={6}>
+    <div className={styles.infoItem}>
+      <div className={styles.infoIcon}>
+        <i className="fa-solid fa-bolt"></i>
+      </div>
+      <div>
+        <h6>Flexible Tenure</h6>
+        <p>
+          Choose tenure from 7 days to 10 years as per your financial goals
+        </p>
+      </div>
+    </div>
+  </Col>
+
+  <Col md={6}>
+    <div className={styles.infoItem}>
+      <div className={styles.infoIcon}>
+        <i className="fa-solid fa-building-columns"></i>
+      </div>
+      <div>
+        <h6>Loan Facility</h6>
+        <p>
+          Can avail loans against FDs up to 75-90% of the deposit value
+        </p>
+      </div>
+    </div>
+  </Col>
+</Row>
+
                 </Card.Body>
               </Card>
             </Col>

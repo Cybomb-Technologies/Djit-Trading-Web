@@ -18,9 +18,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import styles from "./Home.module.css";
 
-
 const API_URL = import.meta.env.VITE_API_BASE_URL;
-
 
 const Home = () => {
   const [featuredCourses, setFeaturedCourses] = useState([]);
@@ -44,7 +42,9 @@ const Home = () => {
   const fetchFeaturedCourses = async () => {
     try {
       setError(null);
-      const response = await axios.get(`${API_URL}/api/courses?featured=true&limit=3`);
+      const response = await axios.get(
+        `${API_URL}/api/courses?featured=true&limit=3`
+      );
 
       if (response.data.courses && response.data.courses.length > 0) {
         setFeaturedCourses(response.data.courses);
@@ -259,21 +259,21 @@ const Home = () => {
         return "primary";
     }
   };
-   const [currentHeading, setCurrentHeading] = useState(0);
-  const [displayText, setDisplayText] = useState('');
+  const [currentHeading, setCurrentHeading] = useState(0);
+  const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
   const headings = [
     "Master the Markets with AI-Powered Insights",
     "Trade Smarter with Real-Time Analytics",
     "Learn Professional Trading Strategies",
-    "Join 10,000+ Successful Traders"
+    "Join 10,000+ Successful Traders",
   ];
 
   useEffect(() => {
     const typeSpeed = isDeleting ? 50 : 100;
     const current = headings[currentHeading];
-    
+
     const timer = setTimeout(() => {
       if (!isDeleting) {
         if (displayText.length < current.length) {
@@ -294,123 +294,123 @@ const Home = () => {
     return () => clearTimeout(timer);
   }, [displayText, isDeleting, currentHeading, headings]);
 
-
   return (
     <div className={styles.homePage}>
       {/* Hero Section with Trading Background */}
-  <section className={styles.heroSection}>
-      <div className={styles.heroBackground}>
-        <div className={styles.heroOverlay}></div>
-      </div>
-      <Container>
-        <Row className="justify-content-center text-center">
-          <Col lg={10}>
-            <div className={styles.heroContent}>
-              {/* Small Company Name */}
-              <div className={styles.companyNameSmall}>
-                <span className={styles.companyTextSmall}>
-                  <span className={styles.tradingIcon}>📈</span>
-                  DJIT TRADING
-                </span>
-              </div>
-
-              {/* Trusted Badge */}
-              <div className={styles.trustedBadge}>
-                <span className={styles.trustedText}>
-                  <span className={styles.checkIcon}>✓</span>
-                  Trusted by 10,000+ Professional Traders
-                </span>
-              </div>
-
-              {/* Terminal Text Animation as Main Heading */}
-              <div className={styles.terminalHeading}>
-                <div className={styles.terminalTextWrapper}>
-                  <span className={styles.prompt}>$ </span>
-                  <span className={styles.typedText}>{displayText}</span>
-                  <span className={styles.cursor}>|</span>
+      <section className={styles.heroSection}>
+        <div className={styles.heroBackground}>
+          <div className={styles.heroOverlay}></div>
+        </div>
+        <Container>
+          <Row className="justify-content-center text-center">
+            <Col lg={10}>
+              <div className={styles.heroContent}>
+                {/* Small Company Name */}
+                <div className={styles.companyNameSmall}>
+                  <span className={styles.companyTextSmall}>
+                    <span className={styles.tradingIcon}>📈</span>
+                    DJIT TRADING
+                  </span>
                 </div>
-              </div>
 
-              <p className={styles.heroSubtitle}>
-                Professional Trading Platform for Modern Investors
-              </p>
-              
-              <div className={styles.taglineContainer}>
-                <p className={styles.tagline}>
-                  Advanced Tools • Real-Time Data • Expert Guidance
+                {/* Trusted Badge */}
+                <div className={styles.trustedBadge}>
+                  <span className={styles.trustedText}>
+                    <span className={styles.checkIcon}>✓</span>
+                    Trusted by 10,000+ Professional Traders
+                  </span>
+                </div>
+
+                {/* Terminal Text Animation as Main Heading */}
+                <div className={styles.terminalHeading}>
+                  <div className={styles.terminalTextWrapper}>
+                    <span className={styles.prompt}>$ </span>
+                    <span className={styles.typedText}>{displayText}</span>
+                    <span className={styles.cursor}>|</span>
+                  </div>
+                </div>
+
+                <p className={styles.heroSubtitle}>
+                  Professional Trading Platform for Modern Investors
                 </p>
-              </div>
-              
-              <p className={styles.description}>
-                Access cutting-edge trading technology with AI-powered analytics, 
-                real-time market insights, and professional-grade charting tools. 
-                Learn trading strategies in Tamil with industry experts.
-              </p>
-              
-              <div className={styles.heroButtons}>
-                <Button
-                  as={Link}
-                  to="/about"
-                  className={styles.primaryBtn}
-                  size="lg"
-                >
-                  <span className={styles.btnIcon}>🚀</span>
-                  Start Trading
-                </Button>
-                <Button
-                  as={Link}
-                  to="/courses"
-                  variant="outline-light"
-                  className={styles.secondaryBtn}
-                  size="lg"
-                >
-                  <span className={styles.btnIcon}>📊</span>
-                  View Courses
-                </Button>
-                <Button
-                  as={Link}
-                  to="/demo"
-                  className={styles.tertiaryBtn}
-                  size="lg"
-                >
-                  <span className={styles.btnIcon}>🎯</span>
-                  Free Demo
-                </Button>
-              </div>
-              
-              <div className={styles.heroStats}>
-                <div className={styles.stat}>
-                  {/* <div className={styles.statIcon}>💹</div> */}
-                  <strong>10K+</strong>
-                  <span>Active Traders</span>
-                </div>
-                <div className={styles.stat}>
-                  {/* <div className={styles.statIcon}>📈</div> */}
-                  <strong>95%</strong>
-                  <span>Success Rate</span>
-                </div>
-                <div className={styles.stat}>
-                  {/* <div className={styles.statIcon}>⚡</div> */}
-                  <strong>50ms</strong>
-                  <span>Execution Speed</span>
-                </div>
-                <div className={styles.stat}>
-                  {/* <div className={styles.statIcon}>🌍</div> */}
-                  <strong>24/5</strong>
-                  <span>Global Markets</span>
-                </div>
-              </div>
-            </div>
-          </Col>
-        </Row>
-      </Container>
 
-      {/* Animated Elements */}
-      <div className={styles.floatingElement1}></div>
-      <div className={styles.floatingElement2}></div>
-      <div className={styles.floatingElement3}></div>
-      <div className={styles.gridOverlay}></div>
-    </section>
+                <div className={styles.taglineContainer}>
+                  <p className={styles.tagline}>
+                    Advanced Tools • Real-Time Data • Expert Guidance
+                  </p>
+                </div>
+
+                <p className={styles.description}>
+                  Access cutting-edge trading technology with AI-powered
+                  analytics, real-time market insights, and professional-grade
+                  charting tools. Learn trading strategies in Tamil with
+                  industry experts.
+                </p>
+
+                <div className={styles.heroButtons}>
+                  <Button
+                    as={Link}
+                    to="/about"
+                    className={styles.primaryBtn}
+                    size="lg"
+                  >
+                    <span className={styles.btnIcon}>🚀</span>
+                    Start Trading
+                  </Button>
+                  <Button
+                    as={Link}
+                    to="/courses"
+                    variant="outline-light"
+                    className={styles.secondaryBtn}
+                    size="lg"
+                  >
+                    <span className={styles.btnIcon}>📊</span>
+                    View Courses
+                  </Button>
+                  <Button
+                    as={Link}
+                    to="/demo"
+                    className={styles.tertiaryBtn}
+                    size="lg"
+                  >
+                    <span className={styles.btnIcon}>🎯</span>
+                    Free Demo
+                  </Button>
+                </div>
+
+                <div className={styles.heroStats}>
+                  <div className={styles.stat}>
+                    {/* <div className={styles.statIcon}>💹</div> */}
+                    <strong>10K+</strong>
+                    <span>Active Traders</span>
+                  </div>
+                  <div className={styles.stat}>
+                    {/* <div className={styles.statIcon}>📈</div> */}
+                    <strong>95%</strong>
+                    <span>Success Rate</span>
+                  </div>
+                  <div className={styles.stat}>
+                    {/* <div className={styles.statIcon}>⚡</div> */}
+                    <strong>50ms</strong>
+                    <span>Execution Speed</span>
+                  </div>
+                  <div className={styles.stat}>
+                    {/* <div className={styles.statIcon}>🌍</div> */}
+                    <strong>24/5</strong>
+                    <span>Global Markets</span>
+                  </div>
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+
+        {/* Animated Elements */}
+        <div className={styles.floatingElement1}></div>
+        <div className={styles.floatingElement2}></div>
+        <div className={styles.floatingElement3}></div>
+        <div className={styles.gridOverlay}></div>
+      </section>
 
       {/* Why Choose DJIT Trading Section */}
       <section className={styles.featuresSection}>
@@ -431,7 +431,9 @@ const Home = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.featureCard}>
                 <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>📚</div>
+                  <div className={styles.featureIcon}>
+                    <i className="fa-solid fa-book"></i>
+                  </div>
                 </div>
                 <h5>Comprehensive Courses</h5>
                 <p>
@@ -443,7 +445,9 @@ const Home = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.featureCard}>
                 <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>👥</div>
+                  <div className={styles.featureIcon}>
+                    <i className="fa-solid fa-users"></i>
+                  </div>
                 </div>
                 <h5>Community Driven</h5>
                 <p>
@@ -455,7 +459,9 @@ const Home = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.featureCard}>
                 <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>🛠️</div>
+                  <div className={styles.featureIcon}>
+                    <i className="fa-solid fa-screwdriver-wrench"></i>
+                  </div>
                 </div>
                 <h5>Financial Tools</h5>
                 <p>
@@ -467,7 +473,9 @@ const Home = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.featureCard}>
                 <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>📱</div>
+                  <div className={styles.featureIcon}>
+                    <i className="fa-solid fa-mobile-screen-button"></i>
+                  </div>
                 </div>
                 <h5>Mobile Friendly</h5>
                 <p>
@@ -479,7 +487,9 @@ const Home = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.featureCard}>
                 <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>🎯</div>
+                  <div className={styles.featureIcon}>
+                    <i className="fa-solid fa-bullseye"></i>
+                  </div>
                 </div>
                 <h5>Practical Strategies</h5>
                 <p>
@@ -491,7 +501,9 @@ const Home = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.featureCard}>
                 <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>🔄</div>
+                  <div className={styles.featureIcon}>
+                    <i className="fa-solid fa-arrows-rotate"></i>
+                  </div>
                 </div>
                 <h5>24/5 Support</h5>
                 <p>
@@ -505,201 +517,6 @@ const Home = () => {
       </section>
 
       {/* Featured Courses Section - Updated to match Courses.jsx styling */}
-      <section className={styles.featuredCoursesSection}>
-        <Container>
-          <Row className="text-center mb-5">
-            <Col>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>Featured Courses</h2>
-                <p className={styles.sectionSubtitle}>
-                  Handpicked courses to kickstart your trading journey
-                </p>
-              </div>
-            </Col>
-          </Row>
-
-          {alert.show && (
-            <Row className="mb-4">
-              <Col>
-                <Alert
-                  variant={alert.type}
-                  dismissible
-                  onClose={() =>
-                    setAlert({ show: false, message: "", type: "" })
-                  }
-                >
-                  {alert.message}
-                </Alert>
-              </Col>
-            </Row>
-          )}
-
-          {loading ? (
-            <Row>
-              <Col className="text-center">
-                <div className={styles.loading}>
-                  <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                  <p className="mt-3">Loading courses...</p>
-                </div>
-              </Col>
-            </Row>
-          ) : featuredCourses.length > 0 ? (
-            <Row>
-              {featuredCourses.map((course) => (
-                <Col lg={4} md={6} className="mb-4" key={course._id}>
-                  <Card className={`${styles.courseCard} h-100`}>
-                    <div className={styles.courseImage}>
-                      {course.thumbnail ? (
-                        <img src={course.thumbnail} alt={course.title} />
-                      ) : (
-                        <div className={styles.imagePlaceholder}>
-                          {course.title?.charAt(0) || "C"}
-                        </div>
-                      )}
-                      <Badge
-                        bg={getLevelVariant(course.level)}
-                        className={styles.levelBadge}
-                      >
-                        {course.level}
-                      </Badge>
-                      {course.featured && (
-                        <Badge bg="primary" className={styles.featuredBadge}>
-                          Featured
-                        </Badge>
-                      )}
-                      {isCourseFree(course) && (
-                        <Badge bg="success" className={styles.freeBadge}>
-                          Free
-                        </Badge>
-                      )}
-                    </div>
-                    <Card.Body
-                      className={`${styles.courseBody} d-flex flex-column`}
-                    >
-                      <div className={styles.courseHeader}>
-                        <Card.Title className={styles.courseTitle}>
-                          {course.title}
-                        </Card.Title>
-                        <Card.Text className={styles.courseDescription}>
-                          {course.description?.substring(0, 120)}...
-                        </Card.Text>
-                      </div>
-
-                      <div className={styles.courseMeta}>
-                        <div className={styles.instructor}>
-                          <span className={styles.metaLabel}>Instructor:</span>
-                          <span className={styles.metaValue}>
-                            {course.instructor}
-                          </span>
-                        </div>
-                        <div className={styles.duration}>
-                          <span className={styles.metaLabel}>Duration:</span>
-                          <span className={styles.metaValue}>
-                            {course.duration}
-                          </span>
-                        </div>
-                        <div className={styles.lessons}>
-                          <span className={styles.metaLabel}>Lessons:</span>
-                          <span className={styles.metaValue}>
-                            {course.lessonsCount || course.lessons || 0}
-                          </span>
-                        </div>
-                        <div className={styles.students}>
-                          <span className={styles.metaLabel}>Students:</span>
-                          <span className={styles.metaValue}>
-                            {course.studentsEnrolled ||
-                              course.enrolledCount ||
-                              0}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className={`${styles.courseFooter} mt-auto`}>
-                        <div className={styles.priceSection}>
-                          <div className={styles.coursePrice}>
-                            {isCourseFree(course) ? (
-                              <span className={styles.freePrice}>Free</span>
-                            ) : (
-                              <>
-                                <span className={styles.currentPrice}>
-                                  ₹{course.discountedPrice || course.price}
-                                </span>
-                                {course.discountedPrice && (
-                                  <span className={styles.originalPrice}>
-                                    ₹{course.price}
-                                  </span>
-                                )}
-                              </>
-                            )}
-                          </div>
-                          {course.discountedPrice && !isCourseFree(course) && (
-                            <div className={styles.discountBadge}>
-                              Save{" "}
-                              {Math.round(
-                                (1 - course.discountedPrice / course.price) *
-                                  100
-                              )}
-                              %
-                            </div>
-                          )}
-                        </div>
-                        <Button
-                          variant={isCourseFree(course) ? "success" : "primary"}
-                          className={styles.enrollBtn}
-                          onClick={() => handleEnrollClick(course)}
-                          disabled={
-                            enrolling && selectedCourse?._id === course._id
-                          }
-                        >
-                          {enrolling && selectedCourse?._id === course._id ? (
-                            <>
-                              <Spinner
-                                animation="border"
-                                size="sm"
-                                className="me-2"
-                              />
-                              Processing...
-                            </>
-                          ) : isCourseFree(course) ? (
-                            "Enroll Free"
-                          ) : (
-                            "Enroll Now"
-                          )}
-                        </Button>
-                      </div>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          ) : (
-            <Row>
-              <Col className="text-center">
-                <div className={styles.noResults}>
-                  <h4>No featured courses found</h4>
-                  <p>Check back later for new courses</p>
-                </div>
-              </Col>
-            </Row>
-          )}
-
-          <Row className="text-center mt-4">
-            <Col>
-              <Button
-                as={Link}
-                to="/courses"
-                variant="outline-primary"
-                size="lg"
-                className={styles.viewAllBtn}
-              >
-                View All Courses
-              </Button>
-            </Col>
-          </Row>
-        </Container>
-      </section>
 
       {/* Testimonials Section */}
       <section className={styles.testimonialsSection}>
@@ -783,21 +600,30 @@ const Home = () => {
               <div className={styles.appContent}>
                 <div className={styles.appFeatures}>
                   <div className={styles.appFeature}>
-                    <div className={styles.featureIcon}>📱</div>
+                    <div className={styles.featureIcon}>
+                      <i className="fa-solid fa-mobile-screen-button"></i>
+                    </div>
+
                     <div>
                       <strong>Real-time Alerts</strong>
                       <span>Instant market notifications</span>
                     </div>
                   </div>
                   <div className={styles.appFeature}>
-                    <div className={styles.featureIcon}>📊</div>
+                    <div className={styles.featureIcon}>
+                      <i className="fa-solid fa-chart-column"></i>
+                    </div>
+
                     <div>
                       <strong>Live Charts</strong>
                       <span>Advanced technical analysis</span>
                     </div>
                   </div>
                   <div className={styles.appFeature}>
-                    <div className={styles.featureIcon}>⚡</div>
+                    <div className={styles.featureIcon}>
+                      <i className="fa-solid fa-bolt"></i>
+                    </div>
+
                     <div>
                       <strong>Quick Orders</strong>
                       <span>Execute trades in seconds</span>
@@ -816,7 +642,11 @@ const Home = () => {
                     </div>
                   </a>
 
-                  <a href="#" className={styles.storeButton}>
+                  <a
+                    href="https://play.google.com/store/apps/details?id=com.cybomb.djit_trading"
+                    target="_blank"
+                    className={styles.storeButton}
+                  >
                     <div className={styles.storeIcon}>
                       <span className={styles.playIcon}></span>
                     </div>
@@ -915,15 +745,21 @@ const Home = () => {
                 </div>
                 <div className={styles.trustBadges}>
                   <span className={styles.trustBadgeItem}>
-                    <span className={styles.badgeIcon}>🔒</span>
+                    <span className={styles.badgeIcon}>
+                      <i className="fa-solid fa-lock"></i>
+                    </span>
                     Premium Content
                   </span>
                   <span className={styles.trustBadgeItem}>
-                    <span className={styles.badgeIcon}>⭐</span>
+                    <span className={styles.badgeIcon}>
+                      <i className="fa-solid fa-star"></i>
+                    </span>
                     4.8/5 Rating
                   </span>
                   <span className={styles.trustBadgeItem}>
-                    <span className={styles.badgeIcon}>💼</span>
+                    <span className={styles.badgeIcon}>
+                      <i className="fa-solid fa-briefcase"></i>
+                    </span>
                     10K+ Students
                   </span>
                 </div>

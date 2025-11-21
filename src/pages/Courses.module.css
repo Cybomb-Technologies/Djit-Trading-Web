@@ -3,7 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Exo+2:wght@300;400;600;800&display=swap');
 
 .coursesPage {
-  padding: 87px 0 50px;
+  padding: 87px 0 0px;
   min-height: 100vh;
   background-color: #f8f9fa;
 }
