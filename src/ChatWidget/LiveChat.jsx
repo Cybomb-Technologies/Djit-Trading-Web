@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./ChatWidget.module.css";
-import io from 'socket.io-client';
+import io from "socket.io-client";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -38,17 +38,17 @@ export default function LiveChat() {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on('adminReply', (data) => {
+    socket.on("adminReply", (data) => {
       if (data.chatId === chatId) {
-        setMessages(prev => [...prev, data.message]);
-        
+        setMessages((prev) => [...prev, data.message]);
+
         // Mark message as read
         markMessageAsRead(data.message._id);
       }
     });
 
     return () => {
-      socket.off('adminReply');
+      socket.off("adminReply");
     };
   }, [socket, chatId]);
 
@@ -57,7 +57,7 @@ export default function LiveChat() {
     const checkAuthentication = async () => {
       try {
         const token = localStorage.getItem("token");
-        
+
         if (token) {
           const res = await fetch(`${API_URL}/api/auth/me`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -77,13 +77,12 @@ export default function LiveChat() {
               return;
             }
           }
-          
+
           localStorage.removeItem("token");
         }
 
         setIsCheckingAuth(false);
         redirectToLogin();
-        
       } catch (error) {
         console.error("Auth check failed:", error);
         localStorage.removeItem("token");
@@ -99,7 +98,7 @@ export default function LiveChat() {
   const startChatSession = async () => {
     try {
       const token = localStorage.getItem("token");
-      
+
       const res = await fetch(`${API_URL}/api/livechat/start`, {
         method: "POST",
         headers: {
@@ -109,14 +108,14 @@ export default function LiveChat() {
       });
 
       const data = await res.json();
-      
+
       if (data.success && data.chat) {
         setChatId(data.chat._id);
         setMessages(data.chat.messages || []);
-        
+
         // Join socket room for this chat
         if (socket) {
-          socket.emit('joinChat', data.chat._id);
+          socket.emit("joinChat", data.chat._id);
         }
       }
     } catch (error) {
@@ -125,26 +124,26 @@ export default function LiveChat() {
   };
 
   const redirectToLogin = () => {
-    navigate("/login", { 
-      state: { 
+    navigate("/login", {
+      state: {
         from: "livechat",
-        returnUrl: "/live-chat"
-      }
+        returnUrl: "/live-chat",
+      },
     });
   };
 
   // Send message
   const sendLiveChatMessage = async () => {
     if (!input.trim() || isLoading) return;
-    
+
     // Optimistically update UI
-    const tempMessage = { 
+    const tempMessage = {
       _id: Date.now().toString(), // Temporary ID
-      sender: "user", 
-      text: input, 
+      sender: "user",
+      text: input,
       timestamp: new Date(),
       senderName: userInfo.name,
-      readByAdmin: false
+      readByAdmin: false,
     };
     setMessages((prev) => [...prev, tempMessage]);
     setInput("");
@@ -164,17 +163,19 @@ export default function LiveChat() {
       });
 
       const data = await res.json();
-      
+
       if (data.success && data.messages) {
         setMessages(data.messages);
       } else {
         // Remove optimistic update if failed
-        setMessages(prev => prev.filter(msg => msg._id !== tempMessage._id));
+        setMessages((prev) =>
+          prev.filter((msg) => msg._id !== tempMessage._id)
+        );
         setInput(input);
       }
     } catch (error) {
       console.error("❌ Error sending message:", error);
-      setMessages(prev => prev.filter(msg => msg._id !== tempMessage._id));
+      setMessages((prev) => prev.filter((msg) => msg._id !== tempMessage._id));
       setInput(input);
     } finally {
       setIsLoading(false);
@@ -239,10 +240,7 @@ export default function LiveChat() {
             <div className={styles.authIcon}>🔒</div>
             <h4>Authentication Required</h4>
             <p>You need to be logged in to use live chat support</p>
-            <button 
-              className={styles.primaryButton}
-              onClick={redirectToLogin}
-            >
+            <button className={styles.primaryButton} onClick={redirectToLogin}>
               Login to Continue
             </button>
           </div>
@@ -250,7 +248,8 @@ export default function LiveChat() {
 
         <div className={styles.authFooter}>
           <p>
-            <strong>Note:</strong> AI Chat is available without login, but live agent support requires authentication
+            <strong>Note:</strong> AI Chat is available without login, but live
+            agent support requires authentication
           </p>
         </div>
       </div>
@@ -264,12 +263,12 @@ export default function LiveChat() {
         <div className={styles.headerText}>
           <b>{userInfo.name}</b>
           <span>
-            {userInfo.mobile} 
+            {userInfo.mobile}
             {userInfo.email && ` • ${userInfo.email}`}
           </span>
         </div>
         <div className={styles.headerActions}>
-          <button 
+          <button
             className={styles.logoutBtn}
             onClick={handleLogout}
             title="Logout"
@@ -284,28 +283,37 @@ export default function LiveChat() {
           <div className={styles.welcomeMessage}>
             <div className={styles.welcomeIcon}>💬</div>
             <h4>Welcome to Live Chat Support!</h4>
-            <p>How can we help you today? Our support team is ready to assist you.</p>
+            <p>
+              How can we help you today? Our support team is ready to assist
+              you.
+            </p>
           </div>
         ) : (
           messages.map((msg, i) => (
             <div
               key={msg._id || i}
               className={`${styles.message} ${
-                msg.sender === "user" ? styles.userMessage : 
-                msg.sender === "admin" ? styles.adminMessage : styles.botMessage
+                msg.sender === "user"
+                  ? styles.userMessage
+                  : msg.sender === "admin"
+                  ? styles.adminMessage
+                  : styles.botMessage
               }`}
             >
               <div className={styles.messageBubble}>
                 <div className={styles.messageHeader}>
                   <span className={styles.senderName}>
-                    {msg.sender === "user" ? "You" : 
-                     msg.sender === "admin" ? "Support Agent" : "System"}
+                    {msg.sender === "user"
+                      ? "You"
+                      : msg.sender === "admin"
+                      ? msg.senderName || "Support Agent"
+                      : "System"}
                   </span>
                   {msg.timestamp && (
                     <span className={styles.messageTime}>
-                      {new Date(msg.timestamp).toLocaleTimeString([], { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
+                      {new Date(msg.timestamp).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
                       })}
                     </span>
                   )}
@@ -347,11 +355,7 @@ export default function LiveChat() {
           disabled={isLoading || !input.trim()}
           className={styles.sendButton}
         >
-          {isLoading ? (
-            <div className={styles.loadingSpinner}></div>
-          ) : (
-            "➤"
-          )}
+          {isLoading ? <div className={styles.loadingSpinner}></div> : "➤"}
         </button>
       </div>
     </div>
