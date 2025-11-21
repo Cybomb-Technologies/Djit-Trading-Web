@@ -14,7 +14,9 @@ export default function ChatWidget() {
       <button className={styles.chatButton} onClick={() => setIsOpen(!isOpen)}>
         <div className={styles.buttonContent}>
           <span className={styles.chatIcon}>💬</span>
-          <span className={styles.chatLabel}>Chat with us</span>
+          <span className={`${styles.chatLabel} d-none d-md-inline`}>
+  Chat with us
+</span>
         </div>
         <div className={styles.pulseEffect}></div>
       </button>

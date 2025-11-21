@@ -498,105 +498,87 @@ const streamVideo = async (req, res) => {
 const serveDocument = async (req, res) => {
   try {
     const { token } = req.query;
-    
+ 
     if (!token) {
       return res.status(401).json({ success: false, message: "Access token required" });
     }
-
+ 
     let decoded;
     try {
       decoded = verifySecureToken(token);
     } catch (error) {
-      return res.status(401).json({ success: false, message: error.message });
+      return res.status(401).json({ success: false, message: "Invalid or expired token" });
     }
-
+ 
     const { userId, contentId } = decoded;
-
+ 
     console.log(`Serving document for content ${contentId}, user ${userId}`);
-
-    const content = await CourseContent.findById(contentId).populate('course');
+ 
+    const content = await CourseContent.findById(contentId).populate("course");
     if (!content) {
       return res.status(404).json({ success: false, message: "Content not found" });
     }
-
+ 
     // Verify enrollment
     const enrollment = await Enrollment.findOne({
       user: userId,
       course: content.course._id,
       paymentStatus: "completed",
     });
-
+ 
     if (!enrollment) {
       return res.status(403).json({
         success: false,
-        message: "You are not enrolled in this course or payment is pending",
+        message: "You are not enrolled in this course",
       });
     }
-
-    const documentPath = path.join(__dirname, '..', content.documentFile.path);
-    
-    if (!fs.existsSync(documentPath)) {
-      return res.status(404).json({ success: false, message: "Document file not found on server" });
+ 
+    const filePath = path.join(__dirname, "..", content.documentFile.path);
+ 
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ success: false, message: "File not found on server" });
     }
-
-    const stat = fs.statSync(documentPath);
-    const fileSize = stat.size;
-
-    // Determine content type based on file extension and MIME type
-    let contentType = 'application/octet-stream'; // Default fallback
-    
-    // Use the stored MIME type if available
-    if (content.documentFile.mimetype) {
-      contentType = content.documentFile.mimetype;
-    } else {
-      // Fallback to extension-based detection
-      const fileExtension = path.extname(content.documentFile.filename).toLowerCase();
-      
-      const mimeTypes = {
-        '.pdf': 'application/pdf',
-        '.doc': 'application/msword',
-        '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        '.ppt': 'application/vnd.ms-powerpoint',
-        '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-        '.xls': 'application/vnd.ms-excel',
-        '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        '.txt': 'text/plain',
-        '.csv': 'text/csv'
-      };
-      
-      contentType = mimeTypes[fileExtension] || 'application/octet-stream';
+ 
+    const fileStat = fs.statSync(filePath);
+    const fileSize = fileStat.size;
+ 
+    // Determine MIME type
+    const mime = content.documentFile.mimetype || "application/octet-stream";
+    const ext = path.extname(content.documentFile.filename).toLowerCase();
+ 
+    // 🔥 FIX: PDF should preview inside iframe
+    let disposition = "inline";
+ 
+    // Excel/Word should download
+    if (ext === ".xls" || ext === ".xlsx" || ext === ".doc" || ext === ".docx") {
+      disposition = "attachment";
     }
-
-    const headers = {
-      'Content-Type': contentType,
-      'Content-Length': fileSize,
-      'Content-Disposition': `inline; filename="${content.documentFile.originalName}"`,
-      'Cache-Control': 'no-store, no-cache, must-revalidate, private',
-      'Pragma': 'no-cache',
-      'Expires': '0',
-      'Content-Security-Policy': "default-src 'none'",
-      'X-Content-Type-Options': 'nosniff'
-    };
-
-    // For Excel files, we might want to force download instead of inline viewing
-    // since browser support for inline Excel viewing can be inconsistent
-    const fileExtension = path.extname(content.documentFile.filename).toLowerCase();
-    if (fileExtension === '.xls' || fileExtension === '.xlsx') {
-      headers['Content-Disposition'] = `attachment; filename="${content.documentFile.originalName}"`;
-    }
-
-    const fileStream = fs.createReadStream(documentPath);
-    res.writeHead(200, headers);
-    fileStream.pipe(res);
-    
-    fileStream.on('error', (error) => {
-      console.error('Error streaming document:', error);
-      res.status(500).json({ success: false, message: "Error serving document" });
+ 
+    res.set({
+      "Content-Type": mime,
+      "Content-Length": fileSize,
+      "Content-Disposition": `${disposition}; filename=\"${content.documentFile.originalName}\"`,
+ 
+      // ❤️ FIX FOR PDF PREVIEW
+      "X-Frame-Options": "ALLOWALL",
+      "Content-Security-Policy": "frame-ancestors *; default-src *; img-src 'self' blob: data:; media-src *;",
+ 
+      // Required by Chrome to preview PDFs
+      "Cross-Origin-Resource-Policy": "cross-origin",
+      "Cross-Origin-Embedder-Policy": "require-corp",
+ 
+      // Prevent caching
+      "Cache-Control": "no-store",
+      "Pragma": "no-cache",
+      "Expires": "0",
     });
-
+ 
+    const stream = fs.createReadStream(filePath);
+    return stream.pipe(res);
+ 
   } catch (error) {
-    console.error("Error serving document:", error);
-    res.status(500).json({ success: false, message: "Error serving document" });
+    console.error("❌ Error serving document:", error);
+    return res.status(500).json({ success: false, message: "Server error while serving document" });
   }
 };
 

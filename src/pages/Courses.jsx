@@ -18,6 +18,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import EnrollModal from "./EnrollModal";
 import styles from "./Courses.module.css";
+import CourseDisclaimer from "./Courses-disclaime";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -76,7 +77,7 @@ const Courses = () => {
       setEnrollmentsLoading(true);
       const token = localStorage.getItem("token");
       const userId = getUserId();
-      
+
       if (!userId) {
         console.error("User ID not found");
         setEnrollmentsLoading(false);
@@ -86,22 +87,24 @@ const Courses = () => {
       console.log("Fetching enrollments for user:", userId);
 
       // Use the endpoint that works from your Traders component
-      const response = await axios.get(`
-${API_URL}/api/enrollments/user/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `
+${API_URL}/api/enrollments/user/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       console.log("Enrollments response:", response.data);
 
       // Handle different response structures
       const enrollments = response.data.enrollments || response.data || [];
       setEnrolledCourses(enrollments);
-      
     } catch (error) {
       console.error("Error fetching enrolled courses:", error);
-      
+
       // If the main endpoint fails, try alternatives
       if (error.response?.status === 404) {
         console.log("Primary endpoint failed, trying alternatives...");
@@ -117,41 +120,46 @@ ${API_URL}/api/enrollments/user/${userId}`, {
   const tryAlternativeEndpoints = async () => {
     const token = localStorage.getItem("token");
     const userId = getUserId();
-    
+
     try {
       // Try the endpoint from your Traders component
-      const response = await axios.get(`
-${API_URL}/api/enrollments/user/${getUserId()}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      
-      const enrollments = response.data.enrollments || response.data || [];
-      setEnrolledCourses(enrollments);
-      console.log("Alternative endpoint succeeded");
-      
-    } catch (altError) {
-      console.error("Alternative endpoint also failed:", altError);
-      
-      // Final fallback - try to get all enrollments and filter
-      try {
-        const allResponse = await axios.get(`
-${API_URL}/api/enrollments`, {
+      const response = await axios.get(
+        `
+${API_URL}/api/enrollments/user/${getUserId()}`,
+        {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
-        
-        const allEnrollments = allResponse.data.enrollments || allResponse.data || [];
-        const userEnrollments = allEnrollments.filter(enrollment => {
+        }
+      );
+
+      const enrollments = response.data.enrollments || response.data || [];
+      setEnrolledCourses(enrollments);
+      console.log("Alternative endpoint succeeded");
+    } catch (altError) {
+      console.error("Alternative endpoint also failed:", altError);
+
+      // Final fallback - try to get all enrollments and filter
+      try {
+        const allResponse = await axios.get(
+          `
+${API_URL}/api/enrollments`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const allEnrollments =
+          allResponse.data.enrollments || allResponse.data || [];
+        const userEnrollments = allEnrollments.filter((enrollment) => {
           const enrollmentUserId = enrollment.user?._id || enrollment.user;
           return enrollmentUserId === userId;
         });
-        
+
         setEnrolledCourses(userEnrollments);
         console.log("Fallback filtering succeeded");
-        
       } catch (finalError) {
         console.error("All enrollment endpoints failed:", finalError);
         setEnrolledCourses([]); // Set empty array to avoid errors
@@ -168,7 +176,7 @@ ${API_URL}/api/courses/${courseId}/details`);
     } catch (error) {
       console.error("Error fetching course details:", error);
       showAlert("Error loading course details", "danger");
-      const basicCourse = courses.find(course => course._id === courseId);
+      const basicCourse = courses.find((course) => course._id === courseId);
       setCourseDetails(basicCourse);
     } finally {
       setLoadingDetails(false);
@@ -202,7 +210,7 @@ ${API_URL}/api/courses/${courseId}/details`);
 
   // Check if user is enrolled in a course and get enrollment data
   const getEnrollmentData = (courseId) => {
-    return enrolledCourses.find(enrollment => {
+    return enrolledCourses.find((enrollment) => {
       const enrollmentCourseId = enrollment.course?._id || enrollment.course;
       return enrollmentCourseId === courseId;
     });
@@ -349,10 +357,16 @@ ${API_URL}/api/courses/${courseId}/details`);
   };
 
   // Course Details Modal Component with Icons
-  const CourseDetailsModal = ({ show, onHide, course, courseDetails, loadingDetails }) => {
+  const CourseDetailsModal = ({
+    show,
+    onHide,
+    course,
+    courseDetails,
+    loadingDetails,
+  }) => {
     // Use courseDetails if available, otherwise fallback to basic course data
     const displayCourse = courseDetails || course;
-    
+
     if (!displayCourse) return null;
 
     const isEnrolled = isUserEnrolled(course._id);
@@ -376,18 +390,23 @@ ${API_URL}/api/courses/${courseId}/details`);
                 <Col md={6}>
                   <div className={styles.modalImage}>
                     {displayCourse.thumbnail ? (
-                      <img 
-                        src={displayCourse.thumbnail} 
-                        alt={displayCourse.title} 
+                      <img
+                        src={displayCourse.thumbnail}
+                        alt={displayCourse.title}
                         className="img-fluid rounded"
                       />
                     ) : (
-                      <div className={`${styles.imagePlaceholder} ${styles.modalPlaceholder}`}>
+                      <div
+                        className={`${styles.imagePlaceholder} ${styles.modalPlaceholder}`}
+                      >
                         {displayCourse.title.charAt(0)}
                       </div>
                     )}
                     <div className="mt-3">
-                      <Badge bg={getLevelVariant(displayCourse.level)} className="me-2">
+                      <Badge
+                        bg={getLevelVariant(displayCourse.level)}
+                        className="me-2"
+                      >
                         {displayCourse.level}
                       </Badge>
                       {displayCourse.featured && (
@@ -396,12 +415,13 @@ ${API_URL}/api/courses/${courseId}/details`);
                         </Badge>
                       )}
                       {isCourseFree(displayCourse) && (
-                        <Badge bg="success">
-                          Free
-                        </Badge>
+                        <Badge bg="success">Free</Badge>
                       )}
                       {isEnrolled && (
-                        <Badge bg={isCompleted ? "success" : "primary"} className="ms-2">
+                        <Badge
+                          bg={isCompleted ? "success" : "primary"}
+                          className="ms-2"
+                        >
                           {isCompleted ? "Completed" : "Enrolled"}
                         </Badge>
                       )}
@@ -414,10 +434,10 @@ ${API_URL}/api/courses/${courseId}/details`);
                           <small className="text-muted">Your Progress</small>
                           <small className="fw-bold">{progress}%</small>
                         </div>
-                        <ProgressBar 
-                          now={progress} 
+                        <ProgressBar
+                          now={progress}
                           variant={getProgressVariant(progress)}
-                          style={{ height: '6px' }}
+                          style={{ height: "6px" }}
                         />
                       </div>
                     )}
@@ -426,7 +446,7 @@ ${API_URL}/api/courses/${courseId}/details`);
                 <Col md={6}>
                   <div className={styles.modalContent}>
                     <h5 className="mb-3">Course Details</h5>
-                    
+
                     {/* Icon-based Course Meta Information */}
                     <div className={styles.iconMetaGrid}>
                       <div className={styles.iconMetaItem}>
@@ -435,7 +455,9 @@ ${API_URL}/api/courses/${courseId}/details`);
                         </div>
                         <div className={styles.metaContent}>
                           <div className={styles.metaLabel}>Instructor</div>
-                          <div className={styles.metaValue}>{displayCourse.instructor}</div>
+                          <div className={styles.metaValue}>
+                            {displayCourse.instructor}
+                          </div>
                         </div>
                       </div>
 
@@ -445,7 +467,9 @@ ${API_URL}/api/courses/${courseId}/details`);
                         </div>
                         <div className={styles.metaContent}>
                           <div className={styles.metaLabel}>Category</div>
-                          <div className={styles.metaValue}>{displayCourse.category}</div>
+                          <div className={styles.metaValue}>
+                            {displayCourse.category}
+                          </div>
                         </div>
                       </div>
 
@@ -455,7 +479,9 @@ ${API_URL}/api/courses/${courseId}/details`);
                         </div>
                         <div className={styles.metaContent}>
                           <div className={styles.metaLabel}>Duration</div>
-                          <div className={styles.metaValue}>{displayCourse.duration}</div>
+                          <div className={styles.metaValue}>
+                            {displayCourse.duration}
+                          </div>
                         </div>
                       </div>
 
@@ -465,7 +491,9 @@ ${API_URL}/api/courses/${courseId}/details`);
                         </div>
                         <div className={styles.metaContent}>
                           <div className={styles.metaLabel}>Lessons</div>
-                          <div className={styles.metaValue}>{displayCourse.lessons}</div>
+                          <div className={styles.metaValue}>
+                            {displayCourse.lessons}
+                          </div>
                         </div>
                       </div>
 
@@ -475,7 +503,9 @@ ${API_URL}/api/courses/${courseId}/details`);
                         </div>
                         <div className={styles.metaContent}>
                           <div className={styles.metaLabel}>Language</div>
-                          <div className={styles.metaValue}>{displayCourse.language || 'Tamil'}</div>
+                          <div className={styles.metaValue}>
+                            {displayCourse.language || "Tamil"}
+                          </div>
                         </div>
                       </div>
 
@@ -485,7 +515,9 @@ ${API_URL}/api/courses/${courseId}/details`);
                         </div>
                         <div className={styles.metaContent}>
                           <div className={styles.metaLabel}>Delivery Time</div>
-                          <div className={styles.metaValue}>{displayCourse.deliveryTime || '48 Working Hours'}</div>
+                          <div className={styles.metaValue}>
+                            {displayCourse.deliveryTime || "48 Working Hours"}
+                          </div>
                         </div>
                       </div>
 
@@ -494,14 +526,20 @@ ${API_URL}/api/courses/${courseId}/details`);
                           <span className={styles.metaIcon}>👥</span>
                         </div>
                         <div className={styles.metaContent}>
-                          <div className={styles.metaLabel}>Students Enrolled</div>
-                          <div className={styles.metaValue}>{displayCourse.studentsEnrolled}</div>
+                          <div className={styles.metaLabel}>
+                            Students Enrolled
+                          </div>
+                          <div className={styles.metaValue}>
+                            {displayCourse.studentsEnrolled}
+                          </div>
                         </div>
                       </div>
 
                       <div className={styles.iconMetaItem}>
                         <div className={styles.iconWrapper}>
-                          <span className={styles.metaIcon}>💰</span>
+                          <span className={styles.priceIcon}>
+                            <i className="fa-solid fa-coins"></i>
+                          </span>
                         </div>
                         <div className={styles.metaContent}>
                           <div className={styles.metaLabel}>Price</div>
@@ -511,7 +549,9 @@ ${API_URL}/api/courses/${courseId}/details`);
                             ) : (
                               <>
                                 <span className="fw-bold">
-                                  ₹{displayCourse.discountedPrice || displayCourse.price}
+                                  ₹
+                                  {displayCourse.discountedPrice ||
+                                    displayCourse.price}
                                 </span>
                                 {displayCourse.discountedPrice && (
                                   <span className="text-muted text-decoration-line-through ms-2 small">
@@ -554,43 +594,49 @@ ${API_URL}/api/courses/${courseId}/details`);
               )}
 
               {/* Course Contains Section */}
-              {displayCourse.courseContains && displayCourse.courseContains.length > 0 && (
-                <div className="mt-4">
-                  <div className="d-flex align-items-center mb-3">
-                    <span className={`${styles.sectionIcon} me-2`}>📦</span>
-                    <h6 className="mb-0">Course Modules</h6>
+              {displayCourse.courseContains &&
+                displayCourse.courseContains.length > 0 && (
+                  <div className="mt-4">
+                    <div className="d-flex align-items-center mb-3">
+                      <span className={`${styles.sectionIcon} me-2`}>📦</span>
+                      <h6 className="mb-0">Course Modules</h6>
+                    </div>
+                    <div className={styles.featuresList}>
+                      {displayCourse.courseContains.map((item, index) => (
+                        <div key={index} className={styles.featureItem}>
+                          <span className={styles.featureIcon}>✓</span>
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className={styles.featuresList}>
-                    {displayCourse.courseContains.map((item, index) => (
-                      <div key={index} className={styles.featureItem}>
-                        <span className={styles.featureIcon}>✓</span>
-                        <span>{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+                )}
 
               {/* Indicators Section */}
-              {displayCourse.indicators && displayCourse.indicators.length > 0 && (
-                <div className="mt-4">
-                  <div className="d-flex align-items-center mb-3">
-                    <span className={`${styles.sectionIcon} me-2`}>📊</span>
-                    <h6 className="mb-0">Indicators You Will Get</h6>
-                  </div>
-                  <div className={styles.indicatorsList}>
-                    {displayCourse.indicators.map((indicator, index) => (
-                      <div key={index} className={styles.indicatorItem}>
-                        <div className={styles.indicatorHeader}>
-                          <span className={styles.indicatorIcon}>⚡</span>
-                          <strong className={styles.indicatorName}>{indicator.name}</strong>
+              {displayCourse.indicators &&
+                displayCourse.indicators.length > 0 && (
+                  <div className="mt-4">
+                    <div className="d-flex align-items-center mb-3">
+                      <span className={`${styles.sectionIcon} me-2`}>📊</span>
+                      <h6 className="mb-0">Indicators You Will Get</h6>
+                    </div>
+                    <div className={styles.indicatorsList}>
+                      {displayCourse.indicators.map((indicator, index) => (
+                        <div key={index} className={styles.indicatorItem}>
+                          <div className={styles.indicatorHeader}>
+                            <span className={styles.indicatorIcon}>⚡</span>
+                            <strong className={styles.indicatorName}>
+                              {indicator.name}
+                            </strong>
+                          </div>
+                          <p className={styles.indicatorDescription}>
+                            {indicator.description}
+                          </p>
                         </div>
-                        <p className={styles.indicatorDescription}>{indicator.description}</p>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {/* Notes Section */}
               {displayCourse.notes && displayCourse.notes.length > 0 && (
@@ -640,7 +686,7 @@ ${API_URL}/api/courses/${courseId}/details`);
           <Button variant="outline-secondary" onClick={onHide}>
             Close
           </Button>
-          <Button 
+          <Button
             variant={getEnrollButtonVariant(displayCourse)}
             onClick={() => {
               onHide();
@@ -659,66 +705,76 @@ ${API_URL}/api/courses/${courseId}/details`);
 
   return (
     <div className={styles.coursesPage}>
-       {/* Enhanced Header Section */}
-     <Row className="mb-5">
-  <Col>
-    <div className={styles.pageHeader}>
-      <div className={styles.headerBackground}>
-        <div className={styles.headerContent}>
-          {/* Small Company Name */}
-          <div className={styles.companyNameSmall}>
-            <span className={styles.companyTextSmall}>
-              <span className={styles.tradingIcon}>📈</span>
-              DJIT TRADING
-            </span>
+      {/* Enhanced Header Section */}
+      <Row className="mb-5">
+        <Col>
+          <div className={styles.pageHeader}>
+            <div className={styles.headerBackground}>
+              <div className={styles.headerContent}>
+                {/* Small Company Name */}
+                <div className={styles.companyNameSmall}>
+                  <span className={styles.companyTextSmall}>
+                    <span className={styles.tradingIcon}>📈</span>
+                    DJIT TRADING
+                  </span>
+                </div>
+
+                <h1 className={styles.pageTitle}>
+                  Our <span className={styles.gradientText}>Trading</span>{" "}
+                  Courses
+                </h1>
+                <p className={styles.pageSubtitle}>
+                  Master the markets with our comprehensive trading education
+                  catalog. From beginner basics to advanced strategies, we have
+                  the perfect course for your journey.
+                </p>
+
+                {/* Stats Cards Section */}
+                <Row className={styles.statsCards}>
+                  <Col md={4} className="mb-3">
+                    <Card className={styles.statCard}>
+                      <Card.Body className={styles.statCardBody}>
+                        <div className={styles.statIcon}>
+                          <i className="fa-solid fa-book"></i>
+                        </div>
+
+                        <div className={styles.statNumber}>
+                          {courses.length}+
+                        </div>
+                        <div className={styles.statLabel}>Courses</div>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                  <Col md={4} className="mb-3">
+                    <Card className={styles.statCard}>
+                      <Card.Body className={styles.statCardBody}>
+                        <div className={styles.statIcon}>
+                          <i className="fa-solid fa-chalkboard-teacher"></i>
+                        </div>
+
+                        <div className={styles.statNumber}>Expert</div>
+                        <div className={styles.statLabel}>Instructors</div>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                  <Col md={4} className="mb-3">
+                    <Card className={styles.statCard}>
+                      <Card.Body className={styles.statCardBody}>
+                        <div className={styles.statIcon}>
+                          <i className="fa-solid fa-bolt"></i>
+                        </div>
+
+                        <div className={styles.statNumber}>Lifetime</div>
+                        <div className={styles.statLabel}>Access</div>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                </Row>
+              </div>
+            </div>
           </div>
-
-          <h1 className={styles.pageTitle}>
-            Our <span className={styles.gradientText}>Trading</span> Courses
-          </h1>
-          <p className={styles.pageSubtitle}>
-            Master the markets with our comprehensive trading education
-            catalog. From beginner basics to advanced strategies, we
-            have the perfect course for your journey.
-          </p>
-
-          {/* Stats Cards Section */}
-          <Row className={styles.statsCards}>
-            <Col md={4} className="mb-3">
-              <Card className={styles.statCard}>
-                <Card.Body className={styles.statCardBody}>
-                  <div className={styles.statIcon}>📚</div>
-                  <div className={styles.statNumber}>
-                    {courses.length}+
-                  </div>
-                  <div className={styles.statLabel}>Courses</div>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col md={4} className="mb-3">
-              <Card className={styles.statCard}>
-                <Card.Body className={styles.statCardBody}>
-                  <div className={styles.statIcon}>👨‍🏫</div>
-                  <div className={styles.statNumber}>Expert</div>
-                  <div className={styles.statLabel}>Instructors</div>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col md={4} className="mb-3">
-              <Card className={styles.statCard}>
-                <Card.Body className={styles.statCardBody}>
-                  <div className={styles.statIcon}>⚡</div>
-                  <div className={styles.statNumber}>Lifetime</div>
-                  <div className={styles.statLabel}>Access</div>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </div>
-      </div>
-    </div>
-  </Col>
-</Row>
+        </Col>
+      </Row>
       <Container>
         {/* Alert */}
         {alert.show && (
@@ -739,7 +795,6 @@ ${API_URL}/api/courses/${courseId}/details`);
           </div>
         )}
 
-       
         {/* Search and Filters */}
         <Row className="mb-4">
           <Col lg={6} className="mb-3">
@@ -817,7 +872,11 @@ ${API_URL}/api/courses/${courseId}/details`);
 
               return (
                 <Col lg={4} md={6} key={course._id} className="mb-4">
-                  <Card className={`${styles.courseCard} ${isEnrolled ? styles.enrolledCourseCard : ''}`}>
+                  <Card
+                    className={`${styles.courseCard} ${
+                      isEnrolled ? styles.enrolledCourseCard : ""
+                    }`}
+                  >
                     <div className={styles.courseImage}>
                       {course.thumbnail ? (
                         <img src={course.thumbnail} alt={course.title} />
@@ -843,7 +902,10 @@ ${API_URL}/api/courses/${courseId}/details`);
                         </Badge>
                       )}
                       {isEnrolled && (
-                        <Badge bg={isCompleted ? "success" : "primary"} className={styles.enrolledBadge}>
+                        <Badge
+                          bg={isCompleted ? "success" : "primary"}
+                          className={styles.enrolledBadge}
+                        >
                           {isCompleted ? "Completed" : "Enrolled"}
                         </Badge>
                       )}
@@ -865,8 +927,8 @@ ${API_URL}/api/courses/${courseId}/details`);
                             <small className="text-muted">Your Progress</small>
                             <small className="fw-bold">{progress}%</small>
                           </div>
-                          <ProgressBar 
-                            now={progress} 
+                          <ProgressBar
+                            now={progress}
                             variant={getProgressVariant(progress)}
                             className={styles.progressBar}
                           />
@@ -876,34 +938,59 @@ ${API_URL}/api/courses/${courseId}/details`);
                       {/* Updated Course Meta with Icons */}
                       <div className={styles.courseMeta}>
                         <div className={styles.courseMetaItem}>
-                          <span className={styles.courseMetaIcon}>👨‍🏫</span>
+                          <span className={styles.courseMetaIcon}>
+                            <i className="fa-solid fa-chalkboard-teacher"></i>
+                          </span>
+
                           <div className={styles.courseMetaContent}>
-                            <div className={styles.courseMetaLabel}>Instructor</div>
-                            <div className={styles.courseMetaValue}>{course.instructor}</div>
+                            <div className={styles.courseMetaLabel}>
+                              Instructor
+                            </div>
+                            <div className={styles.courseMetaValue}>
+                              {course.instructor}
+                            </div>
                           </div>
                         </div>
-                        
+
                         <div className={styles.courseMetaItem}>
-                          <span className={styles.courseMetaIcon}>⏱️</span>
+                          <span className={styles.courseMetaIcon}>
+                            <i className="fa-solid fa-stopwatch"></i>
+                          </span>
+
                           <div className={styles.courseMetaContent}>
-                            <div className={styles.courseMetaLabel}>Duration</div>
-                            <div className={styles.courseMetaValue}>{course.duration}</div>
+                            <div className={styles.courseMetaLabel}>
+                              Duration
+                            </div>
+                            <div className={styles.courseMetaValue}>
+                              {course.duration}
+                            </div>
                           </div>
                         </div>
-                        
+
                         <div className={styles.courseMetaItem}>
                           <span className={styles.courseMetaIcon}>📖</span>
                           <div className={styles.courseMetaContent}>
-                            <div className={styles.courseMetaLabel}>Lessons</div>
-                            <div className={styles.courseMetaValue}>{course.lessons}</div>
+                            <div className={styles.courseMetaLabel}>
+                              Lessons
+                            </div>
+                            <div className={styles.courseMetaValue}>
+                              {course.lessons}
+                            </div>
                           </div>
                         </div>
-                        
+
                         <div className={styles.courseMetaItem}>
-                          <span className={styles.courseMetaIcon}>👥</span>
+                          <span className={styles.courseMetaIcon}>
+  <i className="fa-solid fa-users"></i>
+</span>
+
                           <div className={styles.courseMetaContent}>
-                            <div className={styles.courseMetaLabel}>Students</div>
-                            <div className={styles.courseMetaValue}>{course.studentsEnrolled}</div>
+                            <div className={styles.courseMetaLabel}>
+                              Students
+                            </div>
+                            <div className={styles.courseMetaValue}>
+                              {course.studentsEnrolled}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -919,7 +1006,10 @@ ${API_URL}/api/courses/${courseId}/details`);
                             ) : (
                               <>
                                 <div className={styles.paidPriceContainer}>
-                                  <span className={styles.priceIcon}>💰</span>
+                                  <span className={styles.priceIcon}>
+                                    <i className="fa-solid fa-coins"></i>
+                                  </span>
+
                                   <span className={styles.currentPrice}>
                                     ₹{course.discountedPrice || course.price}
                                   </span>
@@ -937,13 +1027,14 @@ ${API_URL}/api/courses/${courseId}/details`);
                               <span className={styles.discountIcon}>🔥</span>
                               Save{" "}
                               {Math.round(
-                                (1 - course.discountedPrice / course.price) * 100
+                                (1 - course.discountedPrice / course.price) *
+                                  100
                               )}
                               %
                             </div>
                           )}
                         </div>
-                        
+
                         {/* Updated Button Section */}
                         <div className={styles.buttonGroup}>
                           <Button
@@ -1024,7 +1115,9 @@ ${API_URL}/api/courses/${courseId}/details`);
           courseDetails={courseDetails}
           loadingDetails={loadingDetails}
         />
+        
       </Container>
+      <CourseDisclaimer />
     </div>
   );
 };
