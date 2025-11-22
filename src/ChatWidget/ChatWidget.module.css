@@ -301,7 +301,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  background: #0c0f1d; /* Clean solid background */
+  background: #0c0f1d;
 }
 
 /* 🔹 Messages - Clean */
@@ -309,7 +309,7 @@
   display: flex;
   gap: 12px;
   animation: messageSlide 0.3s ease-out;
-  max-width: 80%;
+  max-width: 100%;
 }
 
 @keyframes messageSlide {
@@ -382,7 +382,7 @@
 .messageTime {
   font-size: 11px;
   color: #94a3b8;
-  padding: 0 8px;
+  padding: 0 8px 0 0;
   font-weight: 500;
   font-family: 'Rajdhani', sans-serif;
 }
@@ -605,7 +605,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: #0c0f1d; /* Clean solid background */
+  background: #0c0f1d;
   min-height: 0;
 }
 
@@ -619,7 +619,36 @@
   font-family: 'Exo 2', sans-serif;
 }
 
-/* 🔹 Live Chat Message Styles */
+/* 🔹 Date Separator - WhatsApp-like date display */
+.dateSeparator {
+  text-align: center;
+  margin: 16px 0;
+  position: relative;
+}
+
+.dateSeparator::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #2d3748;
+}
+
+.dateSeparator span {
+  background: #0c0f1d;
+  padding: 6px 12px;
+  color: #94a3b8;
+  font-size: 12px;
+  border-radius: 12px;
+  border: 1px solid #2d3748;
+  font-family: 'Rajdhani', sans-serif;
+  position: relative;
+  z-index: 1;
+}
+
+/* 🔹 Live Chat Message Styles - FIXED */
 .liveChatContainer .message {
   display: flex;
   animation: messageSlideLive 0.3s ease-out;
@@ -642,75 +671,155 @@
   margin-left: auto;
 }
 
-.liveChatContainer .botMessage {
-  justify-content: flex-start;
-}
-
+.liveChatContainer .botMessage,
 .liveChatContainer .adminMessage {
   justify-content: flex-start;
 }
 
+/* 🔹 Message Bubble - FIXED for proper width */
 .liveChatContainer .messageBubble {
-  max-width: 70%;
+  max-width: 85%;
+  min-width: 120px;
   padding: 12px 16px;
   border-radius: 16px;
   line-height: 1.4;
-  font-size: 13px;
+  font-size: 14px;
   word-wrap: break-word;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
+/* 🔹 User Message Bubble - FIXED background color and time */
 .liveChatContainer .userMessage .messageBubble {
-  background: #4ecdc4;
-  color: #0c0f1d;
+  background: #2563eb; /* Changed to darker blue for better contrast */
+  color: white;
   border-bottom-right-radius: 6px;
+  align-self: flex-end;
 }
 
-.liveChatContainer .botMessage .messageBubble {
-  background: #2d3748;
-  color: #e2e8f0;
-  border-bottom-left-radius: 6px;
+/* 🔹 User Message Time - FIXED for better visibility */
+.userMessageTime {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: right;
+  margin-top: 2px;
+  font-family: 'Rajdhani', sans-serif;
+  align-self: flex-end;
 }
 
+/* 🔹 Admin Message Bubble - FIXED for full width */
 .liveChatContainer .adminMessage .messageBubble {
   background: #065f46;
   color: #d1fae5;
   border-bottom-left-radius: 6px;
+  align-self: flex-start;
+  width: fit-content;
+  max-width: 85%;
+  min-width: 200px;
 }
 
-/* 🔹 Message Header */
+/* 🔹 Bot Message Bubble */
+.liveChatContainer .botMessage .messageBubble {
+  background: #2d3748;
+  color: #e2e8f0;
+  border-bottom-left-radius: 6px;
+  align-self: flex-start;
+}
+
+/* 🔹 Message Header - FIXED for proper alignment */
 .messageHeader {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
+  align-items: flex-start;
+  margin-bottom: 4px;
+  width: 100%;
+  gap: 12px;
 }
 
 .senderName {
   font-weight: 600;
-  font-size: 11px;
-  opacity: 0.8;
+  font-size: 13px;
+  opacity: 0.9;
   font-family: 'Rajdhani', sans-serif;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+/* 🔹 Admin Name - FIXED to handle long names */
+.adminMessage .senderName {
+  color: #d1fae5;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .userMessage .senderName {
-  color: rgba(12, 15, 29, 0.9);
-}
-
-.adminMessage .senderName {
-  color: #10b981;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
 }
 
 .botMessage .senderName {
   color: #4ecdc4;
+  font-size: 13px;
 }
 
+/* 🔹 Message Time - FIXED alignment */
 .messageTime {
-  font-size: 9px;
-  opacity: 0.7;
+  font-size: 11px;
   font-family: 'Rajdhani', sans-serif;
+  color: rgba(255, 255, 255, 0.7);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
+.userMessage .messageTime {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.adminMessage .messageTime {
+  color: rgba(209, 250, 229, 0.8);
+}
+
+.botMessage .messageTime {
+  color: rgba(78, 205, 196, 0.8);
+}
+
+/* 🔹 Message Text - FIXED */
 .messageText {
+  line-height: 1.4;
+  font-family: 'Exo 2', sans-serif;
+  word-wrap: break-word;
+  width: 100%;
+  font-size: 14px;
+}
+
+/* 🔹 Welcome Message */
+.welcomeMessage {
+  text-align: center;
+  padding: 30px 20px;
+  color: #94a3b8;
+}
+
+.welcomeIcon {
+  font-size: 32px;
+  margin-bottom: 12px;
+  color: #4ecdc4;
+}
+
+.welcomeMessage h4 {
+  margin: 0 0 8px 0;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.welcomeMessage p {
+  margin: 0;
   line-height: 1.4;
   font-family: 'Exo 2', sans-serif;
 }
@@ -976,56 +1085,6 @@
   font-family: 'Exo 2', sans-serif;
 }
 
-/* 🔹 Welcome Message */
-.welcomeMessage {
-  text-align: center;
-  padding: 30px 20px;
-  color: #94a3b8;
-}
-
-.welcomeIcon {
-  font-size: 32px;
-  margin-bottom: 12px;
-  color: #4ecdc4;
-}
-
-.welcomeMessage h4 {
-  margin: 0 0 8px 0;
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  font-family: 'Orbitron', sans-serif;
-}
-
-.welcomeMessage p {
-  margin: 0;
-  line-height: 1.4;
-  font-family: 'Exo 2', sans-serif;
-}
-
-.guestNote {
-  margin-top: 12px;
-  padding: 10px;
-  background: #451a03;
-  border-radius: 8px;
-  border: 1px solid #92400e;
-}
-
-.loginLink {
-  background: none;
-  border: none;
-  color: #4ecdc4;
-  text-decoration: underline;
-  cursor: pointer;
-  font-size: inherit;
-  margin: 0 2px;
-  font-family: inherit;
-}
-
-.loginLink:hover {
-  color: #45b7af;
-}
-
 /* 🔹 User Info Form */
 .userInfoForm {
   flex: 1;
@@ -1124,7 +1183,7 @@
   background: #45b7af;
 }
 
-/* 🔹 Mobile Responsive */
+/* 🔹 Mobile Responsive - FIXED for admin name and time */
 @media (max-width: 768px) {
   .chatModal {
     width: 95vw;
@@ -1164,9 +1223,14 @@
   }
   
   .liveChatContainer .messageBubble {
-    max-width: 85%;
+    max-width: 90%;
     padding: 10px 14px;
-    font-size: 12px;
+    font-size: 13px;
+    min-width: 100px;
+  }
+  
+  .liveChatContainer .adminMessage .messageBubble {
+    min-width: 150px;
   }
   
   .liveChatContainer .inputSection {
@@ -1231,9 +1295,49 @@
     padding: 4px 8px;
   }
   
+  /* 🔹 FIXED: Mobile view for admin name and time */
   .messageHeader {
     flex-direction: column;
     align-items: flex-start;
     gap: 2px;
+  }
+  
+  .senderName {
+    max-width: 100%;
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+  
+  .messageTime {
+    font-size: 10px;
+    margin-left: 0;
+  }
+  
+  .userMessageTime {
+    font-size: 10px;
+  }
+}
+
+/* 🔹 Enhanced for very long admin names */
+@media (max-width: 480px) {
+  .adminMessage .senderName {
+    max-width: 120px;
+    font-size: 12px;
+  }
+  
+  .liveChatContainer .messageBubble {
+    max-width: 92%;
+  }
+  
+  .liveChatContainer .adminMessage .messageBubble {
+    min-width: 120px;
+  }
+  
+  .messageHeader {
+    gap: 2px;
+  }
+  
+  .senderName {
+    max-width: 100px;
   }
 }
