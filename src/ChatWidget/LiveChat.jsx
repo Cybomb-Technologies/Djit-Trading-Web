@@ -216,6 +216,36 @@ export default function LiveChat() {
     redirectToLogin();
   };
 
+  // Format date for display
+  const formatMessageDate = (timestamp) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === now.toDateString()) {
+      return "Today";
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return "Yesterday";
+    } else {
+      return date.toLocaleDateString([], {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+  };
+
+  // Check if we need to show date separator
+  const shouldShowDateSeparator = (currentMsg, previousMsg) => {
+    if (!previousMsg) return true;
+    
+    const currentDate = new Date(currentMsg.timestamp).toDateString();
+    const previousDate = new Date(previousMsg.timestamp).toDateString();
+    
+    return currentDate !== previousDate;
+  };
+
   // Loading state
   if (isCheckingAuth) {
     return (
@@ -289,39 +319,62 @@ export default function LiveChat() {
             </p>
           </div>
         ) : (
-          messages.map((msg, i) => (
-            <div
-              key={msg._id || i}
-              className={`${styles.message} ${
-                msg.sender === "user"
-                  ? styles.userMessage
-                  : msg.sender === "admin"
-                  ? styles.adminMessage
-                  : styles.botMessage
-              }`}
-            >
-              <div className={styles.messageBubble}>
-                <div className={styles.messageHeader}>
-                  <span className={styles.senderName}>
-                    {msg.sender === "user"
-                      ? "You"
+          messages.map((msg, index) => {
+            const showDateSeparator = shouldShowDateSeparator(
+              msg, 
+              messages[index - 1]
+            );
+
+            return (
+              <div key={msg._id || index}>
+                {showDateSeparator && (
+                  <div className={styles.dateSeparator}>
+                    <span>{formatMessageDate(msg.timestamp)}</span>
+                  </div>
+                )}
+                <div
+                  className={`${styles.message} ${
+                    msg.sender === "user"
+                      ? styles.userMessage
                       : msg.sender === "admin"
-                      ? msg.senderName || "Support Agent"
-                      : "System"}
-                  </span>
-                  {msg.timestamp && (
-                    <span className={styles.messageTime}>
-                      {new Date(msg.timestamp).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  )}
+                      ? styles.adminMessage
+                      : styles.botMessage
+                  }`}
+                >
+                  <div className={styles.messageBubble}>
+                    {(msg.sender === "admin" || msg.sender === "bot") && (
+                      <div className={styles.messageHeader}>
+                        <span className={styles.senderName}>
+                          {msg.sender === "admin"
+                            ? msg.senderName || "Support Agent"
+                            : "System"}
+                        </span>
+                        {msg.timestamp && (
+                          <span className={styles.messageTime}>
+                            {new Date(msg.timestamp).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true
+                            })}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    <div className={styles.messageText}>{msg.text}</div>
+                    {msg.sender === "user" && msg.timestamp && (
+                      <div className={styles.userMessageTime}>
+                        {new Date(msg.timestamp).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true
+                        })}
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className={styles.messageText}>{msg.text}</div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
 
         {isLoading && (

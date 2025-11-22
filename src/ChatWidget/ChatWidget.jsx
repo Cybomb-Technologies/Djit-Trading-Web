@@ -8,22 +8,34 @@ export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLiveChat, setIsLiveChat] = useState(false);
 
+  // Chat button close panna function
+  const handleCloseModal = () => {
+    setIsOpen(false);
+  };
+
+  // Chat button open panna function
+  const handleOpenModal = () => {
+    setIsOpen(true);
+  };
+
   return (
     <div className={styles.chatWidget}>
-      {/* Floating Chat Button */}
-      <button className={styles.chatButton} onClick={() => setIsOpen(!isOpen)}>
-        <div className={styles.buttonContent}>
-          <span className={styles.chatIcon}>💬</span>
-          <span className={`${styles.chatLabel} d-none d-md-inline`}>
-  Chat with us
-</span>
-        </div>
-        <div className={styles.pulseEffect}></div>
-      </button>
+      {/* Floating Chat Button - Only show when modal closed */}
+      {!isOpen && (
+        <button className={styles.chatButton} onClick={handleOpenModal}>
+          <div className={styles.buttonContent}>
+            <span className={styles.chatIcon}>💬</span>
+            <span className={`${styles.chatLabel} d-none d-md-inline`}>
+              Chat with us
+            </span>
+          </div>
+          <div className={styles.pulseEffect}></div>
+        </button>
+      )}
 
       {/* Modal Overlay */}
       {isOpen && (
-        <div className={styles.modalOverlay} onClick={() => setIsOpen(false)}>
+        <div className={styles.modalOverlay} onClick={handleCloseModal}>
           <div
             className={styles.chatModal}
             onClick={(e) => e.stopPropagation()}
@@ -48,7 +60,7 @@ export default function ChatWidget() {
               </div>
               <button
                 className={styles.closeButton}
-                onClick={() => setIsOpen(false)}
+                onClick={handleCloseModal}
                 title="Close"
               >
                 ✖
@@ -63,7 +75,7 @@ export default function ChatWidget() {
                   !isLiveChat ? styles.activeMode : ""
                 }`}
               >
-                🤖 AI Assistant
+               <i class="fa-solid fa-robot"></i> AI Assistant
               </button>
               <button
                 onClick={() => setIsLiveChat(true)}
@@ -71,13 +83,17 @@ export default function ChatWidget() {
                   isLiveChat ? styles.activeMode : ""
                 }`}
               >
-                👨‍💼 Live Chat
+                <i class="fa-solid fa-user-tie"></i> Live Chat
               </button>
             </div>
 
             {/* Chat Mode */}
             <div className={styles.modalContent}>
-              {isLiveChat ? <LiveChat /> : <AIChat />}
+              {isLiveChat ? (
+                <LiveChat onClose={handleCloseModal} />
+              ) : (
+                <AIChat onClose={handleCloseModal} />
+              )}
             </div>
           </div>
         </div>
