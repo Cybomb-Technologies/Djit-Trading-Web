@@ -1,6 +1,6 @@
 const Course = require('../models/Course');
 const Coupon = require('../models/Coupon.js');
-
+const CourseContent = require('../models/CourseContent'); 
 // =============================
 // Get all courses
 // =============================
@@ -287,6 +287,9 @@ exports.purchaseCourse = async (req, res) => {
 // =============================
 // Get course with full details
 // =============================
+// =============================
+// Get course with full details including content
+// =============================
 exports.getCourseWithDetails = async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
@@ -294,7 +297,27 @@ exports.getCourseWithDetails = async (req, res) => {
       return res.status(404).json({ message: 'Course not found' });
     }
 
-    // Return course with all details
+    // Get course content from CourseContent collection
+    const courseContents = await CourseContent.find(
+      { 
+        course: req.params.id, 
+        status: 'active' 
+      },
+      'title type duration order isFree' // Only return these fields
+    ).sort({ order: 1 });
+
+    // Transform course contents to get only video information if needed
+    const videos = courseContents
+      .filter(content => content.type === 'video')
+      .map(video => ({
+        title: video.title,
+        type: video.type,
+        duration: video.duration,
+        order: video.order,
+        isFree: video.isFree
+      }));
+
+    // Return course with all details including content
     res.json({
       success: true,
       course: {
@@ -307,7 +330,11 @@ exports.getCourseWithDetails = async (req, res) => {
         detailedDescription: course.detailedDescription || '',
         deliveryTime: course.deliveryTime || '48 Working Hours',
         language: course.language || 'Tamil',
-        disclaimer: course.disclaimer || 'This course is offered solely for educational purposes and is intended for beginners who wish to learn about trading indicators. Participation in this course is voluntary. By purchasing, you acknowledge and agree that no refunds will be granted once access is provided. Trading involves inherent risk and may not be suitable for everyone.'
+        disclaimer: course.disclaimer || 'This course is offered solely for educational purposes and is intended for beginners who wish to learn about trading indicators. Participation in this course is voluntary. By purchasing, you acknowledge and agree that no refunds will be granted once access is provided. Trading involves inherent risk and may not be suitable for everyone.',
+        // Add course contents
+        courseContents: courseContents,
+        // If you only want videos specifically:
+        videos: videos
       }
     });
   } catch (error) {
@@ -317,7 +344,6 @@ exports.getCourseWithDetails = async (req, res) => {
     });
   }
 };
-
 // =============================
 // Add specific course content item
 // =============================
