@@ -88,6 +88,7 @@ const verifyPayment = async (req, res) => {
       const enrollment = new Enrollment({
         user: userId,
         course: courseId,
+        orderId: orderId,
         amountPaid: data.order_amount,
         paymentMethod: "Cashfree",
         paymentStatus: "completed",
@@ -270,6 +271,11 @@ const verifyMobilePayment = async (req, res) => {
         if (!isVerified) {
             console.log(`❌ IAP CONTROLLER FAIL: Purchase verification failed for orderId: ${orderId}`);
             
+            // ✅ FIX 1: Ensure metadata is an object before setting properties
+            if (!enrollment.metadata) {
+                enrollment.metadata = {};
+            }
+            
             // Update enrollment with failure status
             enrollment.paymentStatus = "failed";
             enrollment.metadata.verificationError = "Purchase verification failed";
@@ -285,8 +291,14 @@ const verifyMobilePayment = async (req, res) => {
         // 🎯 CRITICAL FIX: Update Enrollment Status to COMPLETED
         enrollment.paymentStatus = "completed";
         enrollment.transactionId = purchaseToken;
-        enrollment.enrolledAt = new Date(); // 🎯 Set enrolledAt only when payment is complete
-        enrollment.metadata.isVerified = true;
+        enrollment.enrolledAt = new Date(); 
+        
+        // <<<< 🔥 ADD THIS DEFENSIVE CHECK HERE 🔥 >>>>
+        if (!enrollment.metadata) {
+            enrollment.metadata = {};
+        }
+        
+        enrollment.metadata.isVerified = true; // This line now works
         enrollment.metadata.verifiedAt = new Date();
         enrollment.metadata.verificationDetails = verificationDetails;
         enrollment.metadata.couponCode = couponCode || enrollment.metadata.couponCode;
