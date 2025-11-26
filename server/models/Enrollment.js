@@ -11,6 +11,11 @@ const enrollmentSchema = new mongoose.Schema({
     ref: 'Course',
     required: true
   },
+  orderId: { 
+    type: String, 
+    required: true, 
+    unique: true 
+  },
   enrollmentDate: {
     type: Date,
     default: Date.now
