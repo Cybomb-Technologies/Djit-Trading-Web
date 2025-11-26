@@ -4,6 +4,8 @@ const Enrollment = require("../models/Enrollment");
 const Course = require("../models/Course");
 require("dotenv").config();
 
+const APP_BASE_URL = process.env.APP_BASE_URL;
+
 const CASHFREE_BASE_URL = process.env.CASHFREE_BASE_URL;
 
 // ✅ Create Order (called by frontend)
@@ -49,7 +51,6 @@ const createOrder = async (req, res) => {
     });
   }
 };
-
 
 // ✅ Verify Payment (called by frontend polling)
 const verifyPayment = async (req, res) => {
@@ -118,14 +119,24 @@ const verifyPayment = async (req, res) => {
   }
 };
 
-
-
-// ✅ NEW: Create Mobile Order
+// ✅ NEW: Create Mobile Order for IAP
 const createMobileOrder = async (req, res) => {
   try {
-    const { amount, name, email, phone, courseId, userId, couponCode } = req.body;
+    const { amount, name, email, phone, courseId, userId, couponCode, platform } = req.body;
 
-    console.log("📱 Mobile Order Request:", { amount, name, email, courseId, userId });
+     // 1. Construct the correct webhook URL using the new APP_BASE_URL
+    const notifyUrl = `${APP_BASE_URL}/api/payment/mobile-webhook`;
+    console.log(`✅ Mobile Webhook configured as: ${notifyUrl}`);
+
+    if (!APP_BASE_URL) {
+      // Explicitly return the 500 error that Dart saw, but with a clearer message.
+      return res.status(500).json({
+        success: false,
+        message: `order_meta.notify_url : invalid url entered. Value received: undefined/api/payment/mobile-webhook. FIX: APP_BASE_URL environment variable is missing.`
+      });
+    }
+
+    console.log("📱 Mobile Order Request:", { amount, name, email, courseId, userId, platform });
 
     if (!name || !email || !phone || !courseId || !userId) {
       return res.status(400).json({ 
@@ -134,220 +145,241 @@ const createMobileOrder = async (req, res) => {
       });
     }
 
-    const orderId = `MOBILE_ORDER_${Date.now()}_${userId.substring(0, 8)}`;
-    
-    const orderPayload = {
-      order_id: orderId,
+     const orderPayload = {
+      // Generate a unique order ID for your database/Cashfree
+      order_id: `IAP_${Date.now()}_${userId}`,
       order_amount: amount,
-      customer_details: {
-        customer_id: userId,
-        customer_name: name,
-        customer_email: email,
-        customer_phone: phone,
-      },
-      order_currency: "INR",
-      order_note: `Mobile App - Course: ${courseId}`,
+      // ... other details ...
       order_meta: {
-        return_url: "cybombapp://payment/callback",
-        notify_url: `${process.env.API_BASE_URL}/api/payment/mobile-webhook`
+        // This notify_url is still needed if you use a PG to generate an order ID
+        notify_url: notifyUrl,
       }
     };
 
-    const response = await axios.post(CASHFREE_BASE_URL, orderPayload, {
-      headers: {
-        "x-client-id": process.env.CASHFREE_APP_ID,
-        "x-client-secret": process.env.CASHFREE_SECRET_KEY,
-        "x-api-version": "2022-09-01",
-        "Content-Type": "application/json",
-      },
+    // For IAP purchases, we don't need to create a Cashfree order
+    // Instead, create a database record to track the IAP purchase
+    // const orderId = `IAP_ORDER_${Date.now()}_${userId.substring(0, 8)}`;
+    
+    // Create enrollment record with pending status
+    const enrollment = new Enrollment({
+      user: userId,
+      course: courseId,
+      amountPaid: amount,
+      paymentMethod: "Google-Play-IAP",
+      paymentStatus: "pending", // Will be updated when IAP is verified
+      orderId: orderPayload.order_id,
+      platform: "android_iap",
+      couponCode: couponCode || null,
+      enrolledAt: new Date(),
     });
 
-    console.log("✅ Mobile Order Created:", response.data);
+    await enrollment.save();
 
-    // ✅ Mobile-specific response
+    console.log("✅ IAP Mobile Order Created in DB:", enrollment._id);
+
+    // ✅ IAP-specific response - no Cashfree payment link needed
     res.json({
       success: true,
-      orderId: response.data.order_id,
-      paymentSessionId: response.data.payment_session_id,
-      orderAmount: response.data.order_amount,
-      orderCurrency: response.data.order_currency,
-      appId: process.env.CASHFREE_APP_ID,
-      environment: process.env.NODE_ENV === 'production' ? 'PRODUCTION' : 'TEST'
+      orderId: orderId,
+      enrollmentId: enrollment._id,
+      message: "IAP order created successfully. Proceed with Google Play purchase."
     });
 
   } catch (err) {
-    console.error("❌ Mobile Order Error:", err.response?.data || err.message);
+    console.error("❌ IAP Mobile Order Error:", err);
     res.status(500).json({
       success: false,
-      message: err.response?.data?.message || "Failed to create mobile order"
+      message: err.message || "Failed to create IAP mobile order"
     });
   }
 };
 
-// ✅ NEW: Verify Mobile Payment
+// ✅ NEW: Verify Mobile IAP Payment
 const verifyMobilePayment = async (req, res) => {
   try {
-    const { orderId, paymentId, signature, courseId, userId, couponCode } = req.body;
+    const { orderId, purchaseToken, productId, courseId, userId, couponCode, platform } = req.body;
 
-    console.log("📱 Mobile Verify Request:", { orderId, paymentId, courseId, userId });
+    console.log("📱 Mobile IAP Verify Request:", { orderId, productId, courseId, userId, platform });
 
-    if (!orderId || !paymentId || !signature || !courseId || !userId) {
+    if (!orderId || !purchaseToken || !productId || !courseId || !userId) {
       return res.status(400).json({ 
         success: false, 
         message: "Missing required data" 
       });
     }
 
-    // ✅ Verify Cashfree signature for mobile
-    const data = `${orderId}${paymentId}${process.env.CASHFREE_SECRET_KEY}`;
-    const generatedSignature = crypto
-      .createHash('sha256')
-      .update(data)
-      .digest('hex');
+    // For IAP, we need to verify with Google Play Developer API
+    // This is a simplified version - you'll need to implement proper Google Play verification
+    
+    // Check if enrollment exists
+    const enrollment = await Enrollment.findOne({ 
+      orderId: orderId,
+      user: userId 
+    });
+    
+    if (!enrollment) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Enrollment record not found" 
+      });
+    }
 
-    console.log("🔐 Signature Check:", { received: signature, generated: generatedSignature });
-
-    if (generatedSignature !== signature) {
+    // Verify IAP purchase with Google Play (simplified - implement proper verification)
+    const isPurchaseValid = await verifyGooglePlayPurchase(purchaseToken, productId);
+    
+    if (!isPurchaseValid) {
       return res.status(400).json({ 
         success: false, 
-        message: "Invalid payment signature" 
+        message: "Invalid IAP purchase" 
       });
     }
 
-    // ✅ Get payment status from Cashfree
-    const paymentResponse = await axios.get(
-      `${CASHFREE_BASE_URL}/${orderId}/payments/${paymentId}`,
-      {
-        headers: {
-          "x-client-id": process.env.CASHFREE_APP_ID,
-          "x-client-secret": process.env.CASHFREE_SECRET_KEY,
-          "x-api-version": "2022-09-01",
-        },
-      }
-    );
-
-    const paymentData = paymentResponse.data;
-    console.log("📊 Payment Status:", paymentData.payment_status);
-
-    if (paymentData.payment_status === "SUCCESS") {
-      // ✅ Check if already enrolled
-      const existingEnrollment = await Enrollment.findOne({ 
-        user: userId, 
-        course: courseId 
-      });
-      
-      if (existingEnrollment) {
-        return res.json({
-          success: true,
-          message: "Already enrolled in this course",
-          enrollment: existingEnrollment
-        });
-      }
-
-      // ✅ Check course exists
-      const course = await Course.findById(courseId);
-      if (!course) {
-        return res.status(404).json({ 
-          success: false, 
-          message: "Course not found" 
-        });
-      }
-
-      // ✅ Apply coupon if provided
-      if (couponCode) {
-        try {
-          const coupon = await Coupon.findOne({ code: couponCode });
-          if (coupon) {
-            coupon.usedCount += 1;
-            coupon.usedBy.push(userId);
-            await coupon.save();
-            console.log('✅ Coupon applied for mobile payment:', couponCode);
-          }
-        } catch (couponError) {
-          console.error('⚠️ Coupon apply error:', couponError);
-          // Don't fail enrollment if coupon fails
-        }
-      }
-
-      // ✅ Create enrollment
-      const enrollment = new Enrollment({
-        user: userId,
-        course: courseId,
-        amountPaid: paymentData.payment_amount,
-        paymentMethod: "Cashfree-Mobile",
-        paymentStatus: "completed",
-        transactionId: paymentId,
-        orderId: orderId,
-        platform: "android",
-        couponCode: couponCode || null,
-        enrolledAt: new Date(),
-      });
-
-      await enrollment.save();
-
-      console.log("✅ Mobile Enrollment Created:", enrollment._id);
-
-      return res.json({
-        success: true,
-        message: "Payment successful and enrollment completed",
-        enrollment: {
-          id: enrollment._id,
-          courseId: courseId,
-          courseTitle: course.title,
-          enrolledAt: enrollment.enrolledAt,
-          amountPaid: enrollment.amountPaid
-        }
-      });
-    } else {
-      return res.json({
-        success: false,
-        message: "Payment not successful",
-        paymentStatus: paymentData.payment_status
+    // Check course exists
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Course not found" 
       });
     }
+
+    // Apply coupon if provided
+    if (couponCode) {
+      try {
+        const coupon = await Coupon.findOne({ code: couponCode });
+        if (coupon) {
+          coupon.usedCount += 1;
+          coupon.usedBy.push(userId);
+          await coupon.save();
+          console.log('✅ Coupon applied for IAP payment:', couponCode);
+        }
+      } catch (couponError) {
+        console.error('⚠️ Coupon apply error:', couponError);
+        // Don't fail enrollment if coupon fails
+      }
+    }
+
+    // Update enrollment status
+    enrollment.paymentStatus = "completed";
+    enrollment.transactionId = purchaseToken;
+    enrollment.completedAt = new Date();
+    await enrollment.save();
+
+    console.log("✅ IAP Enrollment Completed:", enrollment._id);
+
+    return res.json({
+      success: true,
+      message: "IAP payment successful and enrollment completed",
+      enrollment: {
+        id: enrollment._id,
+        courseId: courseId,
+        courseTitle: course.title,
+        enrolledAt: enrollment.enrolledAt,
+        amountPaid: enrollment.amountPaid
+      }
+    });
+
   } catch (err) {
-    console.error("❌ Mobile Verify Error:", err.response?.data || err.message);
+    console.error("❌ Mobile IAP Verify Error:", err);
     res.status(500).json({ 
       success: false, 
-      message: "Failed to verify mobile payment" 
+      message: "Failed to verify mobile IAP payment" 
     });
   }
 };
 
-// ✅ NEW: Mobile Webhook (for server-to-server notifications)
-const mobileWebhook = async (req, res) => {
+const getGooglePlayAPIClient = async () => {
   try {
-    const { orderId, paymentId, signature, orderAmount, paymentStatus } = req.body;
+    const auth = new new google.auth.GoogleAuth({
+      scopes: ['https://www.googleapis.com/auth/androidpublisher'],
+      // Note: We rely on Application Default Credentials (ADC) or env vars for key loading
+      // which is standard for Node.js environments.
+    });
 
-    console.log("📱 Mobile Webhook Received:", { orderId, paymentId, paymentStatus });
+    const authClient = await auth.getClient();
 
-    // Verify webhook signature
-    const webhookData = orderId + orderAmount + process.env.CASHFREE_SECRET_KEY;
-    const webhookSignature = crypto
-      .createHash('sha256')
-      .update(webhookData)
-      .digest('hex');
-
-    if (webhookSignature !== signature) {
-      return res.status(400).json({ success: false, message: "Invalid webhook signature" });
+    // The package name is crucial for the API call
+    const packageName = process.env.ANDROID_APP_PACKAGE_NAME;
+    if (!packageName) {
+      console.error('CRITICAL ERROR: ANDROID_APP_PACKAGE_NAME environment variable is not set.');
+      throw new Error('Android package name is missing.');
     }
 
-    if (paymentStatus === "SUCCESS") {
+    return {
+      api: google.androidpublisher({
+        version: 'v3',
+        auth: authClient,
+      }),
+      packageName: packageName,
+    };
+  } catch (error) {
+    console.error('Failed to initialize Google Play API Client:', error);
+    throw new Error('Google Play API initialization failed.');
+  }
+};
+
+
+// ✅ NEW: Verify IAP Purchase with Google Play Developer API
+async function verifyGooglePlayPurchase(productId, purchaseToken) {
+  try {
+    console.log(`🔐 Verifying Google Play purchase: ${productId} with token: ${purchaseToken}`);
+
+    const { api, packageName } = await getGooglePlayAPIClient();
+
+    // Call the Google Play Developer API to verify the purchase
+    const verificationResponse = await api.purchases.products.get({
+      packageName: packageName,
+      productId: productId,
+      token: purchaseToken,
+    });
+
+    const purchase = verificationResponse.data;
+
+    console.log('Google Play API Response Status:', verificationResponse.status);
+    console.log('Purchase State:', purchase.purchaseState); // 0=PURCHASED, 1=CANCELED, 2=PENDING
+
+    // Check if the purchase is valid and in a PURCHASED state (0)
+    if (purchase.purchaseState === 0) {
+      console.log('✅ Google Play Purchase Verified and is in state: PURCHASED');
+      return true;
+    } else {
+      console.log(`❌ Google Play Purchase FAILED verification. State: ${purchase.purchaseState}`);
+      return false;
+    }
+
+  } catch (error) {
+    // If the API call fails (e.g., token is invalid, 404 error)
+    console.error('❌ Google Play verification error:', error.message || error);
+    if (error.response && error.response.status === 404) {
+        console.error('Invalid purchase token or non-existent purchase detected (404).');
+    }
+    return false;
+  }
+}
+
+// ✅ NEW: Mobile Webhook for IAP (optional)
+const mobileWebhook = async (req, res) => {
+  try {
+    const { orderId, purchaseToken, productId, purchaseStatus } = req.body;
+
+    console.log("📱 Mobile IAP Webhook Received:", { orderId, productId, purchaseStatus });
+
+    if (purchaseStatus === "SUCCESS") {
       // Update enrollment status if needed
       await Enrollment.findOneAndUpdate(
         { orderId: orderId },
         { 
           paymentStatus: "completed",
-          transactionId: paymentId
+          transactionId: purchaseToken
         }
       );
-      console.log("✅ Webhook: Enrollment updated for order:", orderId);
+      console.log("✅ IAP Webhook: Enrollment updated for order:", orderId);
     }
 
-    res.json({ success: true, message: "Webhook processed" });
+    res.json({ success: true, message: "IAP webhook processed" });
   } catch (err) {
-    console.error("❌ Mobile Webhook Error:", err);
-    res.status(500).json({ success: false, message: "Webhook processing failed" });
+    console.error("❌ Mobile IAP Webhook Error:", err);
+    res.status(500).json({ success: false, message: "IAP webhook processing failed" });
   }
 };
 

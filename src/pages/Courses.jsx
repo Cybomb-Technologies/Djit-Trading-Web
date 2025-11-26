@@ -171,7 +171,7 @@ ${API_URL}/api/enrollments`,
     try {
       setLoadingDetails(true);
       const response = await axios.get(`
-${API_URL}/api/courses/${courseId}/details`);
+      ${API_URL}/api/courses/${courseId}/details`);
       setCourseDetails(response.data.course);
     } catch (error) {
       console.error("Error fetching course details:", error);
