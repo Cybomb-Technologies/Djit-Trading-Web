@@ -952,6 +952,7 @@ const checkEnrollment = async (req, res) => {
     res.status(500).json({ success: false, message: "Error checking enrollment status", error: error.message });
   }
 };
+
 // Secure YouTube proxy with blob response
 const secureYouTubeProxy = async (req, res) => {
   try {
