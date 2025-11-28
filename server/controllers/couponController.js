@@ -1,5 +1,9 @@
-// controllers/couponController.js
 const Coupon = require('../models/Coupon.js');
+const { 
+  createCouponNotification, 
+  createCouponUsageNotification,
+  createCouponLimitNotification 
+} = require('./notificationController');
 
 exports.createCoupon = async (req, res) => {
   try {
@@ -15,6 +19,9 @@ exports.createCoupon = async (req, res) => {
       validUntil,
       usageLimit,
     });
+
+    // Create notification for admin
+    await createCouponNotification(coupon.code, coupon._id);
 
     res.status(201).json({ success: true, coupon });
   } catch (error) {
@@ -232,9 +239,12 @@ exports.applyCoupon = async (req, res) => {
       $inc: { usedCount: 1 }
     };
 
+    let couponDeactivated = false;
+    
     // Check if we need to deactivate coupon
     if (coupon.usageLimit && coupon.usedCount + 1 >= coupon.usageLimit) {
       updateData.$set = { isActive: false };
+      couponDeactivated = true;
       console.log('🔴 Coupon will be deactivated after this use');
     }
 
@@ -252,6 +262,14 @@ exports.applyCoupon = async (req, res) => {
       discountAmount,
       finalAmount
     });
+
+    // Create notification for coupon usage
+    await createCouponUsageNotification(coupon.code, discountAmount, finalAmount);
+
+    // Create notification if coupon was deactivated due to limit
+    if (couponDeactivated) {
+      await createCouponLimitNotification(coupon.code);
+    }
 
     // Verify the update worked
     const verifiedCoupon = await Coupon.findById(coupon._id);
