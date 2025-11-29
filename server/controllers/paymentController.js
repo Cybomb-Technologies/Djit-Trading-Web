@@ -2,6 +2,7 @@
 const axios = require("axios");
 const Enrollment = require("../models/Enrollment");
 const Course = require("../models/Course");
+const Notification = require("../models/Notification");
 require("dotenv").config();
 
 const APP_BASE_URL = process.env.APP_BASE_URL;
@@ -53,6 +54,7 @@ const createOrder = async (req, res) => {
 };
 
 // ✅ Verify Payment (called by frontend polling)
+// ✅ Verify Payment (Cashfree)
 const verifyPayment = async (req, res) => {
   try {
     const { orderId, courseId, userId } = req.body;
@@ -61,7 +63,6 @@ const verifyPayment = async (req, res) => {
       return res.status(400).json({ success: false, message: "Missing required data" });
     }
 
-    // Get order status from Cashfree
     const response = await axios.get(`${CASHFREE_BASE_URL}/${orderId}`, {
       headers: {
         "x-client-id": process.env.CASHFREE_APP_ID,
@@ -73,7 +74,6 @@ const verifyPayment = async (req, res) => {
     const data = response.data;
 
     if (data.order_status === "PAID") {
-      // Check if already enrolled
       const existing = await Enrollment.findOne({ user: userId, course: courseId });
       if (existing) {
         return res.status(400).json({ success: false, message: "Already enrolled in this course" });
@@ -84,7 +84,6 @@ const verifyPayment = async (req, res) => {
         return res.status(404).json({ success: false, message: "Course not found" });
       }
 
-      // Create enrollment
       const enrollment = new Enrollment({
         user: userId,
         course: courseId,
@@ -97,6 +96,20 @@ const verifyPayment = async (req, res) => {
       });
 
       await enrollment.save();
+
+      // 🔔 Notification
+      try {
+        const notification = await Notification.create({
+          title: 'New Enrollment Completed',
+          message: `User ${userId} enrolled in course "${course.title}".`,
+          type: 'enrollment',
+          relatedId: enrollment._id,
+          isRead: false
+        });
+        console.log('✅ Enrollment notification created:', notification._id);
+      } catch (notifErr) {
+        console.error('❌ Notification creation failed:', notifErr.message);
+      }
 
       return res.status(200).json({
         success: true,

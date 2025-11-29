@@ -148,6 +148,7 @@ app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/admin/courses", require("./routes/adminCourseRoutes"));
 app.use("/api/course-content", require("./routes/courseContent"));
 app.use("/api/livechat", require("./routes/liveChatRoutes"));
+app.use("/api/notifications", require("./routes/notificationRoutes"));
 
 // Health check route
 app.get("/api/health", (req, res) => {
