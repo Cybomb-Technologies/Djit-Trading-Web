@@ -4,6 +4,8 @@ const { OAuth2Client } = require('google-auth-library');
 const PasswordReset = require('../models/PasswordReset');
 const crypto = require('crypto');
 const EmailService = require('../services/emailService');
+const { createUserRegistrationNotification } = require('./notificationController');
+const Notification = require('../models/Notification');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -51,7 +53,6 @@ exports.register = async (req, res) => {
       userData.googleId = googleId;
       userData.emailVerified = true;
       userData.importSource = 'google_oauth';
-      // For Google users, if no password is provided, set a random one
       if (!password) {
         userData.password = crypto.randomBytes(16).toString('hex');
       }
@@ -62,6 +63,22 @@ exports.register = async (req, res) => {
 
     const user = await User.create(userData);
     console.log('✅ USER CREATED SUCCESSFULLY:', user.email);
+
+    // 🔔 Create notification for admin
+    await Notification.create({
+      title: 'New User Registered',
+      message: `User ${user.username} registered with email: ${user.email}`,
+      type: 'user',
+      isRead: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    // Optional: real-time via Socket.IO
+    if (global.io) {
+      const unreadCount = await Notification.countDocuments({ isRead: false });
+      global.io.emit('newNotification', { notification: user, unreadCount });
+    }
 
     const token = generateToken(user._id);
 
@@ -85,6 +102,7 @@ exports.register = async (req, res) => {
     });
   }
 };
+
 
 // Login user
 exports.login = async (req, res) => {

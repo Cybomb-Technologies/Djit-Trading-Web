@@ -182,3 +182,29 @@ exports.createCouponLimitNotification = async (couponCode) => {
     console.error('Error creating coupon limit notification:', error);
   }
 };
+
+// Create new user registration notification
+exports.createUserRegistrationNotification = async (username, email) => {
+  try {
+    const notification = new Notification({
+      title: 'New User Registered',
+      message: `User ${username} registered with email: ${email}`,
+      type: 'user'
+    });
+
+    await notification.save();
+
+    // Emit via Socket.IO for real-time admin updates
+    if (global.io) {
+      const unreadCount = await Notification.countDocuments({ isRead: false });
+      global.io.emit('newNotification', {
+        notification,
+        unreadCount
+      });
+    }
+
+    return notification;
+  } catch (error) {
+    console.error('Error creating user registration notification:', error);
+  }
+};

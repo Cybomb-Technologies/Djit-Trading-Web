@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const LiveChat = require("../models/LiveChat");
 const User = require("../models/User");
 const jwt = require('jsonwebtoken');
+const Notification = require("../models/Notification");
 // Start or resume chat for authenticated user
 exports.startChat = async (req, res) => {
   try {
@@ -84,6 +85,7 @@ exports.startChat = async (req, res) => {
 };
 
 // Send message from user
+// Send message from user
 exports.sendMessage = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -151,6 +153,20 @@ exports.sendMessage = async (req, res) => {
     await chat.save();
     console.log("✅ Message saved successfully to chat:", chat._id);
 
+    // 🔔 Notification for new user message
+    try {
+      const notification = await Notification.create({
+        title: 'New Message from User',
+        message: `User ${senderName} sent a message in live chat.`,
+        type: 'live-chat', // enum compatible
+        relatedId: chat._id,
+        isRead: false
+      });
+      console.log('✅ Live chat notification created:', notification._id);
+    } catch (notifErr) {
+      console.error('❌ Live chat notification failed:', notifErr.message);
+    }
+
     // Emit real-time event
     if (global.io) {
       global.io.emit('newMessage', {
@@ -170,6 +186,7 @@ exports.sendMessage = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 // Get all chats for admin with unread counts
 exports.getAllChats = async (req, res) => {
