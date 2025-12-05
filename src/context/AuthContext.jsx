@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }) => {
         },
         body: JSON.stringify({ 
           code: code,
-          redirect_uri: import.meta.env.VITE_FRONT_END_URL
+          redirect_uri: "postmessage",
         }),
       });
 

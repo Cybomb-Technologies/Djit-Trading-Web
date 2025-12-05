@@ -167,19 +167,20 @@ exports.googleAuth = async (req, res) => {
     }
 
     // Exchange authorization code for tokens
-    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        code: code,
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: redirect_uri || "https://djittrading.com/",
-        grant_type: "authorization_code",
-      }),
-    });
+  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded",
+  },
+  body: new URLSearchParams({
+    code: code,
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    client_secret: process.env.GOOGLE_CLIENT_SECRET,
+    redirect_uri: redirect_uri || "postmessage",
+    grant_type: "authorization_code",
+  }),
+});
+
 
     // First check if response is ok
     if (!tokenResponse.ok) {

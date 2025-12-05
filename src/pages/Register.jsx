@@ -170,7 +170,7 @@ const Register = () => {
         client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
         scope: "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid",
         ux_mode: "popup",
-        redirect_uri: FRONTEND_URL,
+        redirect_uri: "postmessage",
         callback: async (response) => {
           try {
             console.log("Google auth response received");
