@@ -202,7 +202,7 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
     }
   };
 
-  // Pre-fetch secure URLs for all content
+// Pre-fetch secure URLs for all content
 // Update preFetchSecureUrls function
 const preFetchSecureUrls = async (contents) => {
   const urls = {};

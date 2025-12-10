@@ -34,7 +34,7 @@ router.get("/secure-media/video", (req, res) => {
       message: "Access token and content ID required" 
     });
   }
-  
+  0
   // Pass to controller
   courseContentController.streamVideo(req, res);
 });

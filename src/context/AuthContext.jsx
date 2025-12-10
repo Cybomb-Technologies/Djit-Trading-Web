@@ -36,8 +36,11 @@ export const AuthProvider = ({ children }) => {
           setUser(response.data.user)
         } catch (error) {
           console.error('Auth check failed:', error)
+          // Clear invalid token
           localStorage.removeItem('token')
           setToken(null)
+          setUser(null)
+          delete axios.defaults.headers.common['Authorization']
         }
       }
       setLoading(false)
@@ -64,49 +67,105 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  const loginWithGoogle = async (googleToken) => {
+  // Google login with authorization code
+  const loginWithGoogle = async (code) => {
     try {
-      console.log('Sending Google token to backend:', googleToken);
+      console.log('Sending Google authorization code to backend...');
       
-      const response = await axios.post(`${API_URL}/api/auth/google`, { 
-        token: googleToken 
+      const response = await fetch(`${API_URL}/api/auth/google`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          code: code,
+          redirect_uri: "postmessage",
+        }),
       });
-      
-      console.log('Backend response:', response.data);
-      
-      const { token: newToken, user: userData } = response.data
-      
-      localStorage.setItem('token', newToken)
-      setToken(newToken)
-      setUser(userData)
-      
-      return { success: true }
+
+      console.log('Backend response status:', response.status);
+
+      const data = await response.json();
+      console.log('Backend response data:', data);
+
+      if (!response.ok) {
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+      }
+
+      if (data.success) {
+        // User exists - login successful
+        const { token: newToken, user: userData } = data;
+        
+        localStorage.setItem('token', newToken);
+        setToken(newToken);
+        setUser(userData);
+        
+        return { 
+          success: true,
+          message: 'Login successful' 
+        };
+      } else if (data.needsRegistration) {
+        // New user - needs registration
+        console.log('New Google user, needs registration:', data.googleUser);
+        return {
+          success: false,
+          needsRegistration: true,
+          googleUser: data.googleUser,
+          message: data.message
+        };
+      } else {
+        // Other error
+        return {
+          success: false,
+          message: data.message || 'Authentication failed'
+        };
+      }
     } catch (error) {
       console.error('Google login error:', error);
       return { 
         success: false, 
-        message: error.response?.data?.message || 'Google login failed' 
-      }
+        message: error.message || 'Google authentication failed'
+      };
     }
   }
 
-  const register = async (username, email, password) => {
+  // Register function with googleId support
+  const register = async (username, email, password, googleId = null) => {
     try {
-      const response = await axios.post(`${API_URL}/api/auth/register`, { 
-        username, email, password 
-      })
-      const { token: newToken, user: userData } = response.data
+      const payload = {
+        username, 
+        email, 
+        ...(password && { password }) // Only include password if it exists
+      };
       
-      localStorage.setItem('token', newToken)
-      setToken(newToken)
-      setUser(userData)
+      // Add googleId if provided
+      if (googleId) {
+        payload.googleId = googleId;
+      }
+
+      console.log('Sending registration payload:', { ...payload, password: password ? '***' : 'NO_PASSWORD' });
+
+      const response = await axios.post(`${API_URL}/api/auth/register`, payload);
+      const { token: newToken, user: userData } = response.data;
       
-      return { success: true }
+      localStorage.setItem('token', newToken);
+      setToken(newToken);
+      setUser(userData);
+      
+      return { success: true };
     } catch (error) {
+      console.error('Registration error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      
       return { 
         success: false, 
-        message: error.response?.data?.message || 'Registration failed' 
-      }
+        message: error.response?.data?.message || 
+                 error.response?.data?.error || 
+                 'Registration failed' 
+      };
     }
   }
 

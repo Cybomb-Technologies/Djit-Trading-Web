@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const LiveChat = require("../models/LiveChat");
 const User = require("../models/User");
-
+const jwt = require('jsonwebtoken');
+const Notification = require("../models/Notification");
 // Start or resume chat for authenticated user
 exports.startChat = async (req, res) => {
   try {
@@ -84,6 +85,7 @@ exports.startChat = async (req, res) => {
 };
 
 // Send message from user
+// Send message from user
 exports.sendMessage = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -151,6 +153,20 @@ exports.sendMessage = async (req, res) => {
     await chat.save();
     console.log("✅ Message saved successfully to chat:", chat._id);
 
+    // 🔔 Notification for new user message
+    try {
+      const notification = await Notification.create({
+        title: 'New Message from User',
+        message: `User ${senderName} sent a message in live chat.`,
+        type: 'live-chat', // enum compatible
+        relatedId: chat._id,
+        isRead: false
+      });
+      console.log('✅ Live chat notification created:', notification._id);
+    } catch (notifErr) {
+      console.error('❌ Live chat notification failed:', notifErr.message);
+    }
+
     // Emit real-time event
     if (global.io) {
       global.io.emit('newMessage', {
@@ -170,6 +186,7 @@ exports.sendMessage = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 // Get all chats for admin with unread counts
 exports.getAllChats = async (req, res) => {
@@ -248,11 +265,108 @@ exports.adminReply = async (req, res) => {
   try {
     const { chatId, message } = req.body;
     
-    // Use system admin ID (you can store this in environment variables)
-    const adminId = req.admin?._id || new mongoose.Types.ObjectId(process.env.SYSTEM_ADMIN_ID || "65a1b2c3d4e5f67890123456");
+    console.log("🔍 === COMPLETE TOKEN DEBUGGING ===");
+    console.log("📦 Request received for chat:", chatId);
+    console.log("📦 Message:", message);
     
-    console.log("🟡 Admin reply to chat:", chatId, "Message:", message);
+    // CHECK ALL HEADERS
+    console.log("🔑 ALL HEADERS:");
+    Object.keys(req.headers).forEach(key => {
+      if (key.toLowerCase().includes('auth') || key.toLowerCase().includes('token')) {
+        console.log(`   🔥 ${key}: ${req.headers[key]}`);
+      } else {
+        console.log(`   ${key}: ${req.headers[key]}`);
+      }
+    });
+    
+    // SPECIFICALLY CHECK AUTHORIZATION
+    const authHeader = req.headers.authorization || req.headers.Authorization;
+    console.log("🔑 Authorization header found:", !!authHeader);
+    console.log("🔑 Authorization value:", authHeader);
+    
+    const token = authHeader?.replace('Bearer ', '')?.replace('bearer ', '');
+    console.log("🔑 Token after cleaning:", token ? "EXISTS" : "NULL");
+    
+    let adminName = "Djit Support";
+    let adminId = null;
 
+    if (token) {
+      console.log("🔑 Token length:", token.length);
+      console.log("🔑 Token starts with:", token.substring(0, 20) + "...");
+      
+      // TEST TOKEN DECODE
+      try {
+        console.log("🔄 Attempting token decode...");
+        
+        // Check JWT_SECRET
+        if (!process.env.JWT_SECRET) {
+          console.log("❌ JWT_SECRET is MISSING in environment variables");
+          throw new Error("JWT_SECRET not found");
+        }
+        
+        console.log("✅ JWT_SECRET exists, length:", process.env.JWT_SECRET.length);
+        
+        // 🔍 DECODE WITHOUT VERIFICATION FIRST
+        console.log("🔍 DECODING TOKEN WITHOUT VERIFICATION:");
+        const decodedWithoutVerify = jwt.decode(token);
+        console.log("   Decoded (no verify):", JSON.stringify(decodedWithoutVerify, null, 2));
+        
+        if (decodedWithoutVerify) {
+          console.log("   Name in token:", decodedWithoutVerify.name);
+          console.log("   ID in token:", decodedWithoutVerify.id);
+          console.log("   Email in token:", decodedWithoutVerify.email);
+        }
+        
+        // NOW TRY VERIFICATION
+        console.log("🔄 NOW ATTEMPTING TOKEN VERIFICATION:");
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("✅ TOKEN VERIFY SUCCESS!");
+        console.log("   Verified payload:", JSON.stringify(decoded, null, 2));
+        console.log("   Admin name in token:", decoded.name);
+        console.log("   Admin ID in token:", decoded.id);
+        console.log("   Admin email in token:", decoded.email);
+        
+        adminName = decoded.name || "Djit Support";
+        adminId = decoded.id;
+        
+        console.log("🎯 WILL USE ADMIN NAME:", adminName);
+        
+      } catch (decodeError) {
+        console.log("❌ TOKEN DECODE/VERIFY FAILED!");
+        console.log("   Error name:", decodeError.name);
+        console.log("   Error message:", decodeError.message);
+        
+        // Try to decode anyway (without verification)
+        try {
+          const fallbackDecoded = jwt.decode(token);
+          console.log("🔄 FALLBACK - Decoded without verification:");
+          console.log("   Fallback payload:", fallbackDecoded);
+          if (fallbackDecoded && fallbackDecoded.name) {
+            adminName = fallbackDecoded.name; // ✅ USE ACTUAL ADMIN NAME
+            adminId = fallbackDecoded.id;
+            console.log("🎯 USING FALLBACK NAME:", adminName);
+          } else {
+            adminName = "Djit Support"; // Only fallback if no name in token
+          }
+        } catch (fallbackError) {
+          console.log("❌ FALLBACK DECODE ALSO FAILED:", fallbackError.message);
+          adminName = "Djit Support";
+        }
+        
+        // Final fallback - DON'T OVERWRITE adminName!
+        adminId = new mongoose.Types.ObjectId(process.env.SYSTEM_ADMIN_ID || "65a1b2c3d4e5f67890123456");
+      }
+    } else {
+      console.log("❌ NO TOKEN FOUND IN REQUEST");
+      console.log("   Check if admin frontend is sending Authorization header");
+      adminId = new mongoose.Types.ObjectId(process.env.SYSTEM_ADMIN_ID || "65a1b2c3d4e5f67890123456");
+      adminName = "Djit Support";
+    }
+    
+    console.log("🟡 Final decision - Admin reply by:", adminName);
+    console.log("🔍 === DEBUG END ===\n");
+
+    // REST OF YOUR ORIGINAL CODE
     if (!message || !message.trim()) {
       return res.status(400).json({ success: false, message: "Message is required" });
     }
@@ -262,27 +376,27 @@ exports.adminReply = async (req, res) => {
       return res.status(404).json({ success: false, message: "Chat not found" });
     }
 
-    // Add admin message with sender name
     const newMessage = {
       sender: "admin",
       senderId: adminId,
-      senderName: "Djit Support", // Add sender name for better display
+      senderName: adminName, // ← THIS WILL NOW SHOW ACTUAL ADMIN NAME
       text: message.trim(),
       timestamp: new Date(),
       readByAdmin: true,
       readByUser: false
     };
 
+    console.log("💬 Creating message with senderName:", adminName);
+
     chat.messages.push(newMessage);
     chat.lastActivity = new Date();
     chat.status = "open";
     
     await chat.save();
-    console.log("✅ Admin reply saved successfully");
+    console.log("✅ Admin reply saved successfully by:", adminName);
 
     // Emit real-time events
     if (global.io) {
-      // Emit to specific user room
       global.io.to(chat.userId.toString()).emit('newMessage', {
         chatId: chat._id,
         message: newMessage,
@@ -290,7 +404,6 @@ exports.adminReply = async (req, res) => {
         unreadCount: chat.unreadCount
       });
       
-      // Emit to admin for real-time update
       global.io.emit('adminReply', {
         chatId: chat._id,
         message: newMessage,
@@ -302,6 +415,7 @@ exports.adminReply = async (req, res) => {
       success: true, 
       messages: chat.messages 
     });
+
   } catch (error) {
     console.error("❌ Error sending admin reply:", error);
     res.status(500).json({ success: false, message: "Server error" });

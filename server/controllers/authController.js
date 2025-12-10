@@ -4,6 +4,8 @@ const { OAuth2Client } = require('google-auth-library');
 const PasswordReset = require('../models/PasswordReset');
 const crypto = require('crypto');
 const EmailService = require('../services/emailService');
+const { createUserRegistrationNotification } = require('./notificationController');
+const Notification = require('../models/Notification');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -11,28 +13,72 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
 };
 
-// Register user
+// Register user with googleId support
 exports.register = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, googleId } = req.body;
+
+    console.log('📝 REGISTRATION ATTEMPT:', { 
+      username, 
+      email, 
+      hasPassword: !!password,
+      googleId: googleId || 'NO_GOOGLE_ID'
+    });
 
     // Check if user exists
     const existingUser = await User.findOne({
-      $or: [{ email }, { username }]
+      $or: [
+        { email }, 
+        { username },
+        ...(googleId ? [{ googleId }] : [])
+      ]
     });
 
     if (existingUser) {
+      console.log('❌ USER ALREADY EXISTS:', existingUser.email);
       return res.status(400).json({
-        message: 'User already exists with this email or username'
+        success: false,
+        message: 'User already exists with this email, username, or Google account'
       });
     }
 
-    // Create user
-    const user = await User.create({
+    // Create user with googleId if provided
+    const userData = {
       username,
       email,
-      password
+      ...(password && { password }) // Only include password if provided
+    };
+
+    if (googleId) {
+      userData.googleId = googleId;
+      userData.emailVerified = true;
+      userData.importSource = 'google_oauth';
+      if (!password) {
+        userData.password = crypto.randomBytes(16).toString('hex');
+      }
+      console.log('✅ CREATING GOOGLE USER WITH ID:', googleId);
+    }
+
+    console.log('🟡 FINAL USER DATA:', { ...userData, password: '***' });
+
+    const user = await User.create(userData);
+    console.log('✅ USER CREATED SUCCESSFULLY:', user.email);
+
+    // 🔔 Create notification for admin
+    await Notification.create({
+      title: 'New User Registered',
+      message: `User ${user.username} registered with email: ${user.email}`,
+      type: 'user',
+      isRead: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
     });
+
+    // Optional: real-time via Socket.IO
+    if (global.io) {
+      const unreadCount = await Notification.countDocuments({ isRead: false });
+      global.io.emit('newNotification', { notification: user, unreadCount });
+    }
 
     const token = generateToken(user._id);
 
@@ -43,16 +89,20 @@ exports.register = async (req, res) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        role: user.role
+        role: user.role,
+        googleId: user.googleId
       }
     });
   } catch (error) {
+    console.error('❌ REGISTRATION ERROR:', error);
     res.status(500).json({
-      message: 'Error in registration',
+      success: false,
+      message: 'Error in registration: ' + error.message,
       error: error.message
     });
   }
 };
+
 
 // Login user
 exports.login = async (req, res) => {
@@ -80,11 +130,10 @@ exports.login = async (req, res) => {
     // Generate JWT token
     const token = generateToken(user._id);
 
-    // ✅ Unified response for web + mobile
     res.status(200).json({
       success: true,
       message: 'Login successful',
-      token, // mobile apps can use this directly
+      token,
       user: {
         id: user._id,
         username: user.username,
@@ -102,76 +151,119 @@ exports.login = async (req, res) => {
   }
 };
 
-// Google OAuth login/register
+// Google OAuth with authorization code
 exports.googleAuth = async (req, res) => {
   try {
-    const { token: googleToken } = req.body;
+    const { code, redirect_uri } = req.body;
 
-    if (!googleToken) {
+    console.log('Received Google authorization code:', code ? 'YES' : 'NO');
+    console.log('Redirect URI:', redirect_uri);
+
+    if (!code) {
       return res.status(400).json({
         success: false,
-        message: 'Google token is required'
+        message: 'Google authorization code is required'
       });
     }
 
-    // Verify Google token
+    // Exchange authorization code for tokens
+  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded",
+  },
+  body: new URLSearchParams({
+    code: code,
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    client_secret: process.env.GOOGLE_CLIENT_SECRET,
+    redirect_uri: redirect_uri || "postmessage",
+    grant_type: "authorization_code",
+  }),
+});
+
+
+    // First check if response is ok
+    if (!tokenResponse.ok) {
+      const errorData = await tokenResponse.json();
+      console.error('Google token exchange error:', errorData);
+      return res.status(400).json({
+        success: false,
+        message: errorData.error_description || errorData.error || 'Failed to exchange authorization code with Google'
+      });
+    }
+
+    // Only if response is ok, then parse the tokens
+    const tokens = await tokenResponse.json();
+    console.log('Google token exchange successful');
+
+    if (!tokens.id_token) {
+      return res.status(400).json({
+        success: false,
+        message: 'No ID token received from Google'
+      });
+    }
+
+    // Verify the ID token
     const ticket = await client.verifyIdToken({
-      idToken: googleToken,
-      audience: process.env.GOOGLE_CLIENT_ID
+      idToken: tokens.id_token,
+      audience: process.env.GOOGLE_CLIENT_ID,
     });
 
     const payload = ticket.getPayload();
-    const { email, name, picture, sub: googleId } = payload;
+    console.log('Google user payload received:', payload.email);
 
-    console.log('Google OAuth payload:', { email, name, googleId });
+    if (!payload.email) {
+      return res.status(400).json({
+        success: false,
+        message: 'No email found in Google profile'
+      });
+    }
 
-    // Check if user already exists
+    // Check if user already exists by email or googleId
     let user = await User.findOne({ 
       $or: [
-        { email },
-        { 'profile.googleId': googleId }
-      ]
+        { email: payload.email },
+        { googleId: payload.sub }
+      ] 
     });
 
     if (user) {
-      console.log('Existing user found:', user.email);
-      // Update Google ID if not set
-      if (!user.profile.googleId) {
-        user.profile.googleId = googleId;
-        user.profile.profilePicture = {
-          url: picture,
-          filename: `google_${googleId}`
-        };
-        await user.save();
-      }
-
-      // Generate JWT token
+      // User exists - generate JWT token
       const token = generateToken(user._id);
 
-      res.status(200).json({
+      console.log('✅ EXISTING USER LOGIN:', user.email);
+
+      return res.status(200).json({
         success: true,
-        message: 'Google authentication successful',
+        message: 'Google login successful',
         token,
         user: {
           id: user._id,
           username: user.username,
           email: user.email,
           role: user.role,
-          profile: user.profile
+          googleId: user.googleId
         }
       });
     } else {
-      // User not found - return needsRegistration flag
-      console.log('User not found, requiring registration:', email);
-      
-      res.status(404).json({
+      // New user - needs registration
+      const googleUser = {
+        email: payload.email,
+        name: payload.name,
+        given_name: payload.given_name,
+        family_name: payload.family_name,
+        picture: payload.picture,
+        googleId: payload.sub,
+        emailVerified: payload.email_verified || false
+      };
+
+      console.log('🆕 NEW GOOGLE USER DETECTED:', googleUser.email);
+
+      return res.status(200).json({
         success: false,
         needsRegistration: true,
-        message: 'Account not found. Please complete your registration.',
-        email: email,
-        name: name,
-        picture: picture,
-        googleId: googleId
+        message: 'Please complete your registration',
+        googleUser: googleUser
       });
     }
 
@@ -179,8 +271,8 @@ exports.googleAuth = async (req, res) => {
     console.error('Google auth error:', error);
     res.status(500).json({
       success: false,
-      message: 'Error in Google authentication',
-      error: error.message
+      message: 'Google authentication failed',
+      error: process.env.NODE_ENV === 'production' ? undefined : error.message
     });
   }
 };
@@ -200,6 +292,7 @@ exports.getMe = async (req, res) => {
     });
   }
 };
+
 // Forgot password - send 6-digit code
 exports.forgotPassword = async (req, res) => {
   try {
@@ -215,7 +308,6 @@ exports.forgotPassword = async (req, res) => {
     // Check if user exists
     const user = await User.findOne({ email: email.toLowerCase().trim() });
     if (!user) {
-      // For security, don't reveal if email exists or not
       return res.json({
         success: true,
         message: 'If the email exists, a reset code has been sent'
@@ -249,7 +341,6 @@ exports.forgotPassword = async (req, res) => {
 
     if (!emailSent) {
       console.error('Failed to send reset code email');
-      // Still return success for security reasons
     }
 
     res.json({

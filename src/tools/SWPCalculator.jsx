@@ -442,20 +442,29 @@ const SWPCalculator = () => {
                         Fill in the form to see your withdrawal plan results and
                         analysis
                       </p>
-                      <div className={styles.placeholderFeatures}>
-                        <div className={styles.featureItem}>
-                          <span className={styles.featureIcon}>📊</span>
-                          <span>Detailed Analysis</span>
-                        </div>
-                        <div className={styles.featureItem}>
-                          <span className={styles.featureIcon}>📈</span>
-                          <span>Return Projections</span>
-                        </div>
-                        <div className={styles.featureItem}>
-                          <span className={styles.featureIcon}>⚡</span>
-                          <span>Instant Results</span>
-                        </div>
-                      </div>
+                    <div className={styles.placeholderFeatures}>
+  <div className={styles.featureItem}>
+    <span className={styles.featureIcon}>
+      <i className="fa-solid fa-chart-column"></i>
+    </span>
+    <span>Detailed Analysis</span>
+  </div>
+
+  <div className={styles.featureItem}>
+    <span className={styles.featureIcon}>
+      <i className="fa-solid fa-chart-line"></i>
+    </span>
+    <span>Return Projections</span>
+  </div>
+
+  <div className={styles.featureItem}>
+    <span className={styles.featureIcon}>
+      <i className="fa-solid fa-bolt"></i>
+    </span>
+    <span>Instant Results</span>
+  </div>
+</div>
+
                     </div>
                   </Card.Body>
                 </Card>
@@ -545,52 +554,62 @@ const SWPCalculator = () => {
                     investments.
                   </p>
 
-                  <Row className="mt-4">
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoIcon}>💰</div>
-                        <div>
-                          <h6>Regular Income</h6>
-                          <p>
-                            Get a steady stream of income from your investments
-                          </p>
-                        </div>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoIcon}>📊</div>
-                        <div>
-                          <h6>Tax Efficiency</h6>
-                          <p>
-                            Withdrawals are treated as capital returns, making
-                            them potentially tax-efficient
-                          </p>
-                        </div>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoIcon}>⚡</div>
-                        <div>
-                          <h6>Flexibility</h6>
-                          <p>
-                            Choose withdrawal frequency and amount as per your
-                            needs
-                          </p>
-                        </div>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <div className={styles.infoIcon}>🛡️</div>
-                        <div>
-                          <h6>Wealth Preservation</h6>
-                          <p>Your principal continues to earn returns</p>
-                        </div>
-                      </div>
-                    </Col>
-                  </Row>
+                <Row className="mt-4">
+  <Col md={6}>
+    <div className={styles.infoItem}>
+      <div className={styles.infoIcon}>
+        <i className="fa-solid fa-coins"></i>
+      </div>
+      <div>
+        <h6>Regular Income</h6>
+        <p>
+          Get a steady stream of income from your investments
+        </p>
+      </div>
+    </div>
+  </Col>
+
+  <Col md={6}>
+    <div className={styles.infoItem}>
+      <div className={styles.infoIcon}>
+        <i className="fa-solid fa-chart-column"></i>
+      </div>
+      <div>
+        <h6>Tax Efficiency</h6>
+        <p>
+          Withdrawals are treated as capital returns, making them potentially tax-efficient
+        </p>
+      </div>
+    </div>
+  </Col>
+
+  <Col md={6}>
+    <div className={styles.infoItem}>
+      <div className={styles.infoIcon}>
+        <i className="fa-solid fa-bolt"></i>
+      </div>
+      <div>
+        <h6>Flexibility</h6>
+        <p>
+          Choose withdrawal frequency and amount as per your needs
+        </p>
+      </div>
+    </div>
+  </Col>
+
+  <Col md={6}>
+    <div className={styles.infoItem}>
+      <div className={styles.infoIcon}>
+        <i className="fa-solid fa-shield-halved"></i>
+      </div>
+      <div>
+        <h6>Wealth Preservation</h6>
+        <p>Your principal continues to earn returns</p>
+      </div>
+    </div>
+  </Col>
+</Row>
+
                 </Card.Body>
               </Card>
             </Col>

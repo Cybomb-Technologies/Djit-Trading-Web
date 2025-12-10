@@ -14,99 +14,107 @@ const About = () => {
 
   return (
     <div className={styles.aboutPage}>
-   {/* Hero Section - UPDATED WITH TRADING THEME */}
-<section className={styles.heroSection}>
-  <div className={styles.heroBackground}>
-    <div className={styles.heroOverlay}></div>
-  </div>
-  
-  {/* Animated Elements */}
-  <div className={styles.floatingElement1}></div>
-  <div className={styles.floatingElement2}></div>
-  <div className={styles.floatingElement3}></div>
-  <div className={styles.gridOverlay}></div>
-  
-  <Container>
-    <Row className="justify-content-center text-center">
-      <Col lg={10}>
-        <div className={styles.heroContent}>
-          {/* Small Company Name */}
-          <div className={styles.companyNameSmall}>
-            <span className={styles.companyTextSmall}>
-              <span className={styles.tradingIcon}>📈</span>
-              DJIT TRADING
-            </span>
-          </div>
-
-          {/* Trusted Badge */}
-          <div className={styles.trustedBadge}>
-            <span className={styles.trustedText}>
-              <span className={styles.checkIcon}>✓</span>
-              Trusted by 10,000+ traders since 2018
-            </span>
-          </div>
-
-          <h1 className={styles.heroTitle}>
-            About{" "}
-            <span className={styles.gradientText}>DJIT TRADING</span>
-          </h1>
-          <p className={styles.heroSubtitle}>
-            Empowering Traders Through Education and Innovation
-          </p>
-          <div className={styles.taglineContainer}>
-            <p className={styles.tagline}>
-              Your Journey to Trading Excellence Starts Here
-            </p>
-          </div>
-          <p className={styles.description}>
-            DJIT Trading was founded with a simple mission: to democratize
-            trading education and make professional-level market knowledge
-            accessible to everyone in Tamil and English. We believe that
-            with the right guidance, tools, and community, anyone can
-            master the art of trading.
-          </p>
-          <div className={styles.heroButtons}>
-            <Button
-              as={Link}
-              to="/courses"
-              className={styles.primaryBtn}
-              size="lg"
-            >
-              <span className={styles.btnIcon}>📚</span>
-              Explore Courses
-            </Button>
-            <Button
-              as={Link}
-              to="/contact"
-              variant="outline-light"
-              className={styles.secondaryBtn}
-              size="lg"
-            >
-              <span className={styles.btnIcon}>💬</span>
-              Get In Touch
-            </Button>
-          </div>
-
-          {/* Stats Section */}
-          <div className={styles.heroStats}>
-            {stats.map((stat, index) => (
-              <div key={index} className={styles.stat}>
-                <div className={styles.statIcon}>
-                  {index === 0 && "👥"}
-                  {index === 1 && "📊"}
-                  {index === 2 && "🚀"}
-                  {index === 3 && "📅"}
-                </div>
-                <strong>{stat.number}</strong>
-                <span>{stat.label}</span>
-              </div>
-            ))}
-          </div>
+      {/* Hero Section - UPDATED WITH TRADING THEME */}
+      <section className={styles.heroSection}>
+        <div className={styles.heroBackground}>
+          <div className={styles.heroOverlay}></div>
         </div>
-      </Col>
-    </Row>
-  </Container>
-</section>
+        
+        {/* Animated Elements */}
+        <div className={styles.floatingElement1}></div>
+        <div className={styles.floatingElement2}></div>
+        <div className={styles.floatingElement3}></div>
+        <div className={styles.gridOverlay}></div>
+        
+        <Container>
+          <Row className="justify-content-center text-center">
+            <Col lg={10}>
+              <div className={styles.heroContent}>
+                {/* Small Company Name */}
+                <div className={styles.companyNameSmall}>
+                  <span className={styles.companyTextSmall}>
+                    <span className={styles.tradingIcon}>
+                      <i className="fa-solid fa-chart-line"></i>
+                    </span>
+                    DJIT TRADING
+                  </span>
+                </div>
+
+                {/* Trusted Badge */}
+                <div className={styles.trustedBadge}>
+                  <span className={styles.trustedText}>
+                    <span className={styles.checkIcon}>
+                      <i className="fa-solid fa-check"></i>
+                    </span>
+                    Trusted by 10,000+ traders since 2018
+                  </span>
+                </div>
+
+                <h1 className={styles.heroTitle}>
+                  About{" "}
+                  <span className={styles.gradientText}>DJIT TRADING</span>
+                </h1>
+                <p className={styles.heroSubtitle}>
+                  Empowering Traders Through Education and Innovation
+                </p>
+                <div className={styles.taglineContainer}>
+                  <p className={styles.tagline}>
+                    Your Journey to Trading Excellence Starts Here
+                  </p>
+                </div>
+                <p className={styles.description}>
+                  DJIT Trading was founded with a simple mission: to democratize
+                  trading education and make professional-level market knowledge
+                  accessible to everyone in Tamil and English. We believe that
+                  with the right guidance, tools, and community, anyone can
+                  master the art of trading.
+                </p>
+                <div className={styles.heroButtons}>
+                  <Button
+                    as={Link}
+                    to="/courses"
+                    className={styles.primaryBtn}
+                    size="lg"
+                  >
+                    <span className={styles.btnIcon}>
+                      <i className="fa-solid fa-book-open"></i>
+                    </span>
+                    Explore Courses
+                  </Button>
+                  <Button
+                    as={Link}
+                    to="/contact"
+                    variant="outline-light"
+                    className={styles.secondaryBtn}
+                    size="lg"
+                  >
+                    <span className={styles.btnIcon}>
+                      <i className="fa-solid fa-comments"></i>
+                    </span>
+                    Get In Touch
+                  </Button>
+                </div>
+
+                {/* Stats Section */}
+                <div className={styles.heroStats}>
+                  {stats.map((stat, index) => (
+                    <div key={index} className={styles.stat}>
+                      <div className={styles.statIcon}>
+                        {index === 0 && <i className="fa-solid fa-users"></i>}
+                        {index === 1 && <i className="fa-solid fa-chart-bar"></i>}
+                        {index === 2 && <i className="fa-solid fa-rocket"></i>}
+                        {index === 3 && <i className="fa-solid fa-calendar-alt"></i>}
+                      </div>
+                      <strong>{stat.number}</strong>
+                      <span>{stat.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </section>
 
       {/* Our Mission & Vision Section */}
       <section className={styles.missionSection}>
@@ -125,7 +133,9 @@ const About = () => {
             <Col lg={6} className="mb-4">
               <Card className={styles.missionCard}>
                 <Card.Body>
-                  <div className={styles.missionIcon}>🎯</div>
+                  <div className={styles.missionIcon}>
+                    <i className="fa-solid fa-bullseye"></i>
+                  </div>
                   <Card.Title>Our Mission</Card.Title>
                   <Card.Text>
                     To democratize trading education by providing high-quality,
@@ -146,7 +156,9 @@ const About = () => {
             <Col lg={6} className="mb-4">
               <Card className={styles.visionCard}>
                 <Card.Body>
-                  <div className={styles.visionIcon}>🔭</div>
+                  <div className={styles.visionIcon}>
+                    <i className="fa-solid fa-binoculars"></i>
+                  </div>
                   <Card.Title>Our Vision</Card.Title>
                   <Card.Text>
                     To become India's most trusted platform for trading
@@ -185,7 +197,9 @@ const About = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.valueCard}>
                 <div className={styles.valueIconWrapper}>
-                  <div className={styles.valueIcon}>🎓</div>
+                  <div className={styles.valueIcon}>
+                    <i className="fa-solid fa-graduation-cap"></i>
+                  </div>
                 </div>
                 <h5>Education First</h5>
                 <p>
@@ -198,7 +212,9 @@ const About = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.valueCard}>
                 <div className={styles.valueIconWrapper}>
-                  <div className={styles.valueIcon}>🤝</div>
+                  <div className={styles.valueIcon}>
+                    <i className="fa-solid fa-handshake"></i>
+                  </div>
                 </div>
                 <h5>Integrity</h5>
                 <p>
@@ -211,7 +227,9 @@ const About = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.valueCard}>
                 <div className={styles.valueIconWrapper}>
-                  <div className={styles.valueIcon}>🌍</div>
+                  <div className={styles.valueIcon}>
+                    <i className="fa-solid fa-globe"></i>
+                  </div>
                 </div>
                 <h5>Accessibility</h5>
                 <p>
@@ -224,7 +242,9 @@ const About = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.valueCard}>
                 <div className={styles.valueIconWrapper}>
-                  <div className={styles.valueIcon}>🚀</div>
+                  <div className={styles.valueIcon}>
+                    <i className="fa-solid fa-rocket"></i>
+                  </div>
                 </div>
                 <h5>Innovation</h5>
                 <p>
@@ -237,7 +257,9 @@ const About = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.valueCard}>
                 <div className={styles.valueIconWrapper}>
-                  <div className={styles.valueIcon}>👥</div>
+                  <div className={styles.valueIcon}>
+                    <i className="fa-solid fa-users"></i>
+                  </div>
                 </div>
                 <h5>Community</h5>
                 <p>
@@ -250,7 +272,9 @@ const About = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.valueCard}>
                 <div className={styles.valueIconWrapper}>
-                  <div className={styles.valueIcon}>💡</div>
+                  <div className={styles.valueIcon}>
+                    <i className="fa-solid fa-lightbulb"></i>
+                  </div>
                 </div>
                 <h5>Excellence</h5>
                 <p>
@@ -344,7 +368,9 @@ const About = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.featureCard}>
                 <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>🗣️</div>
+                  <div className={styles.featureIcon}>
+                    <i className="fa-solid fa-language"></i>
+                  </div>
                 </div>
                 <h5>Tamil & English Content</h5>
                 <p>
@@ -357,7 +383,9 @@ const About = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.featureCard}>
                 <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>🇮🇳</div>
+                  <div className={styles.featureIcon}>
+                    <i className="fa-solid fa-flag"></i>
+                  </div>
                 </div>
                 <h5>Indian Market Focus</h5>
                 <p>
@@ -370,7 +398,9 @@ const About = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.featureCard}>
                 <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>📊</div>
+                  <div className={styles.featureIcon}>
+                    <i className="fa-solid fa-chart-line"></i>
+                  </div>
                 </div>
                 <h5>Practical Tools</h5>
                 <p>
@@ -383,7 +413,9 @@ const About = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.featureCard}>
                 <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>🔄</div>
+                  <div className={styles.featureIcon}>
+                    <i className="fa-solid fa-infinity"></i>
+                  </div>
                 </div>
                 <h5>Lifetime Access</h5>
                 <p>
@@ -395,7 +427,9 @@ const About = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.featureCard}>
                 <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>👨‍🏫</div>
+                  <div className={styles.featureIcon}>
+                    <i className="fa-solid fa-chalkboard-teacher"></i>
+                  </div>
                 </div>
                 <h5>Expert Instructors</h5>
                 <p>
@@ -408,7 +442,9 @@ const About = () => {
             <Col lg={4} md={6} className="mb-4">
               <div className={styles.featureCard}>
                 <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>📱</div>
+                  <div className={styles.featureIcon}>
+                    <i className="fa-solid fa-mobile-alt"></i>
+                  </div>
                 </div>
                 <h5>Mobile Learning</h5>
                 <p>
@@ -444,7 +480,9 @@ const About = () => {
                     size="lg"
                     className={styles.primaryCta}
                   >
-                    <span className={styles.btnIcon}>🚀</span>
+                    <span className={styles.btnIcon}>
+                      <i className="fa-solid fa-rocket"></i>
+                    </span>
                     Explore Courses
                   </Button>
                   <Button
@@ -454,22 +492,30 @@ const About = () => {
                     size="lg"
                     className={styles.secondaryCta}
                   >
-                    <span className={styles.btnIcon}>💬</span>
+                    <span className={styles.btnIcon}>
+                      <i className="fa-solid fa-comments"></i>
+                    </span>
                     Contact Us
                   </Button>
                 </div>
                 <div className={styles.trustBadges}>
                   <span className={styles.trustBadgeItem}>
-                    <span className={styles.badgeIcon}>🎓</span>
+                    <span className={styles.badgeIcon}>
+                      <i className="fa-solid fa-graduation-cap"></i>
+                    </span>
                     10,000+ Students
                   </span>
                   <span className={styles.trustBadgeItem}>
-                    <span className={styles.badgeIcon}>⭐</span>
+                    <span className={styles.badgeIcon}>
+                      <i className="fa-solid fa-star"></i>
+                    </span>
                     4.8/5 Rating
                   </span>
                   <span className={styles.trustBadgeItem}>
-                    <span className={styles.badgeIcon}>📅</span>6 Years
-                    Experience
+                    <span className={styles.badgeIcon}>
+                      <i className="fa-solid fa-calendar-alt"></i>
+                    </span>
+                    6 Years Experience
                   </span>
                 </div>
               </div>

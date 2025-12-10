@@ -2,7 +2,7 @@
 const express = require('express');
 const { adminAuth } = require('../middleware/auth'); // FIXED: Changed from adminAuth to { adminAuth }
 const Course = require('../models/Course');
-
+const Notification = require('../models/Notification'); // <-- Include Notification model
 const router = express.Router();
 
 // All routes are protected with adminAuth
@@ -26,29 +26,50 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Create course (admin version)
+// Create course (admin version) WITH Notification
 router.post('/', async (req, res) => {
   try {
     const courseData = {
       ...req.body,
-      // You can add admin-specific fields here if needed
       createdBy: req.admin._id
     };
 
     const course = await Course.create(courseData);
-    
-    res.status(201).json({
-      success: true,
-      course
-    });
+    console.log('✅ Course created:', course._id);
+
+    // 🔔 Create notification for admin
+    let notification;
+    try {
+      notification = await Notification.create({
+        title: 'New Course Created',
+        message: `A new course "${course.title}" has been created.`,
+        type: 'course',           // must match enum in Notification model
+        relatedId: course._id,
+        isRead: false
+      });
+      console.log('✅ Notification created:', notification._id);
+    } catch (notifError) {
+      console.error('❌ Error creating notification:', notifError.message);
+    }
+
+    // Optional: emit real-time alert via Socket.IO
+    if (global.io) {
+      const unreadCount = await Notification.countDocuments({ isRead: false });
+      global.io.emit('newNotification', {
+        notification: notification || { title: 'N/A', message: 'N/A', type: 'course' },
+        unreadCount
+      });
+      console.log('📡 Socket.IO emitted newNotification event');
+    }
+
+    res.status(201).json({ success: true, course });
+
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error creating course',
-      error: error.message
-    });
+    console.error('❌ Error creating course:', error.message);
+    res.status(500).json({ success: false, message: 'Error creating course', error: error.message });
   }
 });
+
 
 // Update course (admin version)
 router.put('/:id', async (req, res) => {

@@ -11,28 +11,49 @@ const enrollmentSchema = new mongoose.Schema({
     ref: 'Course',
     required: true
   },
+
+  // OrderId required only for paid enrollments
+  orderId: { 
+    type: String, 
+    required: function() {
+      return this.amountPaid > 0;  // Only required when payment > 0
+    },
+    unique: false
+  },
+
   enrollmentDate: {
     type: Date,
     default: Date.now
   },
+
   progress: {
     type: Number,
     default: 0
   },
+
   completed: {
     type: Boolean,
     default: false
   },
+
   paymentStatus: {
     type: String,
     enum: ['pending', 'completed', 'failed'],
     default: 'pending'
   },
-  amountPaid: Number,
+
+  amountPaid: {
+    type: Number,
+    default: 0
+  },
+
+  // Save the coupon ID
   couponUsed: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Coupon'
+    ref: 'Coupon',
+    default: null
   }
+
 }, {
   timestamps: true
 });

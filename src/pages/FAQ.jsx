@@ -10,7 +10,7 @@ const FAQ = () => {
   const faqCategories = [
     {
       title: "Getting Started",
-      icon: "🚀",
+      icon: "fa-solid fa-rocket",
       color: "#FF6B6B",
       questions: [
         {
@@ -32,7 +32,7 @@ const FAQ = () => {
     },
     {
       title: "Courses & Learning",
-      icon: "📚",
+      icon: "fa-solid fa-book-open",
       color: "#4ECDC4",
       questions: [
         {
@@ -79,7 +79,7 @@ const FAQ = () => {
     },
     {
       title: "Technical & Platform",
-      icon: "💻",
+      icon: "fa-solid fa-laptop-code",
       color: "#45B7D1",
       questions: [
         {
@@ -116,7 +116,7 @@ const FAQ = () => {
     },
     {
       title: "Payments & Pricing",
-      icon: "💰",
+      icon: "fa-solid fa-indian-rupee-sign",
       color: "#96CEB4",
       questions: [
         {
@@ -158,7 +158,7 @@ const FAQ = () => {
     },
     {
       title: "Trading",
-      icon: "📊",
+      icon: "fa-solid fa-chart-line",
       color: "#FFBE0B",
       questions: [
         {
@@ -180,7 +180,7 @@ const FAQ = () => {
     },
     {
       title: "Community & Support",
-      icon: "👥",
+      icon: "fa-solid fa-users",
       color: "#FF6B6B",
       questions: [
         {
@@ -217,7 +217,7 @@ const FAQ = () => {
     },
     {
       title: "Certification & Career",
-      icon: "📜",
+      icon: "fa-solid fa-certificate",
       color: "#6A4C93",
       questions: [
         {
@@ -258,76 +258,84 @@ const FAQ = () => {
 
   return (
     <div className={styles.faqPage}>
-     {/* Hero Section - UPDATED WITH TRADING THEME */}
-<section className={styles.faqHero}>
-  <div className={styles.heroBackground}>
-    <div className={styles.heroOverlay}></div>
-  </div>
-  
-  {/* Animated Elements */}
-  <div className={styles.floatingElement1}></div>
-  <div className={styles.floatingElement2}></div>
-  <div className={styles.floatingElement3}></div>
-  <div className={styles.gridOverlay}></div>
-  
-  <Container>
-    <Row className="justify-content-center text-center">
-      <Col lg={8}>
-        <div className={styles.heroContent}>
-          {/* Small Company Name */}
-          <div className={styles.companyNameSmall}>
-            <span className={styles.companyTextSmall}>
-              <span className={styles.tradingIcon}>📈</span>
-              DJIT TRADING
-            </span>
-          </div>
-
-          {/* Trusted Badge */}
-          <div className={styles.trustedBadge}>
-            <span className={styles.trustedText}>
-              <span className={styles.checkIcon}>✓</span>
-              Trusted by 10,000+ Traders
-            </span>
-          </div>
-
-          <h1 className={styles.heroTitle}>
-            Frequently Asked{" "}
-            <span className={styles.gradientText}>Questions</span>
-          </h1>
-          <p className={styles.heroSubtitle}>
-            Get Answers to All Your Trading Questions
-          </p>
-          <p className={styles.description}>
-            Find comprehensive answers to common questions about our
-            courses, platform features, payment options, and trading
-            community. Can't find what you're looking for? Our support
-            team is here to help!
-          </p>
-          <div className={styles.heroButtons}>
-            <Button
-              as={Link}
-              to="/courses"
-              className={styles.primaryBtn}
-              size="lg"
-            >
-              <span className={styles.btnIcon}>📚</span>
-              Explore Courses
-            </Button>
-            <Button
-              href="#contact"
-              variant="outline-light"
-              className={styles.secondaryBtn}
-              size="lg"
-            >
-              <span className={styles.btnIcon}>💬</span>
-              Contact Support
-            </Button>
-          </div>
+      {/* Hero Section - UPDATED WITH TRADING THEME */}
+      <section className={styles.faqHero}>
+        <div className={styles.heroBackground}>
+          <div className={styles.heroOverlay}></div>
         </div>
-      </Col>
-    </Row>
-  </Container>
-</section>
+        
+        {/* Animated Elements */}
+        <div className={styles.floatingElement1}></div>
+        <div className={styles.floatingElement2}></div>
+        <div className={styles.floatingElement3}></div>
+        <div className={styles.gridOverlay}></div>
+        
+        <Container>
+          <Row className="justify-content-center text-center">
+            <Col lg={8}>
+              <div className={styles.heroContent}>
+                {/* Small Company Name */}
+                <div className={styles.companyNameSmall}>
+                  <span className={styles.companyTextSmall}>
+                    <span className={styles.tradingIcon}>
+                      <i className="fa-solid fa-chart-line"></i>
+                    </span>
+                    DJIT TRADING
+                  </span>
+                </div>
+
+                {/* Trusted Badge */}
+                <div className={styles.trustedBadge}>
+                  <span className={styles.trustedText}>
+                    <span className={styles.checkIcon}>
+                      <i className="fa-solid fa-check"></i>
+                    </span>
+                    Trusted by 10,000+ Traders
+                  </span>
+                </div>
+
+                <h1 className={styles.heroTitle}>
+                  Frequently Asked{" "}
+                  <span className={styles.gradientText}>Questions</span>
+                </h1>
+                <p className={styles.heroSubtitle}>
+                  Get Answers to All Your Trading Questions
+                </p>
+                <p className={styles.description}>
+                  Find comprehensive answers to common questions about our
+                  courses, platform features, payment options, and trading
+                  community. Can't find what you're looking for? Our support
+                  team is here to help!
+                </p>
+                <div className={styles.heroButtons}>
+                  <Button
+                    as={Link}
+                    to="/courses"
+                    className={styles.primaryBtn}
+                    size="lg"
+                  >
+                    <span className={styles.btnIcon}>
+                      <i className="fa-solid fa-book-open"></i>
+                    </span>
+                    Explore Courses
+                  </Button>
+                  <Button
+                    href="#contact"
+                    variant="outline-light"
+                    className={styles.secondaryBtn}
+                    size="lg"
+                  >
+                    <span className={styles.btnIcon}>
+                      <i className="fa-solid fa-comments"></i>
+                    </span>
+                    Contact Support
+                  </Button>
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </section>
 
       {/* FAQ Categories Section - Redesigned */}
       <section className={styles.categoriesSection}>
@@ -361,7 +369,7 @@ const FAQ = () => {
                           className={styles.categoryIcon}
                           style={{ backgroundColor: category.color }}
                         >
-                          {category.icon}
+                          <i className={category.icon}></i>
                         </div>
                         <div className={styles.categoryText}>
                           <h4 className={styles.categoryTitle}>
@@ -373,7 +381,9 @@ const FAQ = () => {
                         </div>
                       </div>
                       <div className={styles.categoryRight}>
-                        <span className={styles.categoryArrow}>→</span>
+                        <span className={styles.categoryArrow}>
+                          <i className="fa-solid fa-arrow-right"></i>
+                        </span>
                       </div>
                     </div>
                     <div className={styles.categoryDivider}></div>
@@ -402,7 +412,7 @@ const FAQ = () => {
                         className={styles.categoryTitleIcon}
                         style={{ backgroundColor: category.color }}
                       >
-                        {category.icon}
+                        <i className={category.icon}></i>
                       </span>
                     </div>
                     <div className={styles.categoryTitleContent}>
@@ -443,7 +453,9 @@ const FAQ = () => {
                                   {faq.question}
                                 </span>
                                 <div className={styles.accordionArrow}>
-                                  <span className={styles.arrowIcon}>▼</span>
+                                  <span className={styles.arrowIcon}>
+                                    <i className="fa-solid fa-chevron-down"></i>
+                                  </span>
                                 </div>
                               </div>
                             </Accordion.Header>
@@ -489,7 +501,9 @@ const FAQ = () => {
           <Row>
             <Col lg={4} className="mb-4">
               <div className={styles.contactMethod}>
-                <div className={styles.contactIcon}>📧</div>
+                <div className={styles.contactIcon}>
+                  <i className="fa-solid fa-envelope"></i>
+                </div>
                 <h5>Email Support</h5>
                 <p
                   className={styles.clickableText}
@@ -510,7 +524,9 @@ const FAQ = () => {
             </Col>
             <Col lg={4} className="mb-4">
               <div className={styles.contactMethod}>
-                <div className={styles.contactIcon}>💬</div>
+                <div className={styles.contactIcon}>
+                  <i className="fa-solid fa-comments"></i>
+                </div>
                 <h5>Contact Us</h5>
                 <p>Available 24/5 Market Hours</p>
                 <small>Get instant help from our team</small>
@@ -525,7 +541,9 @@ const FAQ = () => {
             </Col>
             <Col lg={4} className="mb-4">
               <div className={styles.contactMethod}>
-                <div className={styles.contactIcon}>📞</div>
+                <div className={styles.contactIcon}>
+                  <i className="fa-solid fa-phone"></i>
+                </div>
                 <h5>Phone Support</h5>
                 <p
                   className={styles.clickableText}
@@ -561,9 +579,9 @@ const FAQ = () => {
                   Ready to Start Your Trading Journey?
                 </h2>
                 <p className={styles.ctaSubtitle}>
-                  Join 10,000+ successful traders who transformed their skills
-                  with DJIT Trading
+                  Join 10,000+ successful traders who transformed their skills with DJIT Trading
                 </p>
+
                 <div className={styles.ctaButtons}>
                   <Button
                     as={Link}
@@ -571,9 +589,12 @@ const FAQ = () => {
                     size="lg"
                     className={styles.primaryCta}
                   >
-                    <span className={styles.btnIcon}>🚀</span>
+                    <span className={styles.btnIcon}>
+                      <i className="fa-solid fa-rocket"></i>
+                    </span>
                     Explore All Courses
                   </Button>
+
                   <Button
                     as={Link}
                     to="/register"
@@ -581,7 +602,9 @@ const FAQ = () => {
                     size="lg"
                     className={styles.secondaryCta}
                   >
-                    <span className={styles.btnIcon}>📖</span>
+                    <span className={styles.btnIcon}>
+                      <i className="fa-solid fa-book-open"></i>
+                    </span>
                     Create Free Account
                   </Button>
                 </div>

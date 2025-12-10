@@ -77,7 +77,7 @@ createUploadDirs();
 // CORS configuration
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5173", "http://localhost:5173", "https://cybombadmin.cybomb.com", "https://testing.cybomb.com","https://djittrading.com", "https://www.djittrading.com"],
+    origin: ["http://localhost:3000", "http://localhost:5173", "https://cybombadmin.cybomb.com", "https://testing.cybomb.com","https://djittrading.com", "https://www.djittrading.com"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
@@ -148,6 +148,7 @@ app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/admin/courses", require("./routes/adminCourseRoutes"));
 app.use("/api/course-content", require("./routes/courseContent"));
 app.use("/api/livechat", require("./routes/liveChatRoutes"));
+app.use("/api/notifications", require("./routes/notificationRoutes"));
 
 // Health check route
 app.get("/api/health", (req, res) => {
@@ -293,7 +294,7 @@ process.on('SIGTERM', () => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5003;
 
 server.listen(PORT, () => {
   console.log(`\n🚀 Server running on port ${PORT}`);
