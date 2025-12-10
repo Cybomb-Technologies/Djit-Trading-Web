@@ -151,66 +151,91 @@ exports.login = async (req, res) => {
   }
 };
 
-// Google OAuth with authorization code
+// Google OAuth with support for both authorization code AND idToken
 exports.googleAuth = async (req, res) => {
   try {
-    const { code, redirect_uri } = req.body;
+    const { code, idToken, redirect_uri } = req.body;
 
-    console.log('Received Google authorization code:', code ? 'YES' : 'NO');
-    console.log('Redirect URI:', redirect_uri);
-
-    if (!code) {
-      return res.status(400).json({
-        success: false,
-        message: 'Google authorization code is required'
-      });
-    }
-
-    // Exchange authorization code for tokens
-  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded",
-  },
-  body: new URLSearchParams({
-    code: code,
-    client_id: process.env.GOOGLE_CLIENT_ID,
-    client_secret: process.env.GOOGLE_CLIENT_SECRET,
-    redirect_uri: redirect_uri || "postmessage",
-    grant_type: "authorization_code",
-  }),
-});
-
-
-    // First check if response is ok
-    if (!tokenResponse.ok) {
-      const errorData = await tokenResponse.json();
-      console.error('Google token exchange error:', errorData);
-      return res.status(400).json({
-        success: false,
-        message: errorData.error_description || errorData.error || 'Failed to exchange authorization code with Google'
-      });
-    }
-
-    // Only if response is ok, then parse the tokens
-    const tokens = await tokenResponse.json();
-    console.log('Google token exchange successful');
-
-    if (!tokens.id_token) {
-      return res.status(400).json({
-        success: false,
-        message: 'No ID token received from Google'
-      });
-    }
-
-    // Verify the ID token
-    const ticket = await client.verifyIdToken({
-      idToken: tokens.id_token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+    console.log('Received Google auth request:', {
+      hasCode: !!code,
+      hasIdToken: !!idToken,
+      codeLength: code ? code.length : 0,
+      idTokenLength: idToken ? idToken.length : 0,
+      redirect_uri: redirect_uri || 'postmessage'
     });
 
-    const payload = ticket.getPayload();
-    console.log('Google user payload received:', payload.email);
+    let payload;
+
+    // CASE 1: If idToken is provided directly (from mobile app)
+    if (idToken) {
+      console.log('Processing ID Token from mobile app...');
+      const ticket = await client.verifyIdToken({
+        idToken: idToken,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      payload = ticket.getPayload();
+      console.log('Mobile user payload received:', payload.email);
+    }
+    // CASE 2: If authorization code is provided (from web)
+    else if (code) {
+      console.log('Processing authorization code from web...');
+      
+      // Detect if code is actually an ID token (from mobile app sending in wrong field)
+      if (code.length > 500 && code.includes('.')) {
+        console.log('⚠️ Code looks like an ID token (mobile app), processing as ID token...');
+        const ticket = await client.verifyIdToken({
+          idToken: code,
+          audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        payload = ticket.getPayload();
+      } else {
+        // Normal authorization code flow
+        const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            code: code,
+            client_id: process.env.GOOGLE_CLIENT_ID,
+            client_secret: process.env.GOOGLE_CLIENT_SECRET,
+            redirect_uri: redirect_uri || "postmessage",
+            grant_type: "authorization_code",
+          }),
+        });
+
+        if (!tokenResponse.ok) {
+          const errorData = await tokenResponse.json();
+          console.error('Google token exchange error:', errorData);
+          return res.status(400).json({
+            success: false,
+            message: errorData.error_description || errorData.error || 'Failed to exchange authorization code with Google'
+          });
+        }
+
+        const tokens = await tokenResponse.json();
+        console.log('Google token exchange successful');
+
+        if (!tokens.id_token) {
+          return res.status(400).json({
+            success: false,
+            message: 'No ID token received from Google'
+          });
+        }
+
+        // Verify the ID token from the exchanged tokens
+        const ticket = await client.verifyIdToken({
+          idToken: tokens.id_token,
+          audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        payload = ticket.getPayload();
+      }
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: 'Either authorization code or ID token is required'
+      });
+    }
 
     if (!payload.email) {
       return res.status(400).json({
@@ -218,6 +243,8 @@ exports.googleAuth = async (req, res) => {
         message: 'No email found in Google profile'
       });
     }
+
+    console.log('Google user verified:', payload.email);
 
     // Check if user already exists by email or googleId
     let user = await User.findOne({ 
