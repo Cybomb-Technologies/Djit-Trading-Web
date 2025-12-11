@@ -23,6 +23,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import Progress from './pages/Progress';
 import ChatWidget from "./ChatWidget/ChatWidget";
 import PaymentCallback from './pages/PaymentCallback';
+import PaymentSuccess from "./pages/payment-success";
 
 // Admin Components
 import AdminRoute from "./components/admin/AdminRoute";
@@ -34,11 +35,12 @@ import UserManagement from "./pages/admin/UserManagement";
 import EnrollmentManagement from "./pages/admin/EnrollmentManagement";
 import NewsletterManagement from "./pages/admin/NewsletterManagement";
 import CouponGenerator from "./pages/admin/CouponGenerator";
-import PaymentSuccess from "./pages/payment-success";
+import Reviews from "./pages/admin/Reviews";
+import ReviewsPage from './pages/ReviewsPage'; 
+
 import "./App.css";
 
-
-// ✅ ScrollToTop function defined inside App.tsx
+// ✅ ScrollToTop function
 function ScrollToTop() {
   const { pathname } = useLocation();
 
@@ -82,8 +84,9 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/progress" element={<Progress />} />
               <Route path="/payment-success" element={<PaymentSuccess/> } />
-              
               <Route path="/payment-callback" element={<PaymentCallback />} />
+              <Route path="/reviews" element={<ReviewsPage />} />
+              
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route
@@ -100,6 +103,7 @@ function App() {
                 <Route path="enrollments" element={<EnrollmentManagement />} />
                 <Route path="newsletter" element={<NewsletterManagement />} />
                 <Route path="coupon" element={<CouponGenerator />} />
+                <Route path="reviews" element={<Reviews />} /> 
               </Route>
               
             </Routes>

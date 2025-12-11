@@ -32,12 +32,30 @@ const Home = () => {
   const [couponLoading, setCouponLoading] = useState(false);
   const [validatedCoupon, setValidatedCoupon] = useState(null);
 
+  const [reviews, setReviews] = useState([]);
+  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchFeaturedCourses();
+    fetchReviews();
   }, []);
+
+  // Add this useEffect for the rotating interval
+  useEffect(() => {
+    if (reviews.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentReviewIndex((prevIndex) => 
+          prevIndex < reviews.length - 1 ? prevIndex + 1 : 0
+        );
+      }, 10000); // 10 seconds interval
+
+      return () => clearInterval(interval);
+    }
+  }, [reviews.length]);
 
   const fetchFeaturedCourses = async () => {
     try {
@@ -58,6 +76,107 @@ const Home = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Add this function to fetch reviews
+  const fetchReviews = async () => {
+    try {
+      setReviewsLoading(true);
+      console.log('Fetching reviews from API...');
+      
+      const response = await axios.get(
+        `${API_URL}/api/reviews?limit=10&sortBy=-createdAt`
+      );
+      
+      console.log('Reviews API Response:', response.data);
+      
+      if (response.data.success && response.data.data && response.data.data.length > 0) {
+        console.log(`Loaded ${response.data.data.length} reviews`);
+        setReviews(response.data.data);
+      } else {
+        console.log('No reviews found, using fallback');
+        // Fallback to static testimonials if no reviews found
+        setReviews(getFallbackReviews());
+      }
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+      console.error("Error details:", error.response?.data || error.message);
+      
+      // Keep the static testimonials as fallback
+      setReviews(getFallbackReviews());
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
+  // Add this helper function for fallback reviews
+  const getFallbackReviews = () => {
+    return [
+      {
+        _id: "1",
+        reviewerName: "Rajesh Kumar",
+        rating: 5,
+        reviewText: "DJIT Trading completely transformed my understanding of the market. The Tamil courses made complex concepts incredibly easy to grasp and apply.",
+        courseName: "Advanced Trading Strategies",
+        createdAt: new Date().toISOString()
+      },
+      {
+        _id: "2",
+        reviewerName: "Priya Shankar",
+        rating: 5,
+        reviewText: "The community support and practical strategies helped me achieve consistent profits. Highly recommended for serious traders!",
+        courseName: "Options Trading Mastery",
+        createdAt: new Date().toISOString()
+      },
+      {
+        _id: "3",
+        reviewerName: "Vikram Patel",
+        rating: 5,
+        reviewText: "Best investment I ever made was in DJIT courses. The technical analysis module alone is worth the entire course fee.",
+        courseName: "Technical Analysis Pro",
+        createdAt: new Date().toISOString()
+      }
+    ];
+  };
+
+  // Add helper function to get initials from name
+  const getInitials = (name) => {
+    if (!name) return "DJ";
+    return name
+      .split(" ")
+      .map(word => word[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
+  // Add helper function to format date
+  const formatDate = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("en-IN", {
+        month: "short",
+        year: "numeric"
+      });
+    } catch (error) {
+      return "Recently";
+    }
+  };
+
+  // Add helper function to get stars for rating
+  const renderStars = (rating) => {
+    return (
+      <div className={styles.ratingStars}>
+        {[...Array(5)].map((_, index) => (
+          <span 
+            key={index} 
+            className={index < rating ? styles.starFilled : styles.starEmpty}
+          >
+            ★
+          </span>
+        ))}
+      </div>
+    );
   };
 
   const handleEnrollClick = (course) => {
@@ -516,8 +635,6 @@ const Home = () => {
         </Container>
       </section>
 
-      {/* Featured Courses Section - Updated to match Courses.jsx styling */}
-
       {/* Testimonials Section */}
       <section className={styles.testimonialsSection}>
         <Container>
@@ -526,57 +643,144 @@ const Home = () => {
               <div className={styles.sectionHeader}>
                 <h2 className={styles.sectionTitle}>What Our Students Say</h2>
                 <p className={styles.sectionSubtitle}>
-                  Real success stories from real traders who transformed their
-                  journey
+                  Real success stories from real traders who transformed their journey
                 </p>
               </div>
             </Col>
           </Row>
-          <Row>
-            <Col lg={4} className="mb-4">
-              <div className={styles.testimonialCard}>
-                <div className={styles.quoteIcon}>❝</div>
-                <p className={styles.testimonialText}>
-                  "DJIT Trading completely transformed my understanding of the
-                  market. The Tamil courses made complex concepts incredibly
-                  easy to grasp and apply."
-                </p>
-                <div className={styles.studentInfo}>
-                  <div className={styles.studentAvatar}>RK</div>
-                  <strong>Rajesh Kumar</strong>
-                  <span>Intraday Trader</span>
-                </div>
-              </div>
-            </Col>
-            <Col lg={4} className="mb-4">
-              <div className={styles.testimonialCard}>
-                <div className={styles.quoteIcon}>❝</div>
-                <p className={styles.testimonialText}>
-                  "The community support and practical strategies helped me
-                  achieve consistent profits. Highly recommended for serious
-                  traders!"
-                </p>
-                <div className={styles.studentInfo}>
-                  <div className={styles.studentAvatar}>PS</div>
-                  <strong>Priya Shankar</strong>
-                  <span>Options Trader</span>
-                </div>
-              </div>
-            </Col>
-            <Col lg={4} className="mb-4">
-              <div className={styles.testimonialCard}>
-                <div className={styles.quoteIcon}>❝</div>
-                <p className={styles.testimonialText}>
-                  "Best investment I ever made was in DJIT courses. The
-                  technical analysis module alone is worth the entire course
-                  fee."
-                </p>
-                <div className={styles.studentInfo}>
-                  <div className={styles.studentAvatar}>VP</div>
-                  <strong>Vikram Patel</strong>
-                  <span>Technical Analyst</span>
-                </div>
-              </div>
+          
+          {reviewsLoading ? (
+            <Row>
+              <Col className="text-center">
+                <Spinner animation="border" variant="primary" />
+                <p className="mt-2">Loading testimonials...</p>
+              </Col>
+            </Row>
+          ) : reviews.length > 0 ? (
+            <>
+              <Row>
+                <Col lg={4} className="mb-4">
+                  <div className={styles.testimonialCard}>
+                    <div className={styles.quoteIcon}>❝</div>
+                    {renderStars(reviews[currentReviewIndex]?.rating || 5)}
+                    <p className={styles.testimonialText}>
+                      "{reviews[currentReviewIndex]?.reviewText}"
+                    </p>
+                    <div className={styles.studentInfo}>
+                      <div className={styles.studentAvatar}>
+                        {getInitials(reviews[currentReviewIndex]?.reviewerName)}
+                      </div>
+                      <div>
+                        <strong>{reviews[currentReviewIndex]?.reviewerName}</strong>
+                        <span>
+                          {reviews[currentReviewIndex]?.courseName || "Student"}
+                          {reviews[currentReviewIndex]?.createdAt && (
+                            <span className={styles.reviewDate}>
+                              • {formatDate(reviews[currentReviewIndex]?.createdAt)}
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+                
+                {/* Show next 2 reviews for larger screens */}
+                <Col lg={4} className="mb-4 d-none d-lg-block">
+                  <div className={styles.testimonialCard}>
+                    <div className={styles.quoteIcon}>❝</div>
+                    {renderStars(reviews[(currentReviewIndex + 1) % reviews.length]?.rating || 5)}
+                    <p className={styles.testimonialText}>
+                      "{reviews[(currentReviewIndex + 1) % reviews.length]?.reviewText}"
+                    </p>
+                    <div className={styles.studentInfo}>
+                      <div className={styles.studentAvatar}>
+                        {getInitials(reviews[(currentReviewIndex + 1) % reviews.length]?.reviewerName)}
+                      </div>
+                      <div>
+                        <strong>{reviews[(currentReviewIndex + 1) % reviews.length]?.reviewerName}</strong>
+                        <span>
+                          {reviews[(currentReviewIndex + 1) % reviews.length]?.courseName || "Student"}
+                          {reviews[(currentReviewIndex + 1) % reviews.length]?.createdAt && (
+                            <span className={styles.reviewDate}>
+                              • {formatDate(reviews[(currentReviewIndex + 1) % reviews.length]?.createdAt)}
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+                
+                <Col lg={4} className="mb-4 d-none d-lg-block">
+                  <div className={styles.testimonialCard}>
+                    <div className={styles.quoteIcon}>❝</div>
+                    {renderStars(reviews[(currentReviewIndex + 2) % reviews.length]?.rating || 5)}
+                    <p className={styles.testimonialText}>
+                      "{reviews[(currentReviewIndex + 2) % reviews.length]?.reviewText}"
+                    </p>
+                    <div className={styles.studentInfo}>
+                      <div className={styles.studentAvatar}>
+                        {getInitials(reviews[(currentReviewIndex + 2) % reviews.length]?.reviewerName)}
+                      </div>
+                      <div>
+                        <strong>{reviews[(currentReviewIndex + 2) % reviews.length]?.reviewerName}</strong>
+                        <span>
+                          {reviews[(currentReviewIndex + 2) % reviews.length]?.courseName || "Student"}
+                          {reviews[(currentReviewIndex + 2) % reviews.length]?.createdAt && (
+                            <span className={styles.reviewDate}>
+                              • {formatDate(reviews[(currentReviewIndex + 2) % reviews.length]?.createdAt)}
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+              
+              {/* Review Navigation Dots */}
+              <Row>
+                <Col className="text-center">
+                  <div className={styles.reviewDots}>
+                    {reviews.slice(0, Math.min(5, reviews.length)).map((_, index) => (
+                      <button
+                        key={index}
+                        className={`${styles.reviewDot} ${index === currentReviewIndex ? styles.active : ""}`}
+                        onClick={() => setCurrentReviewIndex(index)}
+                        aria-label={`Go to review ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                  {/* <p className={styles.reviewCounter}>
+                    Showing {currentReviewIndex + 1} of {reviews.length} reviews
+                    <span className={styles.autoScrollIndicator}>
+                      <i className="fas fa-sync-alt ms-2"></i> Auto-scroll every 10s
+                    </span>
+                  </p> */}
+                </Col>
+              </Row>
+            </>
+          ) : (
+            <Row>
+              <Col className="text-center">
+                <p>No reviews yet. Be the first to share your experience!</p>
+              </Col>
+            </Row>
+          )}
+          
+          {/* CTA to view all reviews */}
+          <Row className="mt-4">
+            <Col className="text-center">
+              <Button
+                as={Link}
+                to="/reviews"
+                variant="outline-primary"
+                className={styles.viewAllReviewsBtn}
+              >
+                <i className="fas fa-star me-2"></i>
+                View All Reviews
+              </Button>
             </Col>
           </Row>
         </Container>

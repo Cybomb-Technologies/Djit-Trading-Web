@@ -1,0 +1,225 @@
+.reviewModal .modal-content {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  animation: modalSlideIn 0.3s ease-out;
+  max-height: 90vh; /* Limit max height */
+  display: flex;
+  flex-direction: column;
+}
+
+.reviewModal .modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
+  padding: 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  flex-shrink: 0; /* Prevent header from shrinking */
+}
+
+.reviewModal .modal-header .btn-close {
+  filter: invert(1) brightness(2);
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.reviewModal .modal-header .btn-close:hover {
+  opacity: 1;
+}
+
+.reviewModal .modal-title h4 {
+  color: white;
+  font-weight: 700;
+}
+
+.reviewModal .modal-body {
+  padding: 1.5rem;
+  overflow-y: auto; /* Enable scrolling within body */
+  flex: 1; /* Take remaining space */
+  min-height: 0; /* Allow shrinking */
+}
+
+.reviewModal .modal-footer {
+  flex-shrink: 0; /* Prevent footer from shrinking */
+  position: sticky;
+  bottom: 0;
+  background: white;
+  z-index: 1000;
+}
+
+/* Star Rating */
+.starRating {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.starButton {
+  background: none;
+  border: none;
+  padding: 4px;
+  color: #e4e5e9;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.starButton:hover {
+  transform: scale(1.15);
+  background-color: rgba(255, 193, 7, 0.1);
+}
+
+.starButton.active {
+  color: #ffc107;
+}
+
+.starButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.3);
+}
+
+.ratingText {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+/* Form Elements */
+.titleInput {
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  transition: border-color 0.2s;
+}
+
+.titleInput:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.textarea {
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  resize: vertical;
+  min-height: 150px;
+  max-height: 200px;
+  transition: border-color 0.2s;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.textarea:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.textarea.is-invalid {
+  border-color: #dc3545;
+}
+
+.textarea.is-invalid:focus {
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* Guidelines Box */
+.guidelines {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-left: 4px solid #667eea;
+}
+
+.guidelines h6 {
+  color: #495057;
+}
+
+.guidelines ul {
+  padding-left: 1rem;
+}
+
+.guidelines li {
+  margin-bottom: 0.25rem;
+  color: #6c757d;
+}
+
+/* Success Icon */
+.successIcon {
+  font-size: 4rem;
+  color: #28a745;
+  animation: successPulse 1s ease-in-out;
+}
+
+/* Animations */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes successPulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .reviewModal .modal-dialog {
+    margin: 0.5rem;
+    max-height: 85vh;
+  }
+  
+  .reviewModal .modal-body {
+    padding: 1rem;
+  }
+  
+  .starRating {
+    gap: 4px;
+  }
+  
+  .starButton svg {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .ratingText {
+    font-size: 1rem;
+  }
+  
+  .textarea {
+    min-height: 120px;
+    max-height: 180px;
+  }
+}
+
+/* Scrollbar Styling */
+.reviewModal .modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.reviewModal .modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+  margin: 5px;
+}
+
+.reviewModal .modal-body::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.reviewModal .modal-body::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
