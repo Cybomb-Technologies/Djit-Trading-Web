@@ -25,11 +25,13 @@ const AdminLayout = () => {
 
   const menuItems = [
     { path: '/admin', icon: '📊', label: 'Dashboard', badge: null },
-    { path: '/admin/courses', icon: '📚', label: 'Courses', badge: '12' },
-    { path: '/admin/users', icon: '👥', label: 'Users', badge: '3' },
-    { path: '/admin/enrollments', icon: '🎓', label: 'Enrollments', badge: '45' },
+    { path: '/admin/courses', icon: '📚', label: 'Courses', badge: null },
+    { path: '/admin/users', icon: '👥', label: 'Users', badge: null },
+    { path: '/admin/enrollments', icon: '🎓', label: 'Enrollments', badge: null },
     { path: '/admin/newsletter', icon: '📧', label: 'Newsletter', badge: null },
     { path: '/admin/coupon', icon: '📧', label: 'Coupon Generator', badge: null },
+    { path: '/admin/reviews', icon: '⭐', label: 'User Reviews', badge: null },
+    
   ]
 
   return (

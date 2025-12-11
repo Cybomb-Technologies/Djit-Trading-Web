@@ -1,22 +1,28 @@
-import React, { useState, useEffect } from 'react'
-import { Container, Row, Col, Card, Badge, Table, Form, Button, Spinner, Alert, Image } from 'react-bootstrap'
-import { useAuth } from '../context/AuthContext'
-import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import styles from './Traders.module.css'
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Card, Badge, Table, Form, Button, Spinner, Alert, Image } from 'react-bootstrap';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import ReviewModal from './ReviewModal';
+import styles from './Traders.module.css';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 const Traders = () => {
-  const { user, isAuthenticated } = useAuth()
-  const navigate = useNavigate()
-  const [profile, setProfile] = useState(null)
-  const [enrollments, setEnrollments] = useState([])
-  const [isEditing, setIsEditing] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [uploading, setUploading] = useState(false)
-  const [imageError, setImageError] = useState(false) // ADD THIS LINE
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  
+  const [profile, setProfile] = useState(null);
+  const [enrollments, setEnrollments] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  
+  // Review Modal State
+  const [showReviewModal, setShowReviewModal] = useState(false);
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -55,54 +61,50 @@ const Traders = () => {
     lastActivity: '',
     lastActivityDate: '',
     labels: []
-  })
+  });
 
   // Get user ID from auth context
   const getUserId = () => {
-    if (!user) return null
-    return user.id || user._id || user.userId || user.userID
-  }
+    if (!user) return null;
+    return user.id || user._id || user.userId || user.userID;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       if (!isAuthenticated) {
-        setLoading(false)
-        return
+        setLoading(false);
+        return;
       }
 
       try {
-        setLoading(true)
-        setError('')
-        const token = localStorage.getItem('token')
+        setLoading(true);
+        setError('');
+        const token = localStorage.getItem('token');
         
         if (!token) {
-          throw new Error('No authentication token found')
+          throw new Error('No authentication token found');
         }
 
         const config = {
           headers: { Authorization: `Bearer ${token}` }
-        }
+        };
 
         // Try to get current user data without needing ID
         const [profileResponse, enrollmentsResponse] = await Promise.all([
-          axios.get(`
-${API_URL}/api/users/me`, config).catch(() => 
+          axios.get(`${API_URL}/api/users/me`, config).catch(() => 
             // Fallback: try with user ID if /me endpoint doesn't exist
-            axios.get(`
-${API_URL}/api/users/${getUserId()}`, config)
+            axios.get(`${API_URL}/api/users/${getUserId()}`, config)
           ),
-          axios.get(`
-${API_URL}/api/enrollments/user/${getUserId()}`, config).catch(() =>
+          axios.get(`${API_URL}/api/enrollments/user/${getUserId()}`, config).catch(() =>
             // Fallback: try with user ID if /my-courses endpoint doesn't exist
-            axios.get(`
-${API_URL}/api/enrollments/user/${getUserId()}`, config)
+            axios.get(`${API_URL}/api/enrollments/user/${getUserId()}`, config)
           )
-        ])
+        ]);
 
-        setProfile(profileResponse.data.user || profileResponse.data)
+        setProfile(profileResponse.data.user || profileResponse.data);
         
         // Set form data if profile exists
-        const userProfile = profileResponse.data.user || profileResponse.data
+        const userProfile = profileResponse.data.user || profileResponse.data;
         if (userProfile.profile) {
           setFormData({
             firstName: userProfile.profile.firstName || '',
@@ -124,7 +126,7 @@ ${API_URL}/api/enrollments/user/${getUserId()}`, config)
             tradingSegment: userProfile.profile.tradingSegment || '',
             discordId: userProfile.profile.discordId || '',
             profilePicture: userProfile.profile.profilePicture || {
-               url: '', filename: ''
+              url: '', filename: ''
             },
             emailSubscriberStatus: userProfile.profile.emailSubscriberStatus || '',
             smsSubscriberStatus: userProfile.profile.smsSubscriberStatus || '',
@@ -134,103 +136,102 @@ ${API_URL}/api/enrollments/user/${getUserId()}`, config)
             lastActivityDate: userProfile.profile.lastActivityDate ? 
               new Date(userProfile.profile.lastActivityDate).toISOString().split('T')[0] : '',
             labels: userProfile.profile.labels || []
-          })
+          });
         }
 
         // Process enrollments data
-        const enrollmentsData = enrollmentsResponse.data.enrollments || enrollmentsResponse.data || []
-        setEnrollments(enrollmentsData)
+        const enrollmentsData = enrollmentsResponse.data.enrollments || enrollmentsResponse.data || [];
+        setEnrollments(enrollmentsData);
 
       } catch (error) {
-        console.error('Error fetching user data:', error)
+        console.error('Error fetching user data:', error);
         const errorMessage = error.response?.data?.message || 
           error.message || 
-          'Failed to load user data. Please try again.'
-        setError(errorMessage)
+          'Failed to load user data. Please try again.';
+        setError(errorMessage);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchData()
-  }, [isAuthenticated, user])
+    fetchData();
+  }, [isAuthenticated, user]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     
     // Handle nested objects
     if (name.startsWith('address.')) {
-      const addressField = name.split('.')[1]
+      const addressField = name.split('.')[1];
       setFormData(prev => ({
         ...prev,
         address: {
           ...prev.address,
           [addressField]: value
         }
-      }))
+      }));
     } else if (name.startsWith('address2.')) {
-      const addressField = name.split('.')[1]
+      const addressField = name.split('.')[1];
       setFormData(prev => ({
         ...prev,
         address2: {
           ...prev.address2,
           [addressField]: value
         }
-      }))
+      }));
     } else if (name.startsWith('address3.')) {
-      const addressField = name.split('.')[1]
+      const addressField = name.split('.')[1];
       setFormData(prev => ({
         ...prev,
         address3: {
           ...prev.address3,
           [addressField]: value
         }
-      }))
+      }));
     } else {
       setFormData(prev => ({
         ...prev,
         [name]: value
-      }))
+      }));
     }
-  }
+  };
 
   const handleFileUpload = async (e) => {
-    const file = e.target.files[0]
-    if (!file) return
+    const file = e.target.files[0];
+    if (!file) return;
 
     // Check file type and size
     if (!file.type.startsWith('image/')) {
-      alert('Please select an image file (JPG, PNG, etc.)')
-      return
+      alert('Please select an image file (JPG, PNG, etc.)');
+      return;
     }
 
     if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      alert('File size should be less than 5MB')
-      return
+      alert('File size should be less than 5MB');
+      return;
     }
 
     try {
-      setUploading(true)
-      setImageError(false)
+      setUploading(true);
+      setImageError(false);
       // Create form data for file upload
-      const uploadFormData = new FormData()
-      uploadFormData.append('profilePicture', file)
+      const uploadFormData = new FormData();
+      uploadFormData.append('profilePicture', file);
 
-      const token = localStorage.getItem('token')
-      const response = await axios.post(`
-${API_URL}/api/users/upload-profile-picture`, uploadFormData, {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`${API_URL}/api/users/upload-profile-picture`, uploadFormData, {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
         }
-      })
+      });
 
       if (response.data.success) {
         // Update form data with the uploaded image URL
         setFormData(prev => ({
           ...prev,
           profilePicture: response.data.profilePicture
-        }))
+        }));
         
         // Update profile state immediately for preview
         setProfile(prev => ({
@@ -239,92 +240,101 @@ ${API_URL}/api/users/upload-profile-picture`, uploadFormData, {
             ...prev.profile,
             profilePicture: response.data.profilePicture
           }
-        }))
+        }));
         
-        alert('Profile picture uploaded successfully!')
+        alert('Profile picture uploaded successfully!');
       }
     } catch (error) {
-      console.error('Error uploading profile picture:', error)
+      console.error('Error uploading profile picture:', error);
       const errorMessage = error.response?.data?.message || 
-        'Failed to upload profile picture. Please try again.'
-      alert(errorMessage)
+        'Failed to upload profile picture. Please try again.';
+      alert(errorMessage);
     } finally {
-      setUploading(false)
+      setUploading(false);
     }
-  }
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      setLoading(true)
-      const token = localStorage.getItem('token')
+      setLoading(true);
+      const token = localStorage.getItem('token');
       
-      const response = await axios.put(`
-${API_URL}/api/users/profile`, formData, {
+      const response = await axios.put(`${API_URL}/api/users/profile`, formData, {
         headers: { Authorization: `Bearer ${token}` }
-      })
+      });
       
       if (response.data.success) {
         // Update local profile state with the returned user data
-        setProfile(response.data.user)
-        setIsEditing(false)
+        setProfile(response.data.user);
+        setIsEditing(false);
         
         // Show success message
-        alert('Profile updated successfully!')
+        alert('Profile updated successfully!');
       }
       
     } catch (error) {
-      console.error('Error updating profile:', error)
+      console.error('Error updating profile:', error);
       const errorMessage = error.response?.data?.message || 
-        'Failed to update profile. Please try again.'
-      alert(errorMessage)
+        'Failed to update profile. Please try again.';
+      alert(errorMessage);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleContinueLearning = (courseId) => {
     if (!courseId) {
-      alert('Course not found. Please try again.')
-      return
+      alert('Course not found. Please try again.');
+      return;
     }
-    navigate(`/learning/${courseId}`)
-  }
+    navigate(`/learning/${courseId}`);
+  };
 
   const handleStartLearning = (courseId) => {
     if (!courseId) {
-      alert('Course not found. Please try again.')
-      return
+      alert('Course not found. Please try again.');
+      return;
     }
-    navigate(`/learning/${courseId}`)
-  }
+    navigate(`/learning/${courseId}`);
+  };
 
   const handleBrowseCourses = () => {
-    navigate('/courses')
-  }
+    navigate('/courses');
+  };
+
+  // Open Review Modal
+  const handleOpenReviewModal = () => {
+    setShowReviewModal(true);
+  };
+
+  // Close Review Modal
+  const handleCloseReviewModal = () => {
+    setShowReviewModal(false);
+  };
 
   const getBadgeVariant = (badge) => {
     switch (badge) {
-      case 'Beginner': return 'success'
-      case 'Intermediate': return 'warning'
-      case 'Advanced': return 'danger'
-      case 'Pro': return 'primary'
-      default: return 'secondary'
+      case 'Beginner': return 'success';
+      case 'Intermediate': return 'warning';
+      case 'Advanced': return 'danger';
+      case 'Pro': return 'primary';
+      default: return 'secondary';
     }
-  }
+  };
 
   const getProgressVariant = (progress) => {
-    if (progress === 100) return 'success'
-    if (progress >= 50) return 'primary'
-    if (progress > 0) return 'warning'
-    return 'secondary'
-  }
+    if (progress === 100) return 'success';
+    if (progress >= 50) return 'primary';
+    if (progress > 0) return 'warning';
+    return 'secondary';
+  };
 
   const getProgressText = (progress) => {
-    if (progress === 0) return 'Not Started'
-    if (progress === 100) return 'Completed'
-    return `In Progress (${progress}%)`
-  }
+    if (progress === 0) return 'Not Started';
+    if (progress === 100) return 'Completed';
+    return `In Progress (${progress}%)`;
+  };
 
   const getCourseAction = (enrollment) => {
     if (enrollment.progress === 100) {
@@ -332,24 +342,24 @@ ${API_URL}/api/users/profile`, formData, {
         variant: "outline-success",
         text: 'Review',
         handler: () => handleContinueLearning(enrollment.course?._id || enrollment.course)
-      }
+      };
     } else if (enrollment.progress > 0) {
       return {
         variant: "primary",
         text: 'Continue',
         handler: () => handleContinueLearning(enrollment.course?._id || enrollment.course)
-      }
+      };
     } else {
       return {
         variant: "primary",
         text: 'Start Learning',
         handler: () => handleStartLearning(enrollment.course?._id || enrollment.course)
-      }
+      };
     }
-  }
+  };
 
   // Get profile picture URL or return null
-const getProfilePicture = () => {
+  const getProfilePicture = () => {
     if (profile?.profile?.profilePicture?.url) {
       let imageUrl = profile.profile.profilePicture.url;
       
@@ -362,24 +372,26 @@ const getProfilePicture = () => {
       return imageUrl;
     }
     return null;
-  }
+  };
+
   // Handle image load error
   const handleImageError = () => {
     console.error('Profile image failed to load');
     setImageError(true);
-  }
+  };
 
   // Handle image load success
   const handleImageLoad = () => {
     setImageError(false);
-  }
+  };
+
   // Get initials for avatar fallback
   const getInitials = () => {
     if (profile?.profile?.firstName && profile?.profile?.lastName) {
-      return `${profile.profile.firstName.charAt(0)}${profile.profile.lastName.charAt(0)}`.toUpperCase()
+      return `${profile.profile.firstName.charAt(0)}${profile.profile.lastName.charAt(0)}`.toUpperCase();
     }
-    return user?.username?.charAt(0).toUpperCase() || 'U'
-  }
+    return user?.username?.charAt(0).toUpperCase() || 'U';
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -387,8 +399,8 @@ const getProfilePicture = () => {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
-    })
-  }
+    });
+  };
 
   if (loading) {
     return (
@@ -400,7 +412,7 @@ const getProfilePicture = () => {
           <p className="mt-3">Loading your profile...</p>
         </div>
       </Container>
-    )
+    );
   }
 
   if (!isAuthenticated) {
@@ -414,7 +426,7 @@ const getProfilePicture = () => {
           </Button>
         </div>
       </Container>
-    )
+    );
   }
 
   if (error) {
@@ -433,16 +445,16 @@ const getProfilePicture = () => {
           </div>
         </Alert>
       </Container>
-    )
+    );
   }
 
   const inProgressEnrollments = enrollments.filter(
     enrollment => enrollment.progress > 0 && enrollment.progress < 100
-  )
+  );
 
   const completedEnrollments = enrollments.filter(
     enrollment => enrollment.progress === 100 || enrollment.completed
-  )
+  );
 
   return (
     <div className={styles.tradersPage}>
@@ -453,24 +465,24 @@ const getProfilePicture = () => {
             <Card className="shadow-sm">
               <Card.Body className="text-center">
                 <div className="position-relative d-inline-block">
-                  {getProfilePicture() && !imageError  ? (
-  <Image
-    src={getProfilePicture()}
-    roundedCircle
-    className="mb-3"
-    style={{width: '80px', height: '80px', objectFit: 'cover'}}
-    alt="Profile"
-     onError={handleImageError}
-    onLoad={handleImageLoad}
-  />
-) : (
-  <div 
-    className={`${styles.avatar} bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3`} 
-    style={{width: '80px', height: '80px', fontSize: '2rem'}}
-  >
-    {getInitials()}
-  </div>
-)}
+                  {getProfilePicture() && !imageError ? (
+                    <Image
+                      src={getProfilePicture()}
+                      roundedCircle
+                      className="mb-3"
+                      style={{width: '80px', height: '80px', objectFit: 'cover'}}
+                      alt="Profile"
+                      onError={handleImageError}
+                      onLoad={handleImageLoad}
+                    />
+                  ) : (
+                    <div 
+                      className={`${styles.avatar} bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3`} 
+                      style={{width: '80px', height: '80px', fontSize: '2rem'}}
+                    >
+                      {getInitials()}
+                    </div>
+                  )}
                   {isEditing && (
                     <div className="position-absolute bottom-0 end-0">
                       <Form.Group controlId="formProfilePicture">
@@ -543,15 +555,24 @@ const getProfilePicture = () => {
                     variant="outline-primary" 
                     onClick={handleBrowseCourses}
                   >
+                    <i className="fas fa-book me-2"></i>
                     Browse Courses
                   </Button>
                   <Button 
                     variant="outline-success" 
                     onClick={() => navigate('/progress')}
                   >
+                    <i className="fas fa-chart-line me-2"></i>
                     My Progress
                   </Button>
-                  
+                  <Button 
+                    variant="outline-info" 
+                    onClick={handleOpenReviewModal}
+                    className="d-flex align-items-center justify-content-center gap-2"
+                  >
+                    <i className="fas fa-star"></i>
+                    Write a Review
+                  </Button>
                 </div>
               </Card.Body>
             </Card>
@@ -564,7 +585,7 @@ const getProfilePicture = () => {
                 </Card.Header>
                 <Card.Body>
                   {inProgressEnrollments.slice(0, 3).map(enrollment => {
-                    const courseAction = getCourseAction(enrollment)
+                    const courseAction = getCourseAction(enrollment);
                     return (
                       <div key={enrollment._id} className="d-flex align-items-center mb-3 pb-3 border-bottom">
                         <div className="flex-grow-1">
@@ -590,11 +611,10 @@ const getProfilePicture = () => {
                           {courseAction.text}
                         </Button>
                       </div>
-                    )
+                    );
                   })}
                 </Card.Body>
               </Card>
-              
             )}
           </Col>
 
@@ -608,7 +628,17 @@ const getProfilePicture = () => {
                   size="sm"
                   onClick={() => setIsEditing(!isEditing)}
                 >
-                  {isEditing ? 'Cancel' : 'Edit Profile'}
+                  {isEditing ? (
+                    <>
+                      <i className="fas fa-times me-1"></i>
+                      Cancel
+                    </>
+                  ) : (
+                    <>
+                      <i className="fas fa-edit me-1"></i>
+                      Edit Profile
+                    </>
+                  )}
                 </Button>
               </Card.Header>
               <Card.Body>
@@ -1045,7 +1075,12 @@ const getProfilePicture = () => {
 
                     <div className="d-flex gap-2">
                       <Button type="submit" variant="primary" disabled={loading || uploading}>
-                        {loading ? 'Saving...' : 'Save Changes'}
+                        {loading ? (
+                          <>
+                            <Spinner animation="border" size="sm" className="me-2" />
+                            Saving...
+                          </>
+                        ) : 'Save Changes'}
                       </Button>
                       <Button 
                         type="button" 
@@ -1071,9 +1106,9 @@ const getProfilePicture = () => {
                               className="me-4"
                               alt="Profile"
                               onError={(e) => {
-                        console.log('Image failed to load, showing initials');
-                        e.target.style.display = 'none';
-                      }}
+                                console.log('Image failed to load, showing initials');
+                                e.target.style.display = 'none';
+                              }}
                             />
                           ) : (
                             <div 
@@ -1302,7 +1337,7 @@ const getProfilePicture = () => {
                     </thead>
                     <tbody>
                       {enrollments.map(enrollment => {
-                        const courseAction = getCourseAction(enrollment)
+                        const courseAction = getCourseAction(enrollment);
                         return (
                           <tr key={enrollment._id}>
                             <td>
@@ -1339,7 +1374,7 @@ const getProfilePicture = () => {
                               </Button>
                             </td>
                           </tr>
-                        )
+                        );
                       })}
                     </tbody>
                   </Table>
@@ -1356,8 +1391,16 @@ const getProfilePicture = () => {
           </Col>
         </Row>
       </Container>
-    </div>
-  )
-}
 
-export default Traders
+      {/* Review Modal */}
+      <ReviewModal
+        show={showReviewModal}
+        onHide={handleCloseReviewModal}
+        user={user}
+        profile={profile}
+      />
+    </div>
+  );
+};
+
+export default Traders;

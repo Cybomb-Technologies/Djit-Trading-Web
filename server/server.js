@@ -131,7 +131,8 @@ require("./models/Course");
 require("./models/CourseContent");
 require("./models/Enrollment");
 require("./models/Progress");
-require("./models/LiveChat"); // Make sure LiveChat model is loaded
+require("./models/LiveChat"); 
+require("./models/Review"); 
 
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
@@ -149,6 +150,7 @@ app.use("/api/admin/courses", require("./routes/adminCourseRoutes"));
 app.use("/api/course-content", require("./routes/courseContent"));
 app.use("/api/livechat", require("./routes/liveChatRoutes"));
 app.use("/api/notifications", require("./routes/notificationRoutes"));
+app.use("/api/reviews", require("./routes/reviewRoutes")); 
 
 // Health check route
 app.get("/api/health", (req, res) => {

@@ -232,7 +232,7 @@ router.post('/admins', authMiddleware, async (req, res) => {
       email,
       password,
       role: 'admin',
-      isActive: true
+      isActive: true 
     });
 
     res.status(201).json({

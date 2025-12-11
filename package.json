@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.1.0",
     "axios": "^1.5.0",
     "bootstrap": "^5.3.1",
     "cashfree-pg": "^5.1.0",
@@ -18,6 +19,7 @@
     "lucide-react": "^0.545.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.8.0",
+    "react-bootstrap-icons": "^1.11.6",
     "react-dom": "^18.2.0",
     "react-player": "^3.3.3",
     "react-router-dom": "^6.15.0",
