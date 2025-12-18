@@ -48,10 +48,10 @@ const Home = () => {
   useEffect(() => {
     if (reviews.length > 0) {
       const interval = setInterval(() => {
-        setCurrentReviewIndex((prevIndex) => 
+        setCurrentReviewIndex((prevIndex) =>
           prevIndex < reviews.length - 1 ? prevIndex + 1 : 0
         );
-      }, 10000); // 10 seconds interval
+      }, 5000); // 5 seconds interval
 
       return () => clearInterval(interval);
     }
@@ -83,13 +83,13 @@ const Home = () => {
     try {
       setReviewsLoading(true);
       console.log('Fetching reviews from API...');
-      
+
       const response = await axios.get(
         `${API_URL}/api/reviews?limit=10&sortBy=-createdAt`
       );
-      
+
       console.log('Reviews API Response:', response.data);
-      
+
       if (response.data.success && response.data.data && response.data.data.length > 0) {
         console.log(`Loaded ${response.data.data.length} reviews`);
         setReviews(response.data.data);
@@ -101,7 +101,7 @@ const Home = () => {
     } catch (error) {
       console.error("Error fetching reviews:", error);
       console.error("Error details:", error.response?.data || error.message);
-      
+
       // Keep the static testimonials as fallback
       setReviews(getFallbackReviews());
     } finally {
@@ -168,8 +168,8 @@ const Home = () => {
     return (
       <div className={styles.ratingStars}>
         {[...Array(5)].map((_, index) => (
-          <span 
-            key={index} 
+          <span
+            key={index}
             className={index < rating ? styles.starFilled : styles.starEmpty}
           >
             ★
@@ -417,28 +417,45 @@ const Home = () => {
     <div className={styles.homePage}>
       {/* Hero Section with Trading Background */}
       <section className={styles.heroSection}>
-        <div className={styles.heroBackground}>
-          <div className={styles.heroOverlay}></div>
-        </div>
+        {/* Video Background */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className={styles.heroVideo}
+          onEnded={(e) => {
+            e.target.currentTime = 0;
+            e.target.play();
+          }}
+        >
+          <source
+            src="https://res.cloudinary.com/dcfjt8shw/video/upload/hq0atsss2mkigtlwlp6d.mp4"
+            type="video/mp4"
+          />
+          Your browser does not support the video tag.
+        </video>
+
+        {/* Dark Overlay for Content Readability */}
+        <div className={styles.heroOverlay}></div>
+
         <Container>
           <Row className="justify-content-center text-center">
             <Col lg={10}>
               <div className={styles.heroContent}>
-                {/* Small Company Name */}
+                {/* Small Company Name
                 <div className={styles.companyNameSmall}>
                   <span className={styles.companyTextSmall}>
-                    <span className={styles.tradingIcon}>📈</span>
                     DJIT TRADING
                   </span>
-                </div>
+                </div> */}
 
                 {/* Trusted Badge */}
-                <div className={styles.trustedBadge}>
+                {/* <div className={styles.trustedBadge}>
                   <span className={styles.trustedText}>
-                    <span className={styles.checkIcon}>✓</span>
                     Trusted by 10,000+ Professional Traders
                   </span>
-                </div>
+                </div> */}
 
                 {/* Terminal Text Animation as Main Heading */}
                 <div className={styles.terminalHeading}>
@@ -449,17 +466,17 @@ const Home = () => {
                   </div>
                 </div>
 
-                <p className={styles.heroSubtitle}>
+                <p className={styles.heroSubtitle} style={{ color: "white", paddingTop: "40px", fontWeight: "bold", fontSize: "24px" }}>
                   Professional Trading Platform for Modern Investors
                 </p>
 
-                <div className={styles.taglineContainer}>
+                {/* <div className={styles.taglineContainer}>
                   <p className={styles.tagline}>
                     Advanced Tools • Real-Time Data • Expert Guidance
                   </p>
-                </div>
+                </div> */}
 
-                <p className={styles.description}>
+                <p className={styles.description} style={{ color: "white", padding: "40px" }}>
                   Access cutting-edge trading technology with AI-powered
                   analytics, real-time market insights, and professional-grade
                   charting tools. Learn trading strategies in Tamil with
@@ -473,7 +490,6 @@ const Home = () => {
                     className={styles.primaryBtn}
                     size="lg"
                   >
-                    <span className={styles.btnIcon}>🚀</span>
                     Start Trading
                   </Button>
                   <Button
@@ -483,7 +499,6 @@ const Home = () => {
                     className={styles.secondaryBtn}
                     size="lg"
                   >
-                    <span className={styles.btnIcon}>📊</span>
                     View Courses
                   </Button>
                   <Button
@@ -492,43 +507,37 @@ const Home = () => {
                     className={styles.tertiaryBtn}
                     size="lg"
                   >
-                    <span className={styles.btnIcon}>🎯</span>
                     Free Demo
                   </Button>
-                </div>
-
-                <div className={styles.heroStats}>
-                  <div className={styles.stat}>
-                    {/* <div className={styles.statIcon}>💹</div> */}
-                    <strong>10K+</strong>
-                    <span>Active Traders</span>
-                  </div>
-                  <div className={styles.stat}>
-                    {/* <div className={styles.statIcon}>📈</div> */}
-                    <strong>95%</strong>
-                    <span>Success Rate</span>
-                  </div>
-                  <div className={styles.stat}>
-                    {/* <div className={styles.statIcon}>⚡</div> */}
-                    <strong>50ms</strong>
-                    <span>Execution Speed</span>
-                  </div>
-                  <div className={styles.stat}>
-                    {/* <div className={styles.statIcon}>🌍</div> */}
-                    <strong>24/5</strong>
-                    <span>Global Markets</span>
-                  </div>
                 </div>
               </div>
             </Col>
           </Row>
         </Container>
+      </section>
 
-        {/* Animated Elements */}
-        <div className={styles.floatingElement1}></div>
-        <div className={styles.floatingElement2}></div>
-        <div className={styles.floatingElement3}></div>
-        <div className={styles.gridOverlay}></div>
+      {/* Stats Section with Beige Background */}
+      <section className={styles.statsSection}>
+        <Container>
+          <div className={styles.heroStats}>
+            <div className={styles.stat}>
+              <strong>10K+</strong>
+              <span>Active Traders</span>
+            </div>
+            <div className={styles.stat}>
+              <strong>95%</strong>
+              <span>Success Rate</span>
+            </div>
+            <div className={styles.stat}>
+              <strong>50ms</strong>
+              <span>Execution Speed</span>
+            </div>
+            <div className={styles.stat}>
+              <strong>24/5</strong>
+              <span>Global Markets</span>
+            </div>
+          </div>
+        </Container>
       </section>
 
       {/* Why Choose DJIT Trading Section */}
@@ -546,88 +555,61 @@ const Home = () => {
               </div>
             </Col>
           </Row>
-          <Row>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.featureCard}>
-                <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>
-                    <i className="fa-solid fa-book"></i>
-                  </div>
-                </div>
+          <Row className="g-4">
+            {/* Row 1 */}
+            <Col lg={4} md={6}>
+              <div className={`${styles.featureCard} ${styles.featureCardOrange}`}>
+                <i className="fa-solid fa-book"></i>
                 <h5>Comprehensive Courses</h5>
                 <p>
-                  From basics to advanced strategies, learn everything about
-                  trading in Tamil with structured curriculum.
+                  From basics to advanced strategies, learn everything about trading in Tamil with structured curriculum.
                 </p>
               </div>
             </Col>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.featureCard}>
-                <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>
-                    <i className="fa-solid fa-users"></i>
-                  </div>
-                </div>
+            <Col lg={4} md={6}>
+              <div className={`${styles.featureCard} ${styles.featureCardBlue}`}>
+                <i className="fa-solid fa-users"></i>
                 <h5>Community Driven</h5>
                 <p>
-                  Connect with fellow traders, share ideas, and learn from
-                  experiences in our active community.
+                  Connect with fellow traders, share ideas, and learn from experiences in our active community.
                 </p>
               </div>
             </Col>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.featureCard}>
-                <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>
-                    <i className="fa-solid fa-screwdriver-wrench"></i>
-                  </div>
-                </div>
+            <Col lg={4} md={6}>
+              <div className={`${styles.featureCard} ${styles.featureCardOrange}`}>
+                <i className="fa-solid fa-screwdriver-wrench"></i>
                 <h5>Financial Tools</h5>
                 <p>
-                  Access advanced FG, SIP, and SWP calculators for better
-                  financial planning and analysis.
+                  Access advanced FG, SIP, and SWP calculators for better financial planning and analysis.
                 </p>
               </div>
             </Col>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.featureCard}>
-                <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>
-                    <i className="fa-solid fa-mobile-screen-button"></i>
-                  </div>
-                </div>
+
+            {/* Row 2 */}
+            <Col lg={4} md={6}>
+              <div className={`${styles.featureCard} ${styles.featureCardBlue}`}>
+                <i className="fa-solid fa-mobile-screen-button"></i>
                 <h5>Mobile Friendly</h5>
                 <p>
-                  Learn anytime, anywhere with our fully responsive and
-                  mobile-optimized trading platform.
+                  Learn anytime, anywhere with our fully responsive and mobile-optimized trading platform.
                 </p>
               </div>
             </Col>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.featureCard}>
-                <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>
-                    <i className="fa-solid fa-bullseye"></i>
-                  </div>
-                </div>
+            <Col lg={4} md={6}>
+              <div className={`${styles.featureCard} ${styles.featureCardOrange}`}>
+                <i className="fa-solid fa-bullseye"></i>
                 <h5>Practical Strategies</h5>
                 <p>
-                  Real-world trading strategies specifically designed for Indian
-                  market conditions.
+                  Real-world trading strategies specifically designed for Indian market conditions.
                 </p>
               </div>
             </Col>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.featureCard}>
-                <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>
-                    <i className="fa-solid fa-arrows-rotate"></i>
-                  </div>
-                </div>
+            <Col lg={4} md={6}>
+              <div className={`${styles.featureCard} ${styles.featureCardBlue}`}>
+                <i className="fa-solid fa-headset"></i>
                 <h5>24/5 Support</h5>
                 <p>
-                  Get instant help when you need it with our dedicated support
-                  team during market hours.
+                  Get instant help when you need it with our dedicated support team during market hours.
                 </p>
               </div>
             </Col>
@@ -648,7 +630,7 @@ const Home = () => {
               </div>
             </Col>
           </Row>
-          
+
           {reviewsLoading ? (
             <Row>
               <Col className="text-center">
@@ -657,110 +639,80 @@ const Home = () => {
               </Col>
             </Row>
           ) : reviews.length > 0 ? (
-            <>
-              <Row>
-                <Col lg={4} className="mb-4">
-                  <div className={styles.testimonialCard}>
-                    <div className={styles.quoteIcon}>❝</div>
-                    {renderStars(reviews[currentReviewIndex]?.rating || 5)}
-                    <p className={styles.testimonialText}>
-                      "{reviews[currentReviewIndex]?.reviewText}"
-                    </p>
-                    <div className={styles.studentInfo}>
-                      <div className={styles.studentAvatar}>
-                        {getInitials(reviews[currentReviewIndex]?.reviewerName)}
+            <Row className="justify-content-center g-4">
+              {/* Display 3 reviews starting from currentReviewIndex */}
+              {[0, 1, 2].map((offset) => {
+                const index = (currentReviewIndex + offset) % reviews.length;
+                const review = reviews[index];
+                return (
+                  <Col key={index} lg={4} md={6}>
+                    <div className={styles.testimonialWrapper}>
+                      {/* Blue Shadow Layer (Static) */}
+                      <div className={styles.blueShadowLayer}>
+                        <img
+                          src="/src/assets/testimonial_svg/Rectangle 4811.svg"
+                          alt=""
+                          className={styles.blueShadowSvg}
+                        />
                       </div>
-                      <div>
-                        <strong>{reviews[currentReviewIndex]?.reviewerName}</strong>
-                        <span>
-                          {reviews[currentReviewIndex]?.courseName || "Student"}
-                          {reviews[currentReviewIndex]?.createdAt && (
-                            <span className={styles.reviewDate}>
-                              • {formatDate(reviews[currentReviewIndex]?.createdAt)}
-                            </span>
+
+                      {/* Orange Card Layer (Moves on hover) */}
+                      <div className={styles.orangeCardLayer}>
+                        <img
+                          src="/src/assets/testimonial_svg/Rectangle 4812.svg"
+                          alt=""
+                          className={styles.orangeCardSvg}
+                        />
+
+                        {/* Quotation Marks */}
+                        <img
+                          src="/src/assets/testimonial_svg/❝.svg"
+                          alt=""
+                          className={styles.quoteOpenSvg}
+                        />
+                        <img
+                          src="/src/assets/testimonial_svg/❝-1.svg"
+                          alt=""
+                          className={styles.quoteCloseSvg}
+                        />
+
+                        {/* Default Content - Review text + Name */}
+                        <div className={styles.defaultContent}>
+                          <p className={styles.testimonialText}>
+                            {review.reviewText}
+                          </p>
+                          <div className={styles.reviewerNameDefault}>
+                            — {review.reviewerName}
+                          </div>
+                        </div>
+
+                        {/* Hover Content - Full Details */}
+                        <div className={styles.hoverContent}>
+                          <div className={styles.reviewerName}>
+                            {review.reviewerName}
+                          </div>
+                          {review.courseName && (
+                            <div className={styles.courseName}>
+                              {review.courseName}
+                            </div>
                           )}
-                        </span>
+                          {review.rating && (
+                            <div className={styles.rating}>
+                              {renderStars(review.rating)}
+                            </div>
+                          )}
+                          {review.createdAt && (
+                            <div className={styles.reviewDate}>
+                              {formatDate(review.createdAt)}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Col>
-                
-                {/* Show next 2 reviews for larger screens */}
-                <Col lg={4} className="mb-4 d-none d-lg-block">
-                  <div className={styles.testimonialCard}>
-                    <div className={styles.quoteIcon}>❝</div>
-                    {renderStars(reviews[(currentReviewIndex + 1) % reviews.length]?.rating || 5)}
-                    <p className={styles.testimonialText}>
-                      "{reviews[(currentReviewIndex + 1) % reviews.length]?.reviewText}"
-                    </p>
-                    <div className={styles.studentInfo}>
-                      <div className={styles.studentAvatar}>
-                        {getInitials(reviews[(currentReviewIndex + 1) % reviews.length]?.reviewerName)}
-                      </div>
-                      <div>
-                        <strong>{reviews[(currentReviewIndex + 1) % reviews.length]?.reviewerName}</strong>
-                        <span>
-                          {reviews[(currentReviewIndex + 1) % reviews.length]?.courseName || "Student"}
-                          {reviews[(currentReviewIndex + 1) % reviews.length]?.createdAt && (
-                            <span className={styles.reviewDate}>
-                              • {formatDate(reviews[(currentReviewIndex + 1) % reviews.length]?.createdAt)}
-                            </span>
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Col>
-                
-                <Col lg={4} className="mb-4 d-none d-lg-block">
-                  <div className={styles.testimonialCard}>
-                    <div className={styles.quoteIcon}>❝</div>
-                    {renderStars(reviews[(currentReviewIndex + 2) % reviews.length]?.rating || 5)}
-                    <p className={styles.testimonialText}>
-                      "{reviews[(currentReviewIndex + 2) % reviews.length]?.reviewText}"
-                    </p>
-                    <div className={styles.studentInfo}>
-                      <div className={styles.studentAvatar}>
-                        {getInitials(reviews[(currentReviewIndex + 2) % reviews.length]?.reviewerName)}
-                      </div>
-                      <div>
-                        <strong>{reviews[(currentReviewIndex + 2) % reviews.length]?.reviewerName}</strong>
-                        <span>
-                          {reviews[(currentReviewIndex + 2) % reviews.length]?.courseName || "Student"}
-                          {reviews[(currentReviewIndex + 2) % reviews.length]?.createdAt && (
-                            <span className={styles.reviewDate}>
-                              • {formatDate(reviews[(currentReviewIndex + 2) % reviews.length]?.createdAt)}
-                            </span>
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-              
-              {/* Review Navigation Dots */}
-              <Row>
-                <Col className="text-center">
-                  <div className={styles.reviewDots}>
-                    {reviews.slice(0, Math.min(5, reviews.length)).map((_, index) => (
-                      <button
-                        key={index}
-                        className={`${styles.reviewDot} ${index === currentReviewIndex ? styles.active : ""}`}
-                        onClick={() => setCurrentReviewIndex(index)}
-                        aria-label={`Go to review ${index + 1}`}
-                      />
-                    ))}
-                  </div>
-                  {/* <p className={styles.reviewCounter}>
-                    Showing {currentReviewIndex + 1} of {reviews.length} reviews
-                    <span className={styles.autoScrollIndicator}>
-                      <i className="fas fa-sync-alt ms-2"></i> Auto-scroll every 10s
-                    </span>
-                  </p> */}
-                </Col>
-              </Row>
-            </>
+                  </Col>
+                );
+              })}
+            </Row>
           ) : (
             <Row>
               <Col className="text-center">
@@ -768,25 +720,24 @@ const Home = () => {
               </Col>
             </Row>
           )}
-          
+
           {/* CTA to view all reviews */}
-          <Row className="mt-4">
+          <Row className="mt-5">
             <Col className="text-center">
               <Button
                 as={Link}
                 to="/reviews"
-                variant="outline-primary"
                 className={styles.viewAllReviewsBtn}
               >
-                <i className="fas fa-star me-2"></i>
                 View All Reviews
+                <i className="fas fa-arrow-right ms-2"></i>
               </Button>
             </Col>
           </Row>
         </Container>
       </section>
 
-      {/* Download App Section */}
+      {/* Download App Section - Trade On The Go */}
       <section className={styles.downloadAppSection}>
         <Container>
           <Row className="text-center mb-5">
@@ -800,46 +751,46 @@ const Home = () => {
             </Col>
           </Row>
           <Row className="align-items-center">
+            {/* Left Side - Features & Buttons */}
             <Col lg={6} className="mb-5 mb-lg-0">
               <div className={styles.appContent}>
+                {/* Feature Cards */}
                 <div className={styles.appFeatures}>
                   <div className={styles.appFeature}>
-                    <div className={styles.featureIcon}>
-                      <i className="fa-solid fa-mobile-screen-button"></i>
+                    <div className={styles.featureIconBox}>
+                      <i className="fa-solid fa-bell"></i>
                     </div>
-
-                    <div>
+                    <div className={styles.featureText}>
                       <strong>Real-time Alerts</strong>
                       <span>Instant market notifications</span>
                     </div>
                   </div>
-                  <div className={styles.appFeature}>
-                    <div className={styles.featureIcon}>
-                      <i className="fa-solid fa-chart-column"></i>
-                    </div>
 
-                    <div>
+                  <div className={styles.appFeature}>
+                    <div className={styles.featureIconBox}>
+                      <i className="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div className={styles.featureText}>
                       <strong>Live Charts</strong>
                       <span>Advanced technical analysis</span>
                     </div>
                   </div>
+
                   <div className={styles.appFeature}>
-                    <div className={styles.featureIcon}>
+                    <div className={styles.featureIconBox}>
                       <i className="fa-solid fa-bolt"></i>
                     </div>
-
-                    <div>
+                    <div className={styles.featureText}>
                       <strong>Quick Orders</strong>
                       <span>Execute trades in seconds</span>
                     </div>
                   </div>
                 </div>
 
+                {/* Download Buttons */}
                 <div className={styles.downloadButtons}>
                   <a href="#" className={styles.storeButton}>
-                    <div className={styles.storeIcon}>
-                      <span className={styles.appleIcon}></span>
-                    </div>
+                    <i className="fa-brands fa-apple"></i>
                     <div className={styles.storeText}>
                       <span>Download on the</span>
                       <strong>App Store</strong>
@@ -849,11 +800,10 @@ const Home = () => {
                   <a
                     href="https://play.google.com/store/apps/details?id=com.cybomb.djit_trading"
                     target="_blank"
+                    rel="noopener noreferrer"
                     className={styles.storeButton}
                   >
-                    <div className={styles.storeIcon}>
-                      <span className={styles.playIcon}></span>
-                    </div>
+                    <i className="fa-brands fa-google-play"></i>
                     <div className={styles.storeText}>
                       <span>Get it on</span>
                       <strong>Google Play</strong>
@@ -863,45 +813,61 @@ const Home = () => {
               </div>
             </Col>
 
+            {/* Right Side - Phone Mockup with Orange Background */}
             <Col lg={6}>
-              <div className={styles.phoneMockup}>
-                <div className={styles.phoneFrame}>
-                  <div className={styles.phoneScreen}>
-                    <div className={styles.screenContent}>
-                      <div className={styles.appHeader}>
-                        <div className={styles.appLogo}>DJIT</div>
-                        <div className={styles.marketStatus}>
-                          <span className={styles.liveDot}></span>
-                          Live Market
+              <div className={styles.phoneContainer}>
+                {/* Orange Background Rectangle */}
+                <div className={styles.orangePhoneBg}>
+                  {/* Phone Frame */}
+                  <div className={styles.phoneFrame}>
+                    <div className={styles.phoneScreen}>
+                      <div className={styles.screenContent}>
+                        {/* App Header */}
+                        <div className={styles.appHeader}>
+                          <div className={styles.appLogo}>DJIT</div>
+                          <div className={styles.marketStatus}>
+                            <span className={styles.liveDot}></span>
+                            Live
+                          </div>
                         </div>
-                      </div>
-                      <div className={styles.stockTicker}>
-                        <div className={styles.stockItem}>
-                          <span>NIFTY</span>
-                          <span className={styles.stockPrice}>22,415.25</span>
-                          <span className={styles.stockChange}>+1.2%</span>
+
+                        {/* Stock Ticker */}
+                        <div className={styles.stockTicker}>
+                          <div className={styles.stockItem}>
+                            <span className={styles.stockSymbol}>NIFTY</span>
+                            <span className={styles.stockPrice}>22,415.25</span>
+                            <span className={styles.stockChange}>+1.2%</span>
+                          </div>
+                          <div className={styles.stockItem}>
+                            <span className={styles.stockSymbol}>SENSEX</span>
+                            <span className={styles.stockPrice}>73,805.64</span>
+                            <span className={styles.stockChange}>+0.8%</span>
+                          </div>
                         </div>
-                        <div className={styles.stockItem}>
-                          <span>SENSEX</span>
-                          <span className={styles.stockPrice}>73,805.64</span>
-                          <span className={styles.stockChange}>+0.8%</span>
+
+                        {/* Chart Placeholder */}
+                        <div className={styles.chartPlaceholder}></div>
+
+                        {/* Quick Actions */}
+                        <div className={styles.quickActions}>
+                          <button className={styles.actionBtn}>Buy</button>
+                          <button className={styles.actionBtn}>Sell</button>
+                          <button className={styles.actionBtn}>Chart</button>
+                          <button className={styles.actionBtn}>Watchlist</button>
                         </div>
-                      </div>
-                      <div className={styles.chartPlaceholder}></div>
-                      <div className={styles.quickActions}>
-                        <button className={styles.actionBtn}>Buy</button>
-                        <button className={styles.actionBtn}>Sell</button>
-                        <button className={styles.actionBtn}>Chart</button>
-                        <button className={styles.actionBtn}>Watchlist</button>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className={styles.floatingNotification}>
-                  <div className={styles.notificationIcon}>📈</div>
-                  <div className={styles.notificationText}>
-                    <strong>Alert: NIFTY</strong>
-                    <span>Breakout detected</span>
+
+                  {/* Alert Notification Card */}
+                  <div className={styles.alertCard}>
+                    <div className={styles.alertIcon}>
+                      <i className="fa-solid fa-bell"></i>
+                    </div>
+                    <div className={styles.alertText}>
+                      <strong>Alert: NIFTY</strong>
+                      <span>Breakout detected</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -910,10 +876,11 @@ const Home = () => {
         </Container>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section - Ready to Master */}
       <section className={styles.ctaSection}>
         <div className={styles.ctaBackground}>
-          <div className={styles.ctaOverlay}></div>
+          {/* Orange Circle Decoration */}
+          <div className={styles.orangeCircle}></div>
         </div>
         <Container>
           <Row className="text-center">
@@ -923,34 +890,29 @@ const Home = () => {
                   Ready to Master Stock Market Trading?
                 </h2>
                 <p className={styles.ctaSubtitle}>
-                  Join 10,000+ successful traders who transformed their skills
-                  and achieved financial freedom with DJIT Trading
+                  Join 10,000+ successful traders who transformed their skills and achieved financial freedom with DJIT Trading
                 </p>
                 <div className={styles.ctaButtons}>
                   <Button
                     as={Link}
                     to="/courses"
-                    size="lg"
                     className={styles.primaryCta}
                   >
-                    <span className={styles.btnIcon}>🚀</span>
+                    <i className="me-2"></i>
                     Explore All Courses
                   </Button>
                   <Button
                     as={Link}
                     to="/register"
-                    variant="outline-light"
-                    size="lg"
                     className={styles.secondaryCta}
                   >
-                    <span className={styles.btnIcon}>📖</span>
+                    <i className="me-2"></i>
                     Start Growing Today
                   </Button>
                 </div>
                 <div className={styles.trustBadges}>
                   <span className={styles.trustBadgeItem}>
                     <span className={styles.badgeIcon}>
-                      <i className="fa-solid fa-lock"></i>
                     </span>
                     Premium Content
                   </span>
@@ -962,7 +924,7 @@ const Home = () => {
                   </span>
                   <span className={styles.trustBadgeItem}>
                     <span className={styles.badgeIcon}>
-                      <i className="fa-solid fa-briefcase"></i>
+                
                     </span>
                     10K+ Students
                   </span>
@@ -973,7 +935,7 @@ const Home = () => {
         </Container>
       </section>
       {/* Enroll Confirmation Modal */}
-      <Modal
+      < Modal
         show={showEnrollModal}
         onHide={() => setShowEnrollModal(false)}
         centered
@@ -1080,8 +1042,8 @@ const Home = () => {
             )}
           </Button>
         </Modal.Footer>
-      </Modal>
-    </div>
+      </Modal >
+    </div >
   );
 };
 
