@@ -67,6 +67,25 @@ const Courses = () => {
     } catch (error) {
       console.error("Error fetching courses:", error);
       showAlert("Error loading courses", "danger");
+
+      // Fallback mock data if API fails
+      const mockCourses = [
+        {
+          _id: "mock_djit_hunter",
+          title: "Djit Hunter - Master Entry Course",
+          description: "DJIT Hunter – Master Entry Course is a specialized trading program designed to help you identify high-probability entry points in the market.",
+          thumbnail: "",
+          level: "Advanced",
+          featured: true,
+          price: 9999,
+          instructor: "Dev",
+          duration: "8 Weeks",
+          lessons: 15,
+          studentsEnrolled: 118,
+          category: "Trading"
+        }
+      ];
+      setCourses(mockCourses);
     } finally {
       setLoading(false);
     }
@@ -374,7 +393,14 @@ ${API_URL}/api/enrollments`,
     const isCompleted = isCourseCompleted(course._id);
 
     return (
-      <Modal show={show} onHide={onHide} size="lg" centered scrollable>
+      <Modal
+        show={show}
+        onHide={onHide}
+        size="lg"
+        centered
+        dialogClassName={styles.customModal}
+        className={styles.modalTopLayer}
+      >
         <Modal.Header closeButton>
           <Modal.Title>{displayCourse.title}</Modal.Title>
         </Modal.Header>
@@ -448,102 +474,102 @@ ${API_URL}/api/enrollments`,
                     <h5 className="mb-3">Course Details</h5>
 
                     {/* Icon-based Course Meta Information */}
-                    <div className={styles.iconMetaGrid}>
-                      <div className={styles.iconMetaItem}>
-                        <div className={styles.iconWrapper}>
-                          <span className={styles.metaIcon}>👨‍🏫</span>
+                    <div className={styles.modalMetaGrid}>
+                      <div className={styles.modalMetaItem}>
+                        <div className={styles.modalMetaIcon}>
+                          <i className="fa-solid fa-chalkboard-user"></i>
                         </div>
-                        <div className={styles.metaContent}>
-                          <div className={styles.metaLabel}>Instructor</div>
-                          <div className={styles.metaValue}>
+                        <div className={styles.modalMetaText}>
+                          <div className={styles.modalMetaLabel}>Instructor</div>
+                          <div className={styles.modalMetaValue}>
                             {displayCourse.instructor}
                           </div>
                         </div>
                       </div>
 
-                      <div className={styles.iconMetaItem}>
-                        <div className={styles.iconWrapper}>
-                          <span className={styles.metaIcon}>📚</span>
+                      <div className={styles.modalMetaItem}>
+                        <div className={styles.modalMetaIcon}>
+                          <i className="fa-solid fa-layer-group"></i>
                         </div>
-                        <div className={styles.metaContent}>
-                          <div className={styles.metaLabel}>Category</div>
-                          <div className={styles.metaValue}>
+                        <div className={styles.modalMetaText}>
+                          <div className={styles.modalMetaLabel}>Category</div>
+                          <div className={styles.modalMetaValue}>
                             {displayCourse.category}
                           </div>
                         </div>
                       </div>
 
-                      <div className={styles.iconMetaItem}>
-                        <div className={styles.iconWrapper}>
-                          <span className={styles.metaIcon}>⏱️</span>
+                      <div className={styles.modalMetaItem}>
+                        <div className={styles.modalMetaIcon}>
+                          <i className="fa-solid fa-clock"></i>
                         </div>
-                        <div className={styles.metaContent}>
-                          <div className={styles.metaLabel}>Duration</div>
-                          <div className={styles.metaValue}>
+                        <div className={styles.modalMetaText}>
+                          <div className={styles.modalMetaLabel}>Duration</div>
+                          <div className={styles.modalMetaValue}>
                             {displayCourse.duration}
                           </div>
                         </div>
                       </div>
 
-                      <div className={styles.iconMetaItem}>
-                        <div className={styles.iconWrapper}>
-                          <span className={styles.metaIcon}>📖</span>
+                      <div className={styles.modalMetaItem}>
+                        <div className={styles.modalMetaIcon}>
+                          <i className="fa-solid fa-book-open"></i>
                         </div>
-                        <div className={styles.metaContent}>
-                          <div className={styles.metaLabel}>Lessons</div>
-                          <div className={styles.metaValue}>
+                        <div className={styles.modalMetaText}>
+                          <div className={styles.modalMetaLabel}>Lessons</div>
+                          <div className={styles.modalMetaValue}>
                             {displayCourse.lessons}
                           </div>
                         </div>
                       </div>
 
-                      <div className={styles.iconMetaItem}>
-                        <div className={styles.iconWrapper}>
-                          <span className={styles.metaIcon}>🌐</span>
+                      <div className={styles.modalMetaItem}>
+                        <div className={styles.modalMetaIcon}>
+                          <i className="fa-solid fa-language"></i>
                         </div>
-                        <div className={styles.metaContent}>
-                          <div className={styles.metaLabel}>Language</div>
-                          <div className={styles.metaValue}>
+                        <div className={styles.modalMetaText}>
+                          <div className={styles.modalMetaLabel}>Language</div>
+                          <div className={styles.modalMetaValue}>
                             {displayCourse.language || "Tamil"}
                           </div>
                         </div>
                       </div>
 
-                      <div className={styles.iconMetaItem}>
-                        <div className={styles.iconWrapper}>
-                          <span className={styles.metaIcon}>🚚</span>
+                      <div className={styles.modalMetaItem}>
+                        <div className={styles.modalMetaIcon}>
+                          <i className="fa-solid fa-truck-fast"></i>
                         </div>
-                        <div className={styles.metaContent}>
-                          <div className={styles.metaLabel}>Delivery Time</div>
-                          <div className={styles.metaValue}>
+                        <div className={styles.modalMetaText}>
+                          <div className={styles.modalMetaLabel}>Delivery Time</div>
+                          <div className={styles.modalMetaValue}>
                             {displayCourse.deliveryTime || "48 Working Hours"}
                           </div>
                         </div>
                       </div>
 
-                      <div className={styles.iconMetaItem}>
-                        <div className={styles.iconWrapper}>
-                          <span className={styles.metaIcon}>👥</span>
+                      <div className={styles.modalMetaItem}>
+                        <div className={styles.modalMetaIcon}>
+                          <i className="fa-solid fa-users"></i>
                         </div>
-                        <div className={styles.metaContent}>
-                          <div className={styles.metaLabel}>
+                        <div className={styles.modalMetaText}>
+                          <div className={styles.modalMetaLabel}>
                             Students Enrolled
                           </div>
-                          <div className={styles.metaValue}>
+                          <div className={styles.modalMetaValue}>
                             {displayCourse.studentsEnrolled}
                           </div>
                         </div>
                       </div>
 
-                      <div className={styles.iconMetaItem}>
-                        <div className={styles.iconWrapper}>
+                      <div className={styles.modalMetaItem}>
+                        <div className={styles.modalMetaIcon}>
                           <span className={styles.priceIcon}>
                             <i className="fa-solid fa-coins"></i>
                           </span>
                         </div>
-                        <div className={styles.metaContent}>
-                          <div className={styles.metaLabel}>Price</div>
-                          <div className={styles.metaValue}>
+                        <div className={styles.modalMetaText}>
+                          <div className={styles.modalMetaLabel}>Price</div>
+                          <div className={styles.modalMetaValue}>
                             {isCourseFree(displayCourse) ? (
                               <span className="text-success fw-bold">Free</span>
                             ) : (
@@ -571,11 +597,10 @@ ${API_URL}/api/enrollments`,
               {/* Steps Section */}
               {displayCourse.steps && displayCourse.steps.length > 0 && (
                 <div className="mt-4">
-                  <div className="d-flex align-items-center mb-3">
-                    <span className={`${styles.sectionIcon} me-2`}>🎯</span>
-                    <h6 className="mb-0">Course Structure</h6>
+                  <div className={styles.modalSectionTitle}>
+                    <i className="fa-solid fa-bullseye" style={{ color: '#03BEA6' }}></i> Course Structure
                   </div>
-                  <div className={styles.stepsSection}>
+                  <div className={styles.stepsList}>
                     <div className="d-flex align-items-center mb-2">
                       <Badge bg="primary" className="me-2">
                         {displayCourse.steps.length} Steps
@@ -706,75 +731,54 @@ ${API_URL}/api/enrollments`,
   return (
     <div className={styles.coursesPage}>
       {/* Enhanced Header Section */}
-      <Row className="mb-5">
-        <Col>
-          <div className={styles.pageHeader}>
-            <div className={styles.headerBackground}>
-              <div className={styles.headerContent}>
-                {/* Small Company Name */}
-                <div className={styles.companyNameSmall}>
-                  <span className={styles.companyTextSmall}>
-                    <span className={styles.tradingIcon}>📈</span>
-                    DJIT TRADING
-                  </span>
-                </div>
+      {/* Enhanced Header Section */}
+      {/* Search and Filters - Custom Design (Full Width) */}
+      <div className={styles.searchFilterSection}>
+        <Container>
+          <div className={styles.searchContentContainer}>
+            <div className={styles.searchWrapper}>
+              <input
+                type="text"
+                className={styles.searchInputCustom}
+                placeholder="Search courses, instructors..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <button className={styles.searchCustomBtn}>
+                <i className="fa-solid fa-search"></i>
+              </button>
+            </div>
 
-                <h1 className={styles.pageTitle}>
-                  Our <span className={styles.gradientText}>Trading</span>{" "}
-                  Courses
-                </h1>
-                <p className={styles.pageSubtitle}>
-                  Master the markets with our comprehensive trading education
-                  catalog. From beginner basics to advanced strategies, we have
-                  the perfect course for your journey.
-                </p>
+            <div className={styles.filterWrapper}>
+              <select
+                className={styles.customSelect}
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+              >
+                <option value="">All Categories</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
 
-                {/* Stats Cards Section */}
-                <Row className={styles.statsCards}>
-                  <Col md={4} className="mb-3">
-                    <Card className={styles.statCard}>
-                      <Card.Body className={styles.statCardBody}>
-                        <div className={styles.statIcon}>
-                          <i className="fa-solid fa-book"></i>
-                        </div>
-
-                        <div className={styles.statNumber}>
-                          {courses.length}+
-                        </div>
-                        <div className={styles.statLabel}>Courses</div>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                  <Col md={4} className="mb-3">
-                    <Card className={styles.statCard}>
-                      <Card.Body className={styles.statCardBody}>
-                        <div className={styles.statIcon}>
-                          <i className="fa-solid fa-chalkboard-teacher"></i>
-                        </div>
-
-                        <div className={styles.statNumber}>Expert</div>
-                        <div className={styles.statLabel}>Instructors</div>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                  <Col md={4} className="mb-3">
-                    <Card className={styles.statCard}>
-                      <Card.Body className={styles.statCardBody}>
-                        <div className={styles.statIcon}>
-                          <i className="fa-solid fa-bolt"></i>
-                        </div>
-
-                        <div className={styles.statNumber}>Lifetime</div>
-                        <div className={styles.statLabel}>Access</div>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                </Row>
-              </div>
+              <select
+                className={styles.customSelect}
+                value={levelFilter}
+                onChange={(e) => setLevelFilter(e.target.value)}
+              >
+                <option value="">All Levels</option>
+                {levels.map((level) => (
+                  <option key={level} value={level}>
+                    {level}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
-        </Col>
-      </Row>
+        </Container>
+      </div>
       <Container>
         {/* Alert */}
         {alert.show && (
@@ -795,49 +799,6 @@ ${API_URL}/api/enrollments`,
           </div>
         )}
 
-        {/* Search and Filters */}
-        <Row className="mb-4">
-          <Col lg={6} className="mb-3">
-            <InputGroup>
-              <Form.Control
-                type="text"
-                placeholder="Search courses, instructors..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={styles.searchInput}
-              />
-              <Button variant="primary">🔍</Button>
-            </InputGroup>
-          </Col>
-          <Col lg={3} className="mb-3">
-            <Form.Select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              className={styles.filterSelect}
-            >
-              <option value="">All Categories</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
-          <Col lg={3} className="mb-3">
-            <Form.Select
-              value={levelFilter}
-              onChange={(e) => setLevelFilter(e.target.value)}
-              className={styles.filterSelect}
-            >
-              <option value="">All Levels</option>
-              {levels.map((level) => (
-                <option key={level} value={level}>
-                  {level}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
-        </Row>
 
         {/* Results Count */}
         <Row className="mb-4">
@@ -871,210 +832,111 @@ ${API_URL}/api/enrollments`,
               const isCompleted = isCourseCompleted(course._id);
 
               return (
-                <Col lg={4} md={6} key={course._id} className="mb-4">
-                  <Card
-                    className={`${styles.courseCard} ${
-                      isEnrolled ? styles.enrolledCourseCard : ""
-                    }`}
+                <Col lg={12} key={course._id} className="mb-5">
+                  <div
+                    className={styles.courseCardWide}
+                    onClick={() => handleViewDetails(course)}
+                    style={{ cursor: 'pointer' }}
                   >
-                    <div className={styles.courseImage}>
+
+                    {/* LEFT SIDE: IMAGE & BADGE */}
+                    <div className={styles.cardImageSection}>
                       {course.thumbnail ? (
-                        <img src={course.thumbnail} alt={course.title} />
+                        <img
+                          src={course.thumbnail}
+                          alt={course.title}
+                          className={styles.cardImage}
+                        />
                       ) : (
-                        <div className={styles.imagePlaceholder}>
+                        <div className={`${styles.imagePlaceholder} ${styles.cardImage}`}>
                           {course.title.charAt(0)}
                         </div>
                       )}
-                      <Badge
-                        bg={getLevelVariant(course.level)}
-                        className={styles.levelBadge}
-                      >
-                        {course.level}
-                      </Badge>
-                      {course.featured && (
-                        <Badge bg="primary" className={styles.featuredBadge}>
-                          Featured
-                        </Badge>
-                      )}
-                      {isCourseFree(course) && (
-                        <Badge bg="success" className={styles.freeBadge}>
-                          Free
-                        </Badge>
-                      )}
-                      {isEnrolled && (
-                        <Badge
-                          bg={isCompleted ? "success" : "primary"}
-                          className={styles.enrolledBadge}
-                        >
-                          {isCompleted ? "Completed" : "Enrolled"}
-                        </Badge>
-                      )}
+
+                      <span className={styles.badgeAdvanced}>
+                        {course.level || "Advanced"}
+                      </span>
+
                     </div>
-                    <Card.Body className={styles.courseBody}>
-                      <div className={styles.courseHeader}>
-                        <Card.Title className={styles.courseTitle}>
-                          {course.title}
-                        </Card.Title>
-                        <Card.Text className={styles.courseDescription}>
-                          {course.description.substring(0, 120)}...
-                        </Card.Text>
-                      </div>
 
-                      {/* Progress bar for enrolled users */}
-                      {isEnrolled && (
-                        <div className={styles.progressSection}>
-                          <div className="d-flex justify-content-between align-items-center mb-2">
-                            <small className="text-muted">Your Progress</small>
-                            <small className="fw-bold">{progress}%</small>
-                          </div>
-                          <ProgressBar
-                            now={progress}
-                            variant={getProgressVariant(progress)}
-                            className={styles.progressBar}
-                          />
-                        </div>
-                      )}
+                    {/* RIGHT SIDE: CONTENT */}
+                    <div className={styles.cardContentSection}>
+                      <div>
+                        <h3 className={styles.cardTitle}>{course.title}</h3>
+                        <p className={styles.cardDescription}>
+                          {course.description.substring(0, 150)}...
+                        </p>
 
-                      {/* Updated Course Meta with Icons */}
-                      <div className={styles.courseMeta}>
-                        <div className={styles.courseMetaItem}>
-                          <span className={styles.courseMetaIcon}>
-                            <i className="fa-solid fa-chalkboard-teacher"></i>
-                          </span>
-
-                          <div className={styles.courseMetaContent}>
-                            <div className={styles.courseMetaLabel}>
-                              Instructor
-                            </div>
-                            <div className={styles.courseMetaValue}>
-                              {course.instructor}
+                        {/* META GRID */}
+                        <div className={styles.metaGrid}>
+                          <div className={styles.metaItem}>
+                            <i className={`fa-solid fa-chalkboard-user ${styles.metaIcon}`}></i>
+                            <div className={styles.metaText}>
+                              <span className={styles.metaLabel}>Instructor</span>
+                              <span className={styles.metaValue}>{course.instructor || "Dev"}</span>
                             </div>
                           </div>
-                        </div>
 
-                        <div className={styles.courseMetaItem}>
-                          <span className={styles.courseMetaIcon}>
-                            <i className="fa-solid fa-stopwatch"></i>
-                          </span>
-
-                          <div className={styles.courseMetaContent}>
-                            <div className={styles.courseMetaLabel}>
-                              Duration
-                            </div>
-                            <div className={styles.courseMetaValue}>
-                              {course.duration}
+                          <div className={styles.metaItem}>
+                            <i className={`fa-solid fa-stopwatch ${styles.metaIcon}`}></i>
+                            <div className={styles.metaText}>
+                              <span className={styles.metaLabel}>Duration</span>
+                              <span className={styles.metaValue}>{course.duration || "8 Weeks"}</span>
                             </div>
                           </div>
-                        </div>
 
-                        <div className={styles.courseMetaItem}>
-                          <span className={styles.courseMetaIcon}>📖</span>
-                          <div className={styles.courseMetaContent}>
-                            <div className={styles.courseMetaLabel}>
-                              Lessons
-                            </div>
-                            <div className={styles.courseMetaValue}>
-                              {course.lessons}
+                          <div className={styles.metaItem}>
+                            <i className={`fa-solid fa-book-open ${styles.metaIcon}`}></i>
+                            <div className={styles.metaText}>
+                              <span className={styles.metaLabel}>Lessons</span>
+                              <span className={styles.metaValue}>{course.lessons || "15"}</span>
                             </div>
                           </div>
-                        </div>
 
-                        <div className={styles.courseMetaItem}>
-                          <span className={styles.courseMetaIcon}>
-  <i className="fa-solid fa-users"></i>
-</span>
-
-                          <div className={styles.courseMetaContent}>
-                            <div className={styles.courseMetaLabel}>
-                              Students
-                            </div>
-                            <div className={styles.courseMetaValue}>
-                              {course.studentsEnrolled}
+                          <div className={styles.metaItem}>
+                            <i className={`fa-solid fa-users ${styles.metaIcon}`}></i>
+                            <div className={styles.metaText}>
+                              <span className={styles.metaLabel}>Students</span>
+                              <span className={styles.metaValue}>{course.studentsEnrolled || "118"}</span>
                             </div>
                           </div>
                         </div>
                       </div>
 
-                      <div className={styles.courseFooter}>
-                        <div className={styles.priceSection}>
-                          <div className={styles.coursePrice}>
-                            {isCourseFree(course) ? (
-                              <div className={styles.freePriceContainer}>
-                                <span className={styles.freePriceIcon}>🎁</span>
-                                <span className={styles.freePrice}>Free</span>
-                              </div>
-                            ) : (
-                              <>
-                                <div className={styles.paidPriceContainer}>
-                                  <span className={styles.priceIcon}>
-                                    <i className="fa-solid fa-coins"></i>
-                                  </span>
-
-                                  <span className={styles.currentPrice}>
-                                    ₹{course.discountedPrice || course.price}
-                                  </span>
-                                  {course.discountedPrice && (
-                                    <span className={styles.originalPrice}>
-                                      ₹{course.price}
-                                    </span>
-                                  )}
-                                </div>
-                              </>
-                            )}
+                      {/* PRICE & ACTION */}
+                      <div className={styles.priceSectionWide}>
+                        <div className={styles.priceWide}>
+                          ₹{course.discountedPrice || course.price}
+                        </div>
+                        {course.discountedPrice && (
+                          <div className={styles.originalPriceWide}>
+                            ₹{course.price}
                           </div>
-                          {course.discountedPrice && !isCourseFree(course) && (
-                            <div className={styles.discountBadge}>
-                              <span className={styles.discountIcon}>🔥</span>
-                              Save{" "}
-                              {Math.round(
-                                (1 - course.discountedPrice / course.price) *
-                                  100
-                              )}
-                              %
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Updated Button Section */}
-                        <div className={styles.buttonGroup}>
-                          <Button
-                            variant="outline-primary"
-                            className={styles.viewDetailsBtn}
-                            onClick={() => handleViewDetails(course)}
-                          >
-                            <span className={styles.buttonIcon}>👁️</span>
-                            View Details
-                          </Button>
-                          <Button
-                            variant={getEnrollButtonVariant(course)}
-                            className={styles.enrollBtn}
-                            onClick={() => handleEnrollClick(course)}
-                            disabled={
-                              enrolling && selectedCourse?._id === course._id
-                            }
-                          >
-                            {enrolling && selectedCourse?._id === course._id ? (
-                              <>
-                                <Spinner
-                                  animation="border"
-                                  size="sm"
-                                  className="me-2"
-                                />
-                                Processing...
-                              </>
-                            ) : (
-                              <>
-                                <span className={styles.buttonIcon}>
-                                  {getEnrollButtonIcon(course)}
-                                </span>
-                                {getEnrollButtonText(course)}
-                              </>
-                            )}
-                          </Button>
-                        </div>
+                        )}
+                        <button
+                          className={styles.viewDetailsBtnWide}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleViewDetails(course);
+                          }}
+                        >
+                          View Details
+                        </button>
                       </div>
-                    </Card.Body>
-                  </Card>
+
+                    </div>
+
+                    {/* ENROLL BOTTOM BAR */}
+                    <div
+                      className={styles.enrollBottomBar}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEnrollClick(course);
+                      }}
+                    >
+                      Enroll Now <i className="fa-solid fa-arrow-right-to-bracket"></i>
+                    </div>
+                  </div>
                 </Col>
               );
             })
@@ -1115,9 +977,82 @@ ${API_URL}/api/enrollments`,
           courseDetails={courseDetails}
           loadingDetails={loadingDetails}
         />
-        
+
       </Container>
-      <CourseDisclaimer />
+
+      {/* Important Notice Section */}
+      <div className={styles.importantNotice}>
+        <div className={styles.noticeHeaderContainer}>
+          <div className={styles.warningIcon}>
+            <i className="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div className={styles.noticeTitle}>Important Note</div>
+          <div className={styles.noticeSubtitle}>
+            Must Read Before Making a Purchase
+          </div>
+        </div>
+
+        <div className={styles.noticeList}>
+          {/* Item 1 */}
+          <div className={styles.noticeItem}>
+            <div className={`${styles.noticeIcon} ${styles.iconBlue}`}>
+              <i className="fa-solid fa-book"></i>
+            </div>
+            <div className={styles.noticeTextContent}>
+              <span className={styles.itemTitle}>Educational Purpose Only</span>
+              <p className={styles.itemDescription}>
+                This course is offered solely for educational purposes and is
+                intended for beginners who wish to learn about the Trading and
+                indicators I use. Participation in this course is voluntary—you
+                are not required or pressured to enroll. By purchasing, you
+                acknowledge and agree that no refunds will be granted once
+                access is provided. Trading involves inherent risk and may not
+                be suitable for everyone. Any examples, techniques, or
+                strategies discussed are for demonstration only and do not
+                constitute financial or investment advice. Always conduct your
+                own research or consult a licensed professional before making
+                trading decisions.
+              </p>
+            </div>
+          </div>
+
+          {/* Item 2 */}
+          <div className={styles.noticeItem}>
+            <div className={`${styles.noticeIcon} ${styles.iconRed}`}>
+              <i className="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <div className={styles.noticeTextContent}>
+              <span className={`${styles.itemTitle} ${styles.red}`}>
+                IMPORTANT
+              </span>
+              <p className={styles.itemDescription}>
+                WE DIDN'T PROVIDE ANY KIND OF TIPS OR CALLS ARE SUGGESTIONS TO
+                ANYONE. The courses are only for educational purpose. If you
+                purchasing this courses for tips kindly don't waste your money
+                and time.
+              </p>
+            </div>
+          </div>
+
+          {/* Item 3 */}
+          <div className={styles.noticeItem}>
+            <div className={`${styles.noticeIcon} ${styles.iconTeal}`}>
+              <i className="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div className={styles.noticeTextContent}>
+              <span className={styles.itemTitle}>No Profit Guarantee</span>
+              <p className={styles.itemDescription}>
+                This courses are only for educational purpose. We don't give you
+                the guarantee if you purchase this course you will be
+                profitable. But you will know about our trading strategy and
+                more.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
     </div>
   );
 };
