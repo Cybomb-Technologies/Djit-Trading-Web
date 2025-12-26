@@ -6,7 +6,7 @@ export default function AIChat() {
   const [messages, setMessages] = useState([
     {
       sender: "bot",
-      text: "Hello! Welcome to Djit Trading! I'm here to help you with:\n• Trading inquiries\n• Account support\n• Market information\n• Technical issues\n• Platform guidance\n• Investment advice",
+      text: "Hello! Welcome to Djit Trading! 👋\nI can help you with courses, account issues, or general inquiries.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -24,8 +24,8 @@ export default function AIChat() {
   const sendAIMessage = async () => {
     if (!input.trim() || isLoading) return;
 
-    const newMessages = [...messages, { sender: "user", text: input }];
-    setMessages(newMessages);
+    const userMsg = input.trim();
+    setMessages((prev) => [...prev, { sender: "user", text: userMsg }]);
     setInput("");
     setIsLoading(true);
 
@@ -35,29 +35,24 @@ export default function AIChat() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question: input }),
+          body: JSON.stringify({ question: userMsg }),
         }
       );
 
       const data = await res.json();
-      let botText =
-        data.output ||
-        "I apologize, but I'm having trouble processing your request. Please try again in a moment.";
-      botText = botText.replace(/\*/g, "").trim();
-      const botPoints = botText
-        .split(". ")
-        .map((point) => point.trim())
-        .filter((point) => point !== "");
-      const bulletMessage = botPoints.join("\n");
+      let botText = data.output || "I apologize, but I'm having trouble connecting right now.";
 
-      setMessages((prev) => [...prev, { sender: "bot", text: bulletMessage }]);
+      // Clean up text
+      botText = botText.replace(/\*/g, "").trim();
+
+      setMessages((prev) => [...prev, { sender: "bot", text: botText }]);
     } catch (error) {
-      console.error("Error connecting to AI:", error);
+      console.error("AI Error:", error);
       setMessages((prev) => [
         ...prev,
         {
           sender: "bot",
-          text: "I'm currently experiencing connection issues. Please try again shortly or switch to live chat for immediate assistance.",
+          text: "I'm having trouble reaching the server. Please try again later.",
         },
       ]);
     } finally {
@@ -78,46 +73,32 @@ export default function AIChat() {
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`${styles.message} ${
-              msg.sender === "user" ? styles.userMessage : styles.botMessage
-            }`}
+            className={`${styles.message} ${msg.sender === "user" ? styles.userMessage : styles.botMessage
+              }`}
           >
             {msg.sender === "bot" && (
               <div className={styles.botAvatar}>
-                <img src={logo} alt="AI" className={styles.botAvatarImage} style={{width:"40px", height:"40px", borderRadius:"50%"}}/>
+                <img src={logo} alt="Bot" className={styles.botAvatarImage} />
               </div>
             )}
             <div className={styles.messageBubble}>
-              {msg.sender === "bot" ? (
-                <div className={styles.pointList}>
-                  {msg.text.split("\n").map(
-                    (line, i) =>
-                      line.trim() && (
-                        <div key={i} className={styles.pointItem}>
-                          {line}
-                        </div>
-                      )
-                  )}
-                </div>
-              ) : (
-                msg.text
-              )}
+              <div className={styles.pointList}>
+                {msg.text}
+              </div>
             </div>
           </div>
         ))}
+
         {isLoading && (
           <div className={`${styles.message} ${styles.botMessage}`}>
             <div className={styles.botAvatar}>
-              <img src={logo} alt="AI" className={styles.botAvatarImage} style={{width:"40px", height:"40px",borderRadius:"50%"}}/>
+              <img src={logo} alt="Bot" className={styles.botAvatarImage} />
             </div>
             <div className={styles.messageBubble}>
               <div className={styles.typingIndicator}>
-                <span>AI Assistant is typing</span>
-                <div className={styles.typingDots}>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
+                <div className={styles.typingDot}></div>
+                <div className={styles.typingDot}></div>
+                <div className={styles.typingDot}></div>
               </div>
             </div>
           </div>
@@ -131,7 +112,7 @@ export default function AIChat() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask me anything about Djit Trading..."
+            placeholder="Type your message..."
             disabled={isLoading}
             className={styles.messageInput}
           />
@@ -140,17 +121,11 @@ export default function AIChat() {
             disabled={isLoading || !input.trim()}
             className={styles.sendButton}
           >
-            {isLoading ? (
-              <div className={styles.loadingSpinner}></div>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-              </svg>
-            )}
+            <i className="fa-solid fa-paper-plane"></i>
           </button>
         </div>
         <div className={styles.footerNote}>
-          🤖 AI Assistant • Powered by Djit Trading
+          Powered by Djit AI
         </div>
       </div>
     </div>

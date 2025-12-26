@@ -17,6 +17,10 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import styles from "./Home.module.css";
+import rectDark from '../assets/testimonial_svg/Rectangle 4811.svg';
+import rectTeal from '../assets/testimonial_svg/Rectangle 4812.svg';
+import quoteOpen from '../assets/testimonial_svg/❝.svg';
+import quoteClose from '../assets/testimonial_svg/❝-1.svg';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -644,34 +648,35 @@ const Home = () => {
               {[0, 1, 2].map((offset) => {
                 const index = (currentReviewIndex + offset) % reviews.length;
                 const review = reviews[index];
+
                 return (
                   <Col key={index} lg={4} md={6}>
                     <div className={styles.testimonialWrapper}>
-                      {/* Blue Shadow Layer (Static) */}
+                      {/* Back Layer */}
                       <div className={styles.blueShadowLayer}>
                         <img
-                          src="/src/assets/testimonial_svg/Rectangle 4811.svg"
+                          src={rectDark}
                           alt=""
                           className={styles.blueShadowSvg}
                         />
                       </div>
 
-                      {/* Orange Card Layer (Moves on hover) */}
+                      {/* Front Layer */}
                       <div className={styles.orangeCardLayer}>
                         <img
-                          src="/src/assets/testimonial_svg/Rectangle 4812.svg"
+                          src={rectTeal}
                           alt=""
                           className={styles.orangeCardSvg}
                         />
 
                         {/* Quotation Marks */}
                         <img
-                          src="/src/assets/testimonial_svg/❝.svg"
+                          src={quoteOpen}
                           alt=""
                           className={styles.quoteOpenSvg}
                         />
                         <img
-                          src="/src/assets/testimonial_svg/❝-1.svg"
+                          src={quoteClose}
                           alt=""
                           className={styles.quoteCloseSvg}
                         />
@@ -893,22 +898,18 @@ const Home = () => {
                   Join 10,000+ successful traders who transformed their skills and achieved financial freedom with DJIT Trading
                 </p>
                 <div className={styles.ctaButtons}>
-                  <Button
-                    as={Link}
+                  <Link
                     to="/courses"
                     className={styles.primaryCta}
                   >
-                    <i className="me-2"></i>
                     Explore All Courses
-                  </Button>
-                  <Button
-                    as={Link}
+                  </Link>
+                  <Link
                     to="/register"
                     className={styles.secondaryCta}
                   >
-                    <i className="me-2"></i>
                     Start Growing Today
-                  </Button>
+                  </Link>
                 </div>
                 <div className={styles.trustBadges}>
                   <span className={styles.trustBadgeItem}>
@@ -924,7 +925,7 @@ const Home = () => {
                   </span>
                   <span className={styles.trustBadgeItem}>
                     <span className={styles.badgeIcon}>
-                
+
                     </span>
                     10K+ Students
                   </span>

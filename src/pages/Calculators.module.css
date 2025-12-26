@@ -1,0 +1,134 @@
+.pageContainer {
+    width: 100%;
+    min-height: 100vh;
+    background: #FFFFFF;
+    position: relative;
+    padding-bottom: 50px;
+    display: flex;
+    justify-content: center;
+    overflow-x: hidden;
+}
+
+.contentWrapper {
+    width: 100%;
+    max-width: 1440px;
+    background: #FFFFFF;
+    margin-top: 80px;
+    min-height: 806px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mainHeading {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 900;
+    font-size: 64px;
+    line-height: 70px;
+    text-align: center;
+    letter-spacing: -1px;
+
+    background: linear-gradient(91.55deg, #182724 13.68%, #4ECDC4 86.32%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+
+
+    text-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
+    margin-top: 50px;
+    margin-bottom: 50px;
+    text-transform: uppercase;
+}
+
+/* Selector Area (The Blue Box) */
+.calculatorSelectorArea {
+    width: 1188px;
+    height: 499px;
+    background: #D2F5F1;
+    border-radius: 17px;
+    padding: 30px;
+    display: flex;
+    align-items: flex-end;
+    /* Push buttons to bottom */
+    justify-content: center;
+    margin-bottom: 60px;
+}
+
+.toolsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 52px);
+    gap: 20px;
+    width: 100%;
+}
+
+.toolBox {
+    width: 100%;
+    height: 52px;
+    background: #FFFFFF;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.toolBox:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.activeBox {
+    border: 2px solid #4ECDC4;
+    background: #F0FCFB;
+}
+
+.boxLabel {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    color: #000000;
+    text-align: center;
+}
+
+/* Main Calculator Section (Below Blue Box) */
+.calculatorSection {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.emptyStateSection {
+    padding: 100px;
+    text-align: center;
+    font-size: 30px;
+    color: #aaa;
+}
+
+@media (max-width: 1250px) {
+    .calculatorSelectorArea {
+        width: 95%;
+        height: auto;
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 992px) {
+    .toolsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .toolsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .mainHeading {
+        font-size: 40px;
+    }
+}
