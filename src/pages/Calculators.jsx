@@ -15,10 +15,9 @@ const Calculators = () => {
     return (
         <div className={styles.pageContainer}>
             <div className={styles.contentWrapper}>
-                <h1 className={styles.mainHeading}>CALCULATOR</h1>
-
                 {/* Top Selector Section (The "Toggle Sections") */}
                 <div className={styles.calculatorSelectorArea}>
+                    <h1 className={styles.mainHeading}>CALCULATORS</h1>
 
                     {/* The Grid of Boxes for Selection */}
                     <div className={styles.toolsGrid}>

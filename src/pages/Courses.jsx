@@ -19,6 +19,23 @@ import { useAuth } from "../context/AuthContext";
 import EnrollModal from "./EnrollModal";
 import styles from "./Courses.module.css";
 import CourseDisclaimer from "./Courses-disclaime";
+import {
+  Package,
+  BarChart,
+  Zap,
+  FileText,
+  Info,
+  AlertTriangle,
+  Gift,
+  Rocket,
+  GraduationCap,
+  BookOpen,
+  Check,
+  Layout,
+  Clock,
+  Users,
+  Globe
+} from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -298,57 +315,32 @@ ${API_URL}/api/enrollments`,
   };
 
   const getEnrollButtonText = (course) => {
-    if (!isAuthenticated) {
-      return "Enroll Now";
-    }
+    if (!isAuthenticated) return "Enroll Now";
 
     if (isUserEnrolled(course._id)) {
-      const progress = getCourseProgress(course._id);
-      if (progress === 100 || isCourseCompleted(course._id)) {
-        return "Review Course";
-      } else if (progress > 0) {
-        return "Continue Learning";
-      } else {
-        return "Start Learning";
-      }
+      return "Course Enrolled";
     } else {
       return "Enroll Now";
     }
   };
 
   const getEnrollButtonVariant = (course) => {
-    if (!isAuthenticated) {
-      return isCourseFree(course) ? "success" : "primary";
-    }
+    if (!isAuthenticated) return isCourseFree(course) ? "success" : "primary";
 
     if (isUserEnrolled(course._id)) {
-      const progress = getCourseProgress(course._id);
-      if (progress === 100 || isCourseCompleted(course._id)) {
-        return "success";
-      } else {
-        return "primary";
-      }
+      return "success";
     } else {
       return isCourseFree(course) ? "success" : "primary";
     }
   };
 
   const getEnrollButtonIcon = (course) => {
-    if (!isAuthenticated) {
-      return isCourseFree(course) ? "🎁" : "🚀";
-    }
+    if (!isAuthenticated) return isCourseFree(course) ? <Gift size={18} /> : <Rocket size={18} />;
 
     if (isUserEnrolled(course._id)) {
-      const progress = getCourseProgress(course._id);
-      if (progress === 100 || isCourseCompleted(course._id)) {
-        return "🎓";
-      } else if (progress > 0) {
-        return "🚀";
-      } else {
-        return "📚";
-      }
+      return <Check size={18} />;
     } else {
-      return isCourseFree(course) ? "🎁" : "🚀";
+      return isCourseFree(course) ? <Gift size={18} /> : <Rocket size={18} />;
     }
   };
 
@@ -477,7 +469,7 @@ ${API_URL}/api/enrollments`,
                     <div className={styles.modalMetaGrid}>
                       <div className={styles.modalMetaItem}>
                         <div className={styles.modalMetaIcon}>
-                          <i className="fa-solid fa-chalkboard-user"></i>
+                          <Users size={20} />
                         </div>
                         <div className={styles.modalMetaText}>
                           <div className={styles.modalMetaLabel}>Instructor</div>
@@ -489,7 +481,7 @@ ${API_URL}/api/enrollments`,
 
                       <div className={styles.modalMetaItem}>
                         <div className={styles.modalMetaIcon}>
-                          <i className="fa-solid fa-layer-group"></i>
+                          <Layout size={20} />
                         </div>
                         <div className={styles.modalMetaText}>
                           <div className={styles.modalMetaLabel}>Category</div>
@@ -501,7 +493,7 @@ ${API_URL}/api/enrollments`,
 
                       <div className={styles.modalMetaItem}>
                         <div className={styles.modalMetaIcon}>
-                          <i className="fa-solid fa-clock"></i>
+                          <Clock size={20} />
                         </div>
                         <div className={styles.modalMetaText}>
                           <div className={styles.modalMetaLabel}>Duration</div>
@@ -513,7 +505,7 @@ ${API_URL}/api/enrollments`,
 
                       <div className={styles.modalMetaItem}>
                         <div className={styles.modalMetaIcon}>
-                          <i className="fa-solid fa-book-open"></i>
+                          <BookOpen size={20} />
                         </div>
                         <div className={styles.modalMetaText}>
                           <div className={styles.modalMetaLabel}>Lessons</div>
@@ -525,7 +517,7 @@ ${API_URL}/api/enrollments`,
 
                       <div className={styles.modalMetaItem}>
                         <div className={styles.modalMetaIcon}>
-                          <i className="fa-solid fa-language"></i>
+                          <Globe size={20} />
                         </div>
                         <div className={styles.modalMetaText}>
                           <div className={styles.modalMetaLabel}>Language</div>
@@ -537,7 +529,7 @@ ${API_URL}/api/enrollments`,
 
                       <div className={styles.modalMetaItem}>
                         <div className={styles.modalMetaIcon}>
-                          <i className="fa-solid fa-truck-fast"></i>
+                          <Rocket size={20} />
                         </div>
                         <div className={styles.modalMetaText}>
                           <div className={styles.modalMetaLabel}>Delivery Time</div>
@@ -549,7 +541,7 @@ ${API_URL}/api/enrollments`,
 
                       <div className={styles.modalMetaItem}>
                         <div className={styles.modalMetaIcon}>
-                          <i className="fa-solid fa-users"></i>
+                          <GraduationCap size={20} />
                         </div>
                         <div className={styles.modalMetaText}>
                           <div className={styles.modalMetaLabel}>
@@ -564,7 +556,7 @@ ${API_URL}/api/enrollments`,
                       <div className={styles.modalMetaItem}>
                         <div className={styles.modalMetaIcon}>
                           <span className={styles.priceIcon}>
-                            <i className="fa-solid fa-coins"></i>
+                            ₹
                           </span>
                         </div>
                         <div className={styles.modalMetaText}>
@@ -598,7 +590,7 @@ ${API_URL}/api/enrollments`,
               {displayCourse.steps && displayCourse.steps.length > 0 && (
                 <div className="mt-4">
                   <div className={styles.modalSectionTitle}>
-                    <i className="fa-solid fa-bullseye" style={{ color: '#03BEA6' }}></i> Course Structure
+                    Course Structure
                   </div>
                   <div className={styles.stepsList}>
                     <div className="d-flex align-items-center mb-2">
@@ -623,13 +615,13 @@ ${API_URL}/api/enrollments`,
                 displayCourse.courseContains.length > 0 && (
                   <div className="mt-4">
                     <div className="d-flex align-items-center mb-3">
-                      <span className={`${styles.sectionIcon} me-2`}>📦</span>
+                      <span className={`${styles.sectionIcon} me-2`}><Package size={20} /></span>
                       <h6 className="mb-0">Course Modules</h6>
                     </div>
                     <div className={styles.featuresList}>
                       {displayCourse.courseContains.map((item, index) => (
                         <div key={index} className={styles.featureItem}>
-                          <span className={styles.featureIcon}>✓</span>
+                          <span className={styles.featureIcon}><Check size={16} /></span>
                           <span>{item}</span>
                         </div>
                       ))}
@@ -642,14 +634,14 @@ ${API_URL}/api/enrollments`,
                 displayCourse.indicators.length > 0 && (
                   <div className="mt-4">
                     <div className="d-flex align-items-center mb-3">
-                      <span className={`${styles.sectionIcon} me-2`}>📊</span>
+                      <span className={`${styles.sectionIcon} me-2`}><BarChart size={20} /></span>
                       <h6 className="mb-0">Indicators You Will Get</h6>
                     </div>
                     <div className={styles.indicatorsList}>
                       {displayCourse.indicators.map((indicator, index) => (
                         <div key={index} className={styles.indicatorItem}>
                           <div className={styles.indicatorHeader}>
-                            <span className={styles.indicatorIcon}>⚡</span>
+                            <span className={styles.indicatorIcon}><Zap size={16} /></span>
                             <strong className={styles.indicatorName}>
                               {indicator.name}
                             </strong>
@@ -667,13 +659,13 @@ ${API_URL}/api/enrollments`,
               {displayCourse.notes && displayCourse.notes.length > 0 && (
                 <div className="mt-4">
                   <div className="d-flex align-items-center mb-3">
-                    <span className={`${styles.sectionIcon} me-2`}>📝</span>
+                    <span className={`${styles.sectionIcon} me-2`}><FileText size={20} /></span>
                     <h6 className="mb-0">Notes You Will Get</h6>
                   </div>
                   <div className={styles.notesList}>
                     {displayCourse.notes.map((note, index) => (
                       <div key={index} className={styles.noteItem}>
-                        <span className={styles.noteIcon}>📄</span>
+                        <span className={styles.noteIcon}><FileText size={16} /></span>
                         <span>{note}</span>
                       </div>
                     ))}
@@ -685,7 +677,7 @@ ${API_URL}/api/enrollments`,
               {displayCourse.detailedDescription && (
                 <div className="mt-4">
                   <div className="d-flex align-items-center mb-3">
-                    <span className={`${styles.sectionIcon} me-2`}>ℹ️</span>
+                    <span className={`${styles.sectionIcon} me-2`}><Info size={20} /></span>
                     <h6 className="mb-0">About This Course</h6>
                   </div>
                   <div className={styles.descriptionContent}>
@@ -698,7 +690,7 @@ ${API_URL}/api/enrollments`,
               {displayCourse.disclaimer && (
                 <div className="mt-4 p-3 bg-light rounded">
                   <div className="d-flex align-items-center mb-2">
-                    <span className={`${styles.sectionIcon} me-2`}>⚠️</span>
+                    <span className={`${styles.sectionIcon} me-2`}><AlertTriangle size={20} /></span>
                     <h6 className="mb-0">Important Notice</h6>
                   </div>
                   <p className="mb-0 small">{displayCourse.disclaimer}</p>
@@ -928,13 +920,16 @@ ${API_URL}/api/enrollments`,
 
                     {/* ENROLL BOTTOM BAR */}
                     <div
-                      className={styles.enrollBottomBar}
+                      className={`${styles.enrollBottomBar} ${isEnrolled ? styles.enrolled : ''}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleEnrollClick(course);
                       }}
+                      style={isEnrolled ? { background: '#28a745' } : {}}
                     >
-                      Enroll Now <i className="fa-solid fa-arrow-right-to-bracket"></i>
+                      <span className="me-2">{getEnrollButtonIcon(course)}</span>
+                      {getEnrollButtonText(course).toUpperCase()}
+                      {!isEnrolled && <i className="fa-solid fa-arrow-right-to-bracket ms-2"></i>}
                     </div>
                   </div>
                 </Col>
