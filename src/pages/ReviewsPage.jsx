@@ -281,11 +281,11 @@ const ReviewsPage = () => {
                     className={styles.filterSelect}
                   >
                     <option value="all">All Ratings</option>
-                    <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
-                    <option value="4">⭐⭐⭐⭐ 4 Stars</option>
-                    <option value="3">⭐⭐⭐ 3 Stars</option>
-                    <option value="2">⭐⭐ 2 Stars</option>
-                    <option value="1">⭐ 1 Star</option>
+                    <option value="5">5 Stars</option>
+                    <option value="4">4 Stars</option>
+                    <option value="3">3 Stars</option>
+                    <option value="2">2 Stars</option>
+                    <option value="1">1 Star</option>
                   </Form.Select>
                 </Col>
 
@@ -363,14 +363,12 @@ const ReviewsPage = () => {
                   ? "Try adjusting your search or filters"
                   : "Be the first to share your experience!"}
               </p>
-              <Button
-                as={Link}
+              {/* <Link
                 to="/"
-                variant="primary"
                 className={styles.submitReviewBtn}
               >
                 Submit Your Review
-              </Button>
+              </Link> */}
             </div>
           ) : (
             <>
@@ -527,22 +525,18 @@ const ReviewsPage = () => {
                   Share your success story with our community!
                 </p>
                 <div className={styles.ctaButtons}>
-                  <Button
-                    as={Link}
+                  <Link
                     to="/traders"
-                    variant="primary"
                     className={styles.ctaButton}
                   >
                     Submit Your Review
-                  </Button>
-                  <Button
-                    as={Link}
+                  </Link>
+                  <Link
                     to="/courses"
-                    variant="outline-light"
                     className={styles.ctaButton}
                   >
                     Explore Courses
-                  </Button>
+                  </Link>
                 </div>
               </div>
             </Col>

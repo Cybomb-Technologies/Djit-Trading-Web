@@ -86,29 +86,20 @@ const Footer = () => {
           </Col>
 
           {/* Quick Links */}
-          <Col lg={2} md={6} className="mb-4 mb-lg-0">
+          <Col lg={3} md={6} className="mb-4 mb-lg-0">
             <h6 className={styles.footerSubtitle}>Quick Links</h6>
             <ul className={styles.footerLinks}>
               <li><Link to="/courses">All Courses</Link></li>
+              <li><Link to="/tools">Tools</Link></li>
               <li><Link to="/traders">Traders Profile</Link></li>
               <li><Link to="/about">About Us</Link></li>
               <li><Link to="/faq">FAQ</Link></li>
-            </ul>
-          </Col>
-
-          {/* Tools */}
-          <Col lg={2} md={6} className="mb-4 mb-lg-0">
-            <h6 className={styles.footerSubtitle}>Tools</h6>
-            <ul className={styles.footerLinks}>
-              <li><Link to="/tools/fd-calculator">FD Calculator</Link></li>
-              <li><Link to="/tools/sip-calculator">SIP Calculator</Link></li>
-              <li><Link to="/tools/swp-calculator">SWP Calculator</Link></li>
-              <li><Link to="/tools/corpus-calculator">Corpus Calculator</Link></li>
+              <li><Link to="/contact">Contact Us</Link></li>
             </ul>
           </Col>
 
           {/* Newsletter */}
-          <Col lg={4} md={6}>
+          <Col lg={5} md={6}>
             <h6 className={styles.footerSubtitle}>Stay Updated</h6>
             <p className={styles.footerText}>
               Subscribe to get updates on new courses, market insights, and trading signals.

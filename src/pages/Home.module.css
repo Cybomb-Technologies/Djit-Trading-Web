@@ -472,6 +472,22 @@
 }
 
 
+/* View All Reviews Button */
+.viewAllReviewsBtn {
+  background-color: #182724 !important;
+  border-color: #182724 !important;
+  padding: 12px 30px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+}
+
+.viewAllReviewsBtn:hover {
+  background-color: #0d1614 !important;
+  border-color: #0d1614 !important;
+  transform: translateY(-2px);
+}
+
 /* Download App Section */
 .downloadAppSection {
   padding: 100px 0;
@@ -498,7 +514,7 @@
 .featureIconBox {
   width: 60px;
   height: 60px;
-  background: #03BEA6;
+  background: #182724;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -532,7 +548,7 @@
 }
 
 .storeButton {
-  background: #03BEA6;
+  background: #182724;
   border-radius: 16px;
   padding: 10px 20px;
   display: flex;
@@ -546,7 +562,7 @@
 
 .storeButton:hover {
   transform: translateY(-5px);
-  background: #029a86;
+  background: #0d1614;
 }
 
 .storeButton i {

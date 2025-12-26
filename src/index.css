@@ -16,11 +16,39 @@
   box-sizing: border-box;
 }
 
+*:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
   color: var(--dark-text);
   background-color: #fff;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #03BEA6;
+  /* Primary Teal */
+  border-radius: 5px;
+  border: 2px solid #f1f1f1;
+  /* Adds a clean border around the thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #029a86;
+  /* Darker Teal */
 }
 
 .container {
@@ -175,7 +203,7 @@ body {
   .hero-section h1 {
     font-size: 2.5rem;
   }
-  
+
   .hero-section {
     padding: 60px 0;
   }

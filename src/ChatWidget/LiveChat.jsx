@@ -5,7 +5,7 @@ import io from "socket.io-client";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
-export default function LiveChat() {
+export default function LiveChat({ onClose }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState({ name: "", mobile: "", email: "" });
   const [chatId, setChatId] = useState(null);
@@ -56,9 +56,9 @@ export default function LiveChat() {
             if (data.success && data.user) {
               setIsLoggedIn(true);
               setUserInfo({
-                name: data.user.name,
-                email: data.user.email,
-                mobile: data.user.mobile,
+                name: data.user.name || "User",
+                email: data.user.email || "",
+                mobile: data.user.mobile || "",
               });
               await startChatSession();
               setIsCheckingAuth(false);
@@ -170,13 +170,9 @@ export default function LiveChat() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-    setUserInfo({ name: "", email: "", mobile: "" });
-    setChatId(null);
-    setMessages([]);
+  const handleEndChat = () => {
     if (socket) socket.disconnect();
+    if (onClose) onClose();
   };
 
   const shouldShowDateSeparator = (currentMsg, previousMsg) => {
@@ -239,11 +235,11 @@ export default function LiveChat() {
     <div className={styles.liveChatContainer}>
       <div className={styles.liveChatHeader}>
         <div className={styles.headerText}>
-          <b>{userInfo.name.split(' ')[0]}</b>
+          <b>{(userInfo.name || "User").split(' ')[0]}</b>
           <span>{userInfo.mobile}</span>
         </div>
-        <button className={styles.logoutBtn} onClick={handleLogout} title="End Chat">
-          End Chat
+        <button className={styles.logoutBtn} onClick={handleEndChat} title="Close Chat">
+          Close
         </button>
       </div>
 

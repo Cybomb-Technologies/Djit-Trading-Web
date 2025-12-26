@@ -13,6 +13,7 @@
   text-align: center;
   padding: 100px 0;
   color: #666;
+  font-size: 1.2rem;
 }
 
 /* Cards */
@@ -53,7 +54,7 @@
   border-radius: 50%;
   background: linear-gradient(135deg, #182724 0%, #14B8A6 100%);
   color: white;
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
   font-size: 2.5rem;
@@ -70,6 +71,7 @@
   border-radius: 50%;
   border: 4px solid white;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
 .username {
@@ -136,10 +138,9 @@
   color: #14B8A6;
 }
 
-.actionBtn i {
+.actionBtn svg {
   color: #14B8A6;
   width: 20px;
-  text-align: center;
 }
 
 /* Form Styles */
@@ -170,10 +171,11 @@
   border-radius: 8px !important;
   font-weight: 600 !important;
   transition: all 0.2s !important;
+  color: white !important;
 }
 
 .primaryBtn:hover {
-  background: #000 !important;
+  background: linear-gradient(91.55deg, #182724 13.68%, #4ECDC4 86.32%) !important;
   transform: translateY(-2px);
 }
 
@@ -192,42 +194,71 @@
   color: white !important;
 }
 
-/* Enrollments */
-.courseItem {
+/* Detail Items */
+.detailItem {
   display: flex;
-  align-items: center;
+  justify-content: space-between;
   padding: 15px 0;
   border-bottom: 1px solid #f0f0f0;
 }
 
-.courseItem:last-child {
-  border-bottom: none;
+.detailRow {
+  margin-bottom: 1rem;
 }
 
-.courseTitle {
-  font-weight: 600;
+.detailLabel {
+  color: #666;
+  font-weight: 500;
+  display: block;
+  font-size: 0.9rem;
+}
+
+.detailValue {
   color: #182724;
-  margin-bottom: 8px;
+  font-weight: 600;
+  display: block;
+}
+
+.sectionTitle {
+  color: #14B8A6;
+  font-weight: 600;
+  margin: 25px 0 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f0f0f0;
   font-size: 1rem;
 }
 
-.progressBar {
-  height: 6px;
-  background: #f0f0f0;
-  border-radius: 3px;
-  overflow: hidden;
-  margin-right: 15px;
-  flex-grow: 1;
+/* Table Styles */
+.tableContainer {
+  overflow-x: auto;
 }
 
-.progressFill {
-  height: 100%;
-  background: #14B8A6;
-  border-radius: 3px;
-  transition: width 0.3s ease;
+.customTable {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-/* Badges */
+.customTable th {
+  text-align: left;
+  padding: 15px;
+  color: #666;
+  font-weight: 600;
+  border-bottom: 2px solid #f0f0f0;
+  font-size: 0.9rem;
+}
+
+.customTable td {
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+  color: #182724;
+}
+
+.customTable tr:last-child td {
+  border-bottom: none;
+}
+
+/* Badges & Labels */
 .badge {
   background: #E2FFFC !important;
   color: #14B8A6 !important;
@@ -237,22 +268,38 @@
   font-size: 0.8rem !important;
 }
 
-/* Detail Items */
-.detailItem {
-  display: flex;
-  justify-content: space-between;
-  padding: 15px 0;
-  border-bottom: 1px solid #f0f0f0;
+.labelBadge {
+  background: #f0f0f0 !important;
+  color: #555 !important;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
 }
 
-.detailLabel {
+/* Progress Bar */
+.progressBar {
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.progressFill {
+  height: 100%;
+  background: #14B8A6;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progressLabel {
+  font-size: 0.75rem;
   color: #666;
-  font-weight: 500;
-}
-
-.detailValue {
-  color: #182724;
-  font-weight: 600;
+  margin-left: 10px;
+  min-width: 40px;
 }
 
 /* Responsive */

@@ -13,7 +13,7 @@
     width: 100%;
     max-width: 1440px;
     background: #FFFFFF;
-    margin-top: 80px;
+    margin-top: 120px;
     min-height: 806px;
     position: relative;
     display: flex;
@@ -34,24 +34,24 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
 
-
     text-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
-    margin-top: 50px;
-    margin-bottom: 50px;
+    margin-top: 0;
+    margin-bottom: 0;
     text-transform: uppercase;
 }
 
 /* Selector Area (The Blue Box) */
 .calculatorSelectorArea {
     width: 1188px;
-    height: 499px;
+    height: auto;
+    min-height: auto;
     background: #D2F5F1;
     border-radius: 17px;
-    padding: 30px;
+    padding: 40px;
     display: flex;
-    align-items: flex-end;
-    /* Push buttons to bottom */
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
     margin-bottom: 60px;
 }
 

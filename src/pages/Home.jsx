@@ -21,6 +21,8 @@ import rectDark from '../assets/testimonial_svg/Rectangle 4811.svg';
 import rectTeal from '../assets/testimonial_svg/Rectangle 4812.svg';
 import quoteOpen from '../assets/testimonial_svg/❝.svg';
 import quoteClose from '../assets/testimonial_svg/❝-1.svg';
+import centre1 from '../assets/testimonial_svg/centre1.svg';
+import centre2 from '../assets/testimonial_svg/centre2.svg';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -648,6 +650,9 @@ const Home = () => {
               {[0, 1, 2].map((offset) => {
                 const index = (currentReviewIndex + offset) % reviews.length;
                 const review = reviews[index];
+                const isCenter = offset === 1;
+                const backImg = isCenter ? centre2 : rectDark;
+                const frontImg = isCenter ? centre1 : rectTeal;
 
                 return (
                   <Col key={index} lg={4} md={6}>
@@ -655,7 +660,7 @@ const Home = () => {
                       {/* Back Layer */}
                       <div className={styles.blueShadowLayer}>
                         <img
-                          src={rectDark}
+                          src={backImg}
                           alt=""
                           className={styles.blueShadowSvg}
                         />
@@ -664,7 +669,7 @@ const Home = () => {
                       {/* Front Layer */}
                       <div className={styles.orangeCardLayer}>
                         <img
-                          src={rectTeal}
+                          src={frontImg}
                           alt=""
                           className={styles.orangeCardSvg}
                         />

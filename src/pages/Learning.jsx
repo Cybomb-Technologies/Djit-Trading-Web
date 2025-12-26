@@ -15,6 +15,15 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import {
+  PlayCircle,
+  FileText,
+  FileSpreadsheet,
+  File,
+  CheckCircle,
+  Lock,
+  Download
+} from "lucide-react";
 import styles from "./Learning.module.css";
 
 const Learning = () => {
@@ -49,7 +58,7 @@ const Learning = () => {
   // Video completion threshold (90% watched)
   const COMPLETION_THRESHOLD = 0.9;
 
-const API_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   // Load YouTube API
   useEffect(() => {
@@ -66,7 +75,7 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
       setYoutubeApiReady(true);
     }
   }, []);
-    useEffect(() => {
+  useEffect(() => {
     const handleContextMenu = (e) => e.preventDefault();
     const handleKeyDown = (e) => {
       if (
@@ -202,70 +211,70 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
     }
   };
 
-// Pre-fetch secure URLs for all content
-// Update preFetchSecureUrls function
-const preFetchSecureUrls = async (contents) => {
-  const urls = {};
-  
-  for (const content of contents) {
-    if (content.type === "video" && !isYouTubeUrl(content.videoUrl) && content.secureVideoToken) {
-      // ✅ IMPORTANT: Include contentId in the URL
-      urls[content._id] = {
-        video: `${API_URL}/api/course-content/secure-media/video?token=${content.secureVideoToken}&contentId=${content._id}`
-      };
-    } else if ((content.type === "document" || content.type === "pdf" || content.type === "excel") && content.secureDocumentToken) {
-      urls[content._id] = {
-        document: `${API_URL}/api/course-content/secure-media/document?token=${content.secureDocumentToken}&contentId=${content._id}`
-      };
-    }
-  }
-  
-  setSecureMediaUrls(urls);
-};
+  // Pre-fetch secure URLs for all content
+  // Update preFetchSecureUrls function
+  const preFetchSecureUrls = async (contents) => {
+    const urls = {};
 
-// Add this new function to refresh tokens periodically
-const refreshMediaTokens = async () => {
-  try {
-    const token = localStorage.getItem("token");
-    const newUrls = {};
-    
-    for (const content of courseContent) {
-      if (content.type === "video" && !isYouTubeUrl(content.videoUrl)) {
-        const response = await axios.get(
-          `${API_URL}/api/course-content/secure-url/${content._id}/video`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        
-        if (response.data.success) {
-          newUrls[content._id] = {
-            video: response.data.mediaUrl
-          };
-        }
+    for (const content of contents) {
+      if (content.type === "video" && !isYouTubeUrl(content.videoUrl) && content.secureVideoToken) {
+        // ✅ IMPORTANT: Include contentId in the URL
+        urls[content._id] = {
+          video: `${API_URL}/api/course-content/secure-media/video?token=${content.secureVideoToken}&contentId=${content._id}`
+        };
+      } else if ((content.type === "document" || content.type === "pdf" || content.type === "excel") && content.secureDocumentToken) {
+        urls[content._id] = {
+          document: `${API_URL}/api/course-content/secure-media/document?token=${content.secureDocumentToken}&contentId=${content._id}`
+        };
       }
     }
-    
-    setSecureMediaUrls(prev => ({ ...prev, ...newUrls }));
-  } catch (error) {
-    console.error("Error refreshing media tokens:", error);
-  }
-};
 
-// Add useEffect to refresh tokens every 30 minutes
-useEffect(() => {
-  const interval = setInterval(() => {
-    if (courseContent.length > 0) {
-      refreshMediaTokens();
+    setSecureMediaUrls(urls);
+  };
+
+  // Add this new function to refresh tokens periodically
+  const refreshMediaTokens = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const newUrls = {};
+
+      for (const content of courseContent) {
+        if (content.type === "video" && !isYouTubeUrl(content.videoUrl)) {
+          const response = await axios.get(
+            `${API_URL}/api/course-content/secure-url/${content._id}/video`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+
+          if (response.data.success) {
+            newUrls[content._id] = {
+              video: response.data.mediaUrl
+            };
+          }
+        }
+      }
+
+      setSecureMediaUrls(prev => ({ ...prev, ...newUrls }));
+    } catch (error) {
+      console.error("Error refreshing media tokens:", error);
     }
-  }, 30 * 60 * 1000); // 30 minutes
-  
-  return () => clearInterval(interval);
-}, [courseContent]);
+  };
+
+  // Add useEffect to refresh tokens every 30 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (courseContent.length > 0) {
+        refreshMediaTokens();
+      }
+    }, 30 * 60 * 1000); // 30 minutes
+
+    return () => clearInterval(interval);
+  }, [courseContent]);
 
   // ✅ GUARANTEED WORKING YOUTUBE HANDLING
   const createSecureYouTubeBlobUrl = async (contentId, youtubeUrl) => {
     try {
       const token = localStorage.getItem("token");
-      
+
       // Option 1: Get direct YouTube URL (Recommended)
       const response = await axios.post(
         `${API_URL}/api/course-content/direct-youtube-url`,
@@ -279,19 +288,19 @@ useEffect(() => {
         // Use direct YouTube URL (most reliable)
         return response.data.embedUrl;
       }
-      
+
       throw new Error("Failed to get direct URL");
-      
+
     } catch (error) {
       console.error("Error getting direct YouTube URL:", error);
-      
+
       // ✅ FALLBACK: Use direct YouTube embed (100% working)
       const videoId = extractYouTubeId(youtubeUrl);
       if (videoId) {
         console.log("🔄 Using fallback direct YouTube URL");
         return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
       }
-      
+
       throw error;
     }
   };
@@ -321,7 +330,7 @@ useEffect(() => {
     if (!currentContent) return;
 
     setVideoLoading(true);
-    
+
     try {
       if (isYouTubeUrl(currentContent.videoUrl)) {
         // For YouTube, we'll use direct embed (no complex setup needed)
@@ -355,17 +364,17 @@ useEffect(() => {
 
   const getDocumentUrl = (content) => {
     if (!content) return null;
-    
+
     if (content.documentUrl) {
       // External document URL
       return content.documentUrl;
     }
-    
+
     // Use secure media URL for local documents
     if (secureMediaUrls[content._id]?.document) {
       return secureMediaUrls[content._id].document;
     }
-    
+
     return null;
   };
 
@@ -374,7 +383,7 @@ useEffect(() => {
     try {
       setDocumentLoading(true);
       const documentUrl = getDocumentUrl(content);
-      
+
       if (!documentUrl) {
         throw new Error("No document URL available");
       }
@@ -391,20 +400,20 @@ useEffect(() => {
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = downloadUrl;
-      
+
       // Get the original filename from the content
-      const filename = content.documentFile?.originalName || 
-                       getDefaultFilename(content);
-      
+      const filename = content.documentFile?.originalName ||
+        getDefaultFilename(content);
+
       link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       // Clean up the blob URL
       window.URL.revokeObjectURL(downloadUrl);
       setDocumentLoading(false);
-      
+
     } catch (error) {
       console.error("Error downloading file:", error);
       setDocumentLoading(false);
@@ -452,14 +461,16 @@ useEffect(() => {
   // Get document icon
   const getDocumentIcon = (content) => {
     switch (content.type) {
+      case 'video':
+        return <PlayCircle size={18} />;
       case 'pdf':
-        return '📄';
+        return <FileText size={18} />;
       case 'excel':
-        return '📊';
+        return <FileSpreadsheet size={18} />;
       case 'document':
-        return '📝';
+        return <FileText size={18} />;
       default:
-        return '📁';
+        return <File size={18} />;
     }
   };
 
@@ -644,7 +655,7 @@ useEffect(() => {
       // Update progress based on API response or local calculation
       const updatedCompletedContents = new Set(Array.from(completedContents));
       updatedCompletedContents.add(contentId);
-      
+
       const completedCount = updatedCompletedContents.size;
       const totalContents = courseContent.length;
       const percentage = totalContents > 0 ? Math.round((completedCount / totalContents) * 100) : 0;
@@ -700,13 +711,18 @@ useEffect(() => {
   };
 
   const getContentIcon = (type) => {
-    const icons = {
-      video: "🎬",
-      pdf: "📄",
-      document: "📝",
-      excel: "📊"
-    };
-    return icons[type] || "📁";
+    switch (type) {
+      case 'video':
+        return <PlayCircle size={18} />;
+      case 'pdf':
+        return <FileText size={18} />;
+      case 'excel':
+        return <FileSpreadsheet size={18} />;
+      case 'document':
+        return <FileText size={18} />;
+      default:
+        return <File size={18} />;
+    }
   };
 
   const getDurationText = (content) => {
@@ -754,7 +770,7 @@ useEffect(() => {
   const handleMediaError = async (contentId, mediaType) => {
     try {
       console.log(`Media error for ${mediaType}, refreshing secure URL...`);
-      
+
       if (mediaType === 'video') {
         const content = courseContent.find(c => c._id === contentId);
         if (content && isYouTubeUrl(content.videoUrl)) {
@@ -943,7 +959,7 @@ useEffect(() => {
                           <p>Loading video content...</p>
                         </div>
                       )}
-                      
+
                       {getVideoSrc(currentContent) ? (
                         <div className={styles.videoWrapper}>
                           {isYouTubeUrl(currentContent.videoUrl) ? (
@@ -1039,10 +1055,10 @@ useEffect(() => {
                           {/* For PDF files, show in iframe (keep original behavior) */}
                           {currentContent.type === "pdf" ? (
                             <>
-                              <iframe 
+                              <iframe
                                 ref={documentIframeRef}
-                                src={getDocumentUrl(currentContent)} 
-                                className={styles.documentViewer} 
+                                src={getDocumentUrl(currentContent)}
+                                className={styles.documentViewer}
                                 title={currentContent.title}
                                 onLoad={handleDocumentLoad}
                                 onError={(e) => {
@@ -1051,8 +1067,8 @@ useEffect(() => {
                                 }}
                               />
                               <div className={styles.documentActions}>
-                                <Button 
-                                  variant="outline-primary" 
+                                <Button
+                                  variant="outline-primary"
                                   size="sm"
                                   href={getDocumentUrl(currentContent)}
                                   target="_blank"
@@ -1061,10 +1077,10 @@ useEffect(() => {
                                   Open in New Tab
                                 </Button>
                                 {!completedContents.has(currentContent._id) && (
-                                  <Button 
-                                    variant="success" 
+                                  <Button
+                                    variant="success"
                                     size="sm"
-                                    onClick={() => markContentAsCompleted(currentContent._id)} 
+                                    onClick={() => markContentAsCompleted(currentContent._id)}
                                     disabled={markingComplete}
                                   >
                                     {markingComplete ? "Marking..." : "Mark as Complete"}
@@ -1081,8 +1097,8 @@ useEffect(() => {
                                   <p>This file is a {getDocumentTypeName(currentContent).toLowerCase()}.</p>
                                   <p>Click the button below to download and view the file.</p>
                                   <div className="mt-3">
-                                    <Button 
-                                      variant="primary" 
+                                    <Button
+                                      variant="primary"
                                       onClick={() => handleFileDownload(currentContent)}
                                       disabled={documentLoading}
                                       className="me-2"
@@ -1096,7 +1112,7 @@ useEffect(() => {
                                         `Download ${getDocumentTypeName(currentContent)}`
                                       )}
                                     </Button>
-                                    <Button 
+                                    <Button
                                       variant="outline-secondary"
                                       href={getDocumentUrl(currentContent)}
                                       target="_blank"
@@ -1107,7 +1123,7 @@ useEffect(() => {
                                   </div>
                                   <div className="mt-3">
                                     <small className="text-muted">
-                                      <strong>Note:</strong> {getDocumentTypeName(currentContent)} files cannot be previewed in the browser. 
+                                      <strong>Note:</strong> {getDocumentTypeName(currentContent)} files cannot be previewed in the browser.
                                       Please download the file to view it in appropriate software.
                                     </small>
                                   </div>
@@ -1115,10 +1131,10 @@ useEffect(() => {
                               </div>
                               <div className={styles.documentActions}>
                                 {!completedContents.has(currentContent._id) && (
-                                  <Button 
-                                    variant="success" 
+                                  <Button
+                                    variant="success"
                                     size="sm"
-                                    onClick={() => markContentAsCompleted(currentContent._id)} 
+                                    onClick={() => markContentAsCompleted(currentContent._id)}
                                     disabled={markingComplete}
                                   >
                                     {markingComplete ? "Marking..." : "Mark as Complete"}
@@ -1142,8 +1158,8 @@ useEffect(() => {
 
                 <Card.Footer className={styles.contentFooter}>
                   <div className={styles.navigation}>
-                    <Button
-                      variant="outline-secondary"
+                    <button
+                      className={styles.navBtn}
                       onClick={() => {
                         const currentIndex = courseContent.findIndex((content) => content._id === currentContent._id);
                         if (currentIndex > 0) setCurrentContent(courseContent[currentIndex - 1]);
@@ -1151,14 +1167,14 @@ useEffect(() => {
                       disabled={courseContent.findIndex((content) => content._id === currentContent._id) === 0}
                     >
                       ← Previous
-                    </Button>
+                    </button>
 
                     <div className={styles.navigationInfo}>
                       Lesson {courseContent.findIndex((content) => content._id === currentContent._id) + 1} of {courseContent.length}
                     </div>
 
-                    <Button
-                      variant="primary"
+                    <button
+                      className={`${styles.navBtn} ${styles.primary}`}
                       onClick={() => {
                         const currentIndex = courseContent.findIndex((content) => content._id === currentContent._id);
                         if (currentIndex < courseContent.length - 1) setCurrentContent(courseContent[currentIndex + 1]);
@@ -1166,7 +1182,7 @@ useEffect(() => {
                       disabled={courseContent.findIndex((content) => content._id === currentContent._id) === courseContent.length - 1}
                     >
                       Next →
-                    </Button>
+                    </button>
                   </div>
                 </Card.Footer>
               </Card>

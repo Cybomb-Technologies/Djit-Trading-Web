@@ -60,9 +60,9 @@ const csvUpload = multer({
     fileSize: 10 * 1024 * 1024 // 10MB limit
   },
   fileFilter: function (req, file, cb) {
-    if (file.mimetype === 'text/csv' || 
-        file.mimetype === 'application/vnd.ms-excel' ||
-        file.originalname.toLowerCase().endsWith('.csv')) {
+    if (file.mimetype === 'text/csv' ||
+      file.mimetype === 'application/vnd.ms-excel' ||
+      file.originalname.toLowerCase().endsWith('.csv')) {
       cb(null, true);
     } else {
       cb(new Error('Only CSV files are allowed!'), false);
@@ -73,7 +73,7 @@ const csvUpload = multer({
 // Helper function to parse date
 const parseDate = (dateString) => {
   if (!dateString || dateString === '' || dateString === 'NULL') return null;
-  
+
   try {
     // Remove any quotes and trim
     const cleanDate = dateString.toString().replace(/['"]/g, '').trim();
@@ -117,15 +117,15 @@ const cleanPhoneNumber = (phone) => {
 // Helper function to generate username from email
 const generateUsername = (email, index) => {
   if (!email) return `user_${Date.now()}_${index}`;
-  
+
   try {
     let baseUsername = email.toLowerCase().split('@')[0];
     baseUsername = baseUsername.replace(/[^a-zA-Z0-9]/g, '');
-    
+
     if (baseUsername.length < 3) {
       return `user_${Date.now()}_${index}`;
     }
-    
+
     return baseUsername;
   } catch (error) {
     return `user_${Date.now()}_${index}`;
@@ -142,14 +142,14 @@ const isValidEmail = (email) => {
 // Helper function to get course IDs from labels
 const getCourseIdsFromLabels = async (labels) => {
   const courseIds = [];
-  
+
   if (!labels || labels.length === 0) return courseIds;
 
   const courseMappings = {
     // Basics Course
     'Basics of Trading': '691432e3a0d0eb697d30ca7c',
     'Basics of Trading Group member': '691432e3a0d0eb697d30ca7c',
-    
+
     // Djit Hunter Course  
     'Djit Hunter - Master Entry Course': '6914693bb36796123050b4a8',
     'Hunters Group member': '6914693bb36796123050b4a8'
@@ -168,7 +168,7 @@ const getCourseIdsFromLabels = async (labels) => {
 // Helper function to enroll user in courses
 const enrollUserInCourses = async (userId, courseIds, results, rowNumber) => {
   const enrollments = [];
-  
+
   for (const courseId of courseIds) {
     try {
       // Check if enrollment already exists
@@ -220,7 +220,7 @@ const enrollUserInCourses = async (userId, courseIds, results, rowNumber) => {
 exports.getUsers = async (req, res) => {
   try {
     const { page = 1, limit = 10, search = '' } = req.query;
-    
+
     let query = {};
     if (search) {
       query = {
@@ -268,7 +268,7 @@ exports.importUsers = [
     console.log('CSV import request received');
     console.log('Request headers:', req.headers);
     console.log('Request body keys:', Object.keys(req.body));
-    
+
     try {
       if (!req.file) {
         console.log('❌ No file in request');
@@ -294,7 +294,7 @@ exports.importUsers = [
       // Process CSV file
       const rows = [];
       console.log('📖 Starting CSV file reading...');
-      
+
       await new Promise((resolve, reject) => {
         if (!fs.existsSync(req.file.path)) {
           reject(new Error('CSV file not found at path: ' + req.file.path));
@@ -351,14 +351,14 @@ exports.importUsers = [
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         const rowNumber = i + 2; // +2 because CSV headers are row 1
-        
+
         try {
           results.total++;
 
           // Get email from various possible column names
-          const email = row['email 1'] || row['email1'] || row['email'] || 
-                       row['email 2'] || row['email2'] || row['primary email'] ||
-                       row['email address'] || row['contact email'];
+          const email = row['email 1'] || row['email1'] || row['email'] ||
+            row['email 2'] || row['email2'] || row['primary email'] ||
+            row['email address'] || row['contact email'];
 
           console.log(`📧 Processing row ${rowNumber}, email: ${email || 'NOT FOUND'}`);
 
@@ -393,7 +393,7 @@ exports.importUsers = [
 
           // Generate username with index to ensure uniqueness
           const username = generateUsername(normalizedEmail, i);
-          
+
           // Check if username exists and make unique if needed
           let finalUsername = username;
           let usernameCounter = 1;
@@ -403,8 +403,8 @@ exports.importUsers = [
           }
 
           // Generate a secure random password
-          const tempPassword = Math.random().toString(36).slice(-8) + 
-                              Math.random().toString(36).slice(-8);
+          const tempPassword = Math.random().toString(36).slice(-8) +
+            Math.random().toString(36).slice(-8);
 
           // Parse dates
           const birthday = parseDate(row['birthdate'] || row['birthday'] || row['date of birth']);
@@ -416,8 +416,8 @@ exports.importUsers = [
           const phone2 = cleanPhoneNumber(row['phone 2'] || row['phone2'] || row['secondary phone']);
 
           // Parse labels - this is where we get course enrollment information
-          const labels = row['labels'] ? 
-            row['labels'].split(';').map(label => label.trim()).filter(label => label) : 
+          const labels = row['labels'] ?
+            row['labels'].split(';').map(label => label.trim()).filter(label => label) :
             [];
 
           console.log(`🏷️ Labels found for ${normalizedEmail}:`, labels);
@@ -439,7 +439,7 @@ exports.importUsers = [
               tradingViewId: (row['tradingview id'] || row['tradingview'] || row['tradingviewid'] || '').trim(),
               tradingSegment: (row['trading segment'] || row['segment'] || '').trim(),
               badge: (row['badge'] || 'Beginner').trim(),
-              
+
               // Primary Address
               address: {
                 street: (row['address 1 - street'] || row['address1'] || row['street'] || '').trim(),
@@ -448,7 +448,7 @@ exports.importUsers = [
                 zipCode: '',
                 country: ''
               },
-              
+
               labels: labels,
               emailSubscriberStatus: (row['email subscriber status'] || row['email status'] || '').trim(),
               smsSubscriberStatus: (row['sms subscriber status'] || row['sms status'] || '').trim(),
@@ -500,7 +500,7 @@ exports.importUsers = [
           if (labels.length > 0) {
             console.log(`🎯 Checking course enrollment for user: ${normalizedEmail}`);
             const courseIds = await getCourseIdsFromLabels(labels);
-            
+
             if (courseIds.length > 0) {
               console.log(`📚 Enrolling user in courses: ${courseIds}`);
               const enrollments = await enrollUserInCourses(user._id, courseIds, results, rowNumber);
@@ -544,7 +544,7 @@ exports.importUsers = [
     } catch (error) {
       console.error('💥 CSV import error:', error);
       console.error('Error stack:', error.stack);
-      
+
       if (req.file && fs.existsSync(req.file.path)) {
         try {
           fs.unlinkSync(req.file.path);
@@ -553,7 +553,7 @@ exports.importUsers = [
           console.warn('⚠️ Could not delete uploaded file during error cleanup:', cleanupError.message);
         }
       }
-      
+
       res.status(500).json({
         success: false,
         message: 'Error importing CSV file',
@@ -566,13 +566,13 @@ exports.importUsers = [
 // Update user profile
 exports.updateProfile = async (req, res) => {
   try {
-    const { 
-      phone, 
-      birthday, 
-      address, 
+    const {
+      phone,
+      birthday,
+      address,
       address2,
       address3,
-      tradingViewId, 
+      tradingViewId,
       tradingSegment,
       firstName,
       lastName,
@@ -587,7 +587,7 @@ exports.updateProfile = async (req, res) => {
       lastActivityDate,
       labels
     } = req.body;
-    
+
     const updateData = {
       'profile.phone': phone,
       'profile.birthday': birthday ? parseDate(birthday) : undefined,
@@ -679,8 +679,21 @@ exports.uploadProfilePicture = [
       }
 
       // Use consistent backend URL
-      const backendUrl = process.env.BACKEND_URL || 'http://localhost:5000';
-      
+      // Use consistent backend URL
+      let backendUrl = process.env.BACKEND_URL;
+
+      // Ignore placeholder "yourdomain.com" if present in .env
+      if (backendUrl && backendUrl.includes('yourdomain.com')) {
+        backendUrl = null;
+      }
+
+      // If no valid env var, use the request's host (works for localhost and production)
+      if (!backendUrl) {
+        const protocol = req.protocol;
+        const host = req.get('host');
+        backendUrl = `${protocol}://${host}`;
+      }
+
       const profilePicture = {
         url: `${backendUrl}/uploads/profile-pictures/${req.file.filename}`,
         filename: req.file.filename,
@@ -717,11 +730,11 @@ exports.uploadProfilePicture = [
 
     } catch (error) {
       console.error('Profile picture upload error:', error);
-      
+
       if (req.file && fs.existsSync(req.file.path)) {
         fs.unlinkSync(req.file.path);
       }
-      
+
       res.status(500).json({
         success: false,
         message: 'Error uploading profile picture',
@@ -798,7 +811,7 @@ exports.getUserDetails = async (req, res) => {
 exports.updateUserRole = async (req, res) => {
   try {
     const { role } = req.body;
-    
+
     const user = await User.findByIdAndUpdate(
       req.params.id,
       { role },
@@ -828,7 +841,7 @@ exports.updateUserRole = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
-    
+
     if (!user) {
       return res.status(404).json({
         message: 'User not found'
