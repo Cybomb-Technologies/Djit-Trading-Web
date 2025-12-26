@@ -8,28 +8,20 @@ export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLiveChat, setIsLiveChat] = useState(false);
 
-  // Chat button close panna function
-  const handleCloseModal = () => {
-    setIsOpen(false);
-  };
-
-  // Chat button open panna function
-  const handleOpenModal = () => {
-    setIsOpen(true);
-  };
+  const handleCloseModal = () => setIsOpen(false);
+  const handleOpenModal = () => setIsOpen(true);
 
   return (
     <div className={styles.chatWidget}>
-      {/* Floating Chat Button - Only show when modal closed */}
+      {/* Floating Chat Button */}
       {!isOpen && (
         <button className={styles.chatButton} onClick={handleOpenModal}>
-          <div className={styles.buttonContent}>
-            <span className={styles.chatIcon}>💬</span>
-            <span className={`${styles.chatLabel} d-none d-md-inline`}>
-              Chat with us
-            </span>
-          </div>
-          <div className={styles.pulseEffect}></div>
+          <span className={styles.chatIcon}>
+            <i className="fa-regular fa-comment-dots"></i>
+          </span>
+          <span className={`${styles.chatLabel} d-none d-md-inline`}>
+            Chat Support
+          </span>
         </button>
       )}
 
@@ -52,7 +44,7 @@ export default function ChatWidget() {
                   <div className={styles.statusIndicator}></div>
                 </div>
                 <div className={styles.headerText}>
-                  <div className={styles.companyName}>Djit Trading Support</div>
+                  <div className={styles.companyName}>Djit Support</div>
                   <div className={styles.status}>
                     {isLiveChat ? "Live Agent" : "AI Assistant"} • Online
                   </div>
@@ -61,9 +53,8 @@ export default function ChatWidget() {
               <button
                 className={styles.closeButton}
                 onClick={handleCloseModal}
-                title="Close"
               >
-                ✖
+                <i className="fa-solid fa-xmark"></i>
               </button>
             </div>
 
@@ -71,23 +62,21 @@ export default function ChatWidget() {
             <div className={styles.modeSwitch}>
               <button
                 onClick={() => setIsLiveChat(false)}
-                className={`${styles.modeBtn} ${
-                  !isLiveChat ? styles.activeMode : ""
-                }`}
+                className={`${styles.modeBtn} ${!isLiveChat ? styles.activeMode : ""
+                  }`}
               >
-               <i class="fa-solid fa-robot"></i> AI Assistant
+                <i className="fa-solid fa-robot"></i> AI Bot
               </button>
               <button
                 onClick={() => setIsLiveChat(true)}
-                className={`${styles.modeBtn} ${
-                  isLiveChat ? styles.activeMode : ""
-                }`}
+                className={`${styles.modeBtn} ${isLiveChat ? styles.activeMode : ""
+                  }`}
               >
-                <i class="fa-solid fa-user-tie"></i> Live Chat
+                <i className="fa-solid fa-headset"></i> Live Chat
               </button>
             </div>
 
-            {/* Chat Mode */}
+            {/* Chat Content */}
             <div className={styles.modalContent}>
               {isLiveChat ? (
                 <LiveChat onClose={handleCloseModal} />

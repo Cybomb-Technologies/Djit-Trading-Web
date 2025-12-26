@@ -13,9 +13,7 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import FDCalculator from "./tools/FDCalculator";
-import SIPCalculator from "./tools/SIPCalculator";
-import SWPCalculator from "./tools/SWPCalculator";
+import Calculators from "./pages/Calculators"; // New Import
 import ContactForm from "./pages/ContactForm";
 import Learning from "./pages/Learning";
 import RefundPolicy from "./pages/RefundPolicy";
@@ -36,7 +34,7 @@ import EnrollmentManagement from "./pages/admin/EnrollmentManagement";
 import NewsletterManagement from "./pages/admin/NewsletterManagement";
 import CouponGenerator from "./pages/admin/CouponGenerator";
 import Reviews from "./pages/admin/Reviews";
-import ReviewsPage from './pages/ReviewsPage'; 
+import ReviewsPage from './pages/ReviewsPage';
 
 import "./App.css";
 
@@ -76,17 +74,19 @@ function App() {
               <Route path="/refund-policy" element={<RefundPolicy />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/tools/fd-calculator" element={<FDCalculator />} />
-              <Route path="/tools/sip-calculator" element={<SIPCalculator />} />
-              <Route path="/tools/swp-calculator" element={<SWPCalculator />} />
+
+              {/* Updated Route for Unified Calculators */}
+              <Route path="/tools" element={<Calculators />} />
+
+
               <Route path="/contact" element={<ContactForm />} />
               <Route path="/learning/:courseId" element={<Learning />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/progress" element={<Progress />} />
-              <Route path="/payment-success" element={<PaymentSuccess/> } />
+              <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/payment-callback" element={<PaymentCallback />} />
               <Route path="/reviews" element={<ReviewsPage />} />
-              
+
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route
@@ -103,13 +103,13 @@ function App() {
                 <Route path="enrollments" element={<EnrollmentManagement />} />
                 <Route path="newsletter" element={<NewsletterManagement />} />
                 <Route path="coupon" element={<CouponGenerator />} />
-                <Route path="reviews" element={<Reviews />} /> 
+                <Route path="reviews" element={<Reviews />} />
               </Route>
-              
+
             </Routes>
           </main>
           {!isAdminRoute && <Footer />}
-          {!isAdminRoute && <ChatWidget/>}
+          {!isAdminRoute && <ChatWidget />}
         </div>
       </AdminAuthProvider>
     </AuthProvider>

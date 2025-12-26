@@ -1,6 +1,5 @@
-// About.jsx
 import React from "react";
-import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import styles from "./About.module.css";
 
@@ -14,167 +13,94 @@ const About = () => {
 
   return (
     <div className={styles.aboutPage}>
-      {/* Hero Section - UPDATED WITH TRADING THEME */}
+      {/* Hero Section */}
       <section className={styles.heroSection}>
-        <div className={styles.heroBackground}>
-          <div className={styles.heroOverlay}></div>
-        </div>
-        
-        {/* Animated Elements */}
-        <div className={styles.floatingElement1}></div>
-        <div className={styles.floatingElement2}></div>
-        <div className={styles.floatingElement3}></div>
-        <div className={styles.gridOverlay}></div>
-        
         <Container>
-          <Row className="justify-content-center text-center">
-            <Col lg={10}>
-              <div className={styles.heroContent}>
-                {/* Small Company Name */}
-                <div className={styles.companyNameSmall}>
-                  <span className={styles.companyTextSmall}>
-                    <span className={styles.tradingIcon}>
-                      <i className="fa-solid fa-chart-line"></i>
-                    </span>
-                    DJIT TRADING
-                  </span>
-                </div>
+          <div className={styles.heroContent}>
+            <h1 className={styles.heroTitle}>
+              About <span className={styles.gradientText}>DJIT TRADING</span>
+            </h1>
+            <p className={styles.heroSubtitle}>
+              Empowering Traders Through Education and Innovation
+            </p>
+            <p className={styles.description}>
+              DJIT Trading was founded with a simple mission: to democratize
+              trading education and make professional-level market knowledge
+              accessible to everyone in Tamil and English. We believe that
+              with the right guidance, tools, and community, anyone can
+              master the art of trading.
+            </p>
 
-                {/* Trusted Badge */}
-                <div className={styles.trustedBadge}>
-                  <span className={styles.trustedText}>
-                    <span className={styles.checkIcon}>
-                      <i className="fa-solid fa-check"></i>
-                    </span>
-                    Trusted by 10,000+ traders since 2018
-                  </span>
-                </div>
+            <div className={styles.heroButtons}>
+              <Link to="/courses" className={styles.primaryBtn}>
+                Explore Courses
+              </Link>
+              <Link to="/contact" className={styles.secondaryBtn}>
+                Get In Touch
+              </Link>
+            </div>
 
-                <h1 className={styles.heroTitle}>
-                  About{" "}
-                  <span className={styles.gradientText}>DJIT TRADING</span>
-                </h1>
-                <p className={styles.heroSubtitle}>
-                  Empowering Traders Through Education and Innovation
-                </p>
-                <div className={styles.taglineContainer}>
-                  <p className={styles.tagline}>
-                    Your Journey to Trading Excellence Starts Here
-                  </p>
+            {/* Stats Section */}
+            <div className={styles.heroStats}>
+              {stats.map((stat, index) => (
+                <div key={index} className={styles.stat}>
+                  <strong>{stat.number}</strong>
+                  <span>{stat.label}</span>
                 </div>
-                <p className={styles.description}>
-                  DJIT Trading was founded with a simple mission: to democratize
-                  trading education and make professional-level market knowledge
-                  accessible to everyone in Tamil and English. We believe that
-                  with the right guidance, tools, and community, anyone can
-                  master the art of trading.
-                </p>
-                <div className={styles.heroButtons}>
-                  <Button
-                    as={Link}
-                    to="/courses"
-                    className={styles.primaryBtn}
-                    size="lg"
-                  >
-                    <span className={styles.btnIcon}>
-                      <i className="fa-solid fa-book-open"></i>
-                    </span>
-                    Explore Courses
-                  </Button>
-                  <Button
-                    as={Link}
-                    to="/contact"
-                    variant="outline-light"
-                    className={styles.secondaryBtn}
-                    size="lg"
-                  >
-                    <span className={styles.btnIcon}>
-                      <i className="fa-solid fa-comments"></i>
-                    </span>
-                    Get In Touch
-                  </Button>
-                </div>
-
-                {/* Stats Section */}
-                <div className={styles.heroStats}>
-                  {stats.map((stat, index) => (
-                    <div key={index} className={styles.stat}>
-                      <div className={styles.statIcon}>
-                        {index === 0 && <i className="fa-solid fa-users"></i>}
-                        {index === 1 && <i className="fa-solid fa-chart-bar"></i>}
-                        {index === 2 && <i className="fa-solid fa-rocket"></i>}
-                        {index === 3 && <i className="fa-solid fa-calendar-alt"></i>}
-                      </div>
-                      <strong>{stat.number}</strong>
-                      <span>{stat.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </Col>
-          </Row>
+              ))}
+            </div>
+          </div>
         </Container>
       </section>
 
       {/* Our Mission & Vision Section */}
       <section className={styles.missionSection}>
         <Container>
-          <Row className="text-center mb-5">
-            <Col>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>Our Mission & Vision</h2>
-                <p className={styles.sectionSubtitle}>
-                  Driving financial literacy and trading excellence across India
-                </p>
-              </div>
-            </Col>
-          </Row>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Our Mission & Vision</h2>
+            <p className={styles.sectionSubtitle}>
+              Driving financial literacy and trading excellence across India
+            </p>
+          </div>
           <Row>
             <Col lg={6} className="mb-4">
-              <Card className={styles.missionCard}>
-                <Card.Body>
-                  <div className={styles.missionIcon}>
-                    <i className="fa-solid fa-bullseye"></i>
-                  </div>
-                  <Card.Title>Our Mission</Card.Title>
-                  <Card.Text>
-                    To democratize trading education by providing high-quality,
-                    accessible learning resources in Tamil and English. We aim
-                    to empower every aspiring trader with the knowledge, tools,
-                    and confidence needed to navigate financial markets
-                    successfully.
-                  </Card.Text>
-                  <ul className={styles.missionList}>
-                    <li>Make trading education accessible to all</li>
-                    <li>Provide practical, real-world strategies</li>
-                    <li>Foster a supportive trading community</li>
-                    <li>Continuously innovate our teaching methods</li>
-                  </ul>
-                </Card.Body>
-              </Card>
+              <div className={styles.missionCard}>
+                <div className={styles.missionIcon}>
+                  <i className="fa-solid fa-bullseye"></i>
+                </div>
+                <h3 className={styles.cardTitle}>Our Mission</h3>
+                <p>
+                  To democratize trading education by providing high-quality,
+                  accessible learning resources in Tamil and English. We aim
+                  to empower every aspiring trader with the knowledge, tools,
+                  and confidence needed.
+                </p>
+                <ul className={styles.missionList}>
+                  <li>Make trading education accessible to all</li>
+                  <li>Provide practical, real-world strategies</li>
+                  <li>Foster a supportive trading community</li>
+                  <li>Continuously innovate our teaching methods</li>
+                </ul>
+              </div>
             </Col>
             <Col lg={6} className="mb-4">
-              <Card className={styles.visionCard}>
-                <Card.Body>
-                  <div className={styles.visionIcon}>
-                    <i className="fa-solid fa-binoculars"></i>
-                  </div>
-                  <Card.Title>Our Vision</Card.Title>
-                  <Card.Text>
-                    To become India's most trusted platform for trading
-                    education, recognized for transforming beginners into
-                    confident, successful traders. We envision a future where
-                    every Indian has the opportunity to achieve financial
-                    freedom through smart trading.
-                  </Card.Text>
-                  <ul className={styles.visionList}>
-                    <li>Create 100,000 successful traders by 2025</li>
-                    <li>Expand to regional languages across India</li>
-                    <li>Develop AI-powered trading assistants</li>
-                    <li>Establish physical learning centers</li>
-                  </ul>
-                </Card.Body>
-              </Card>
+              <div className={styles.visionCard}>
+                <div className={styles.visionIcon}>
+                  <i className="fa-solid fa-binoculars"></i>
+                </div>
+                <h3 className={styles.cardTitle}>Our Vision</h3>
+                <p>
+                  To become India's most trusted platform for trading
+                  education, recognized for transforming beginners into
+                  confident, successful traders through smart trading.
+                </p>
+                <ul className={styles.visionList}>
+                  <li>Create 100,000 successful traders by 2025</li>
+                  <li>Expand to regional languages across India</li>
+                  <li>Develop AI-powered trading assistants</li>
+                  <li>Establish physical learning centers</li>
+                </ul>
+              </div>
             </Col>
           </Row>
         </Container>
@@ -183,168 +109,31 @@ const About = () => {
       {/* Our Values Section */}
       <section className={styles.valuesSection}>
         <Container>
-          <Row className="text-center mb-5">
-            <Col>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>Our Values</h2>
-                <p className={styles.sectionSubtitle}>
-                  The principles that guide everything we do at DJIT Trading
-                </p>
-              </div>
-            </Col>
-          </Row>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Our Values</h2>
+            <p className={styles.sectionSubtitle}>
+              The principles that guide everything we do at DJIT Trading
+            </p>
+          </div>
           <Row>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.valueCard}>
-                <div className={styles.valueIconWrapper}>
+            {[
+              { icon: "fa-graduation-cap", title: "Education First", desc: "Knowledge is the foundation. Comprehensive learning from basics to advanced." },
+              { icon: "fa-handshake", title: "Integrity", desc: "Transparency and honesty. We focus on skill development, not false promises." },
+              { icon: "fa-globe", title: "Accessibility", desc: "Breaking barriers with Tamil content and affordable pricing options." },
+              { icon: "fa-rocket", title: "Innovation", desc: "Evolving methods, latest trends, and new tools for better learning." },
+              { icon: "fa-users", title: "Community", desc: "Strong network of traders supporting and growing with each other." },
+              { icon: "fa-lightbulb", title: "Excellence", desc: "Delivering highest quality content and resources for our students." }
+            ].map((item, idx) => (
+              <Col lg={4} md={6} className="mb-4" key={idx}>
+                <div className={styles.valueCard}>
                   <div className={styles.valueIcon}>
-                    <i className="fa-solid fa-graduation-cap"></i>
+                    <i className={`fa-solid ${item.icon}`}></i>
                   </div>
+                  <h5>{item.title}</h5>
+                  <p>{item.desc}</p>
                 </div>
-                <h5>Education First</h5>
-                <p>
-                  We believe knowledge is the foundation of successful trading.
-                  Our courses are meticulously designed to provide comprehensive
-                  learning from basics to advanced strategies.
-                </p>
-              </div>
-            </Col>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.valueCard}>
-                <div className={styles.valueIconWrapper}>
-                  <div className={styles.valueIcon}>
-                    <i className="fa-solid fa-handshake"></i>
-                  </div>
-                </div>
-                <h5>Integrity</h5>
-                <p>
-                  Transparency and honesty are at our core. We provide realistic
-                  expectations and never promise guaranteed returns, focusing
-                  instead on skill development.
-                </p>
-              </div>
-            </Col>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.valueCard}>
-                <div className={styles.valueIconWrapper}>
-                  <div className={styles.valueIcon}>
-                    <i className="fa-solid fa-globe"></i>
-                  </div>
-                </div>
-                <h5>Accessibility</h5>
-                <p>
-                  Breaking language and financial barriers by offering courses
-                  in Tamil and providing various pricing options to suit
-                  different budgets.
-                </p>
-              </div>
-            </Col>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.valueCard}>
-                <div className={styles.valueIconWrapper}>
-                  <div className={styles.valueIcon}>
-                    <i className="fa-solid fa-rocket"></i>
-                  </div>
-                </div>
-                <h5>Innovation</h5>
-                <p>
-                  Continuously evolving our teaching methods, incorporating the
-                  latest market trends, and developing new tools to enhance the
-                  learning experience.
-                </p>
-              </div>
-            </Col>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.valueCard}>
-                <div className={styles.valueIconWrapper}>
-                  <div className={styles.valueIcon}>
-                    <i className="fa-solid fa-users"></i>
-                  </div>
-                </div>
-                <h5>Community</h5>
-                <p>
-                  Building a strong network of traders who support, learn from,
-                  and grow with each other through our active community
-                  platforms.
-                </p>
-              </div>
-            </Col>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.valueCard}>
-                <div className={styles.valueIconWrapper}>
-                  <div className={styles.valueIcon}>
-                    <i className="fa-solid fa-lightbulb"></i>
-                  </div>
-                </div>
-                <h5>Excellence</h5>
-                <p>
-                  Committed to delivering the highest quality content, support,
-                  and resources to ensure our students receive the best possible
-                  trading education.
-                </p>
-              </div>
-            </Col>
-          </Row>
-        </Container>
-      </section>
-
-      {/* Teaching Methodology Section */}
-      <section className={styles.methodologySection}>
-        <Container>
-          <Row className="text-center mb-5">
-            <Col>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>
-                  Our Teaching Methodology
-                </h2>
-                <p className={styles.sectionSubtitle}>
-                  A proven approach that has transformed thousands of traders
-                </p>
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={3} md={6} className="mb-4">
-              <div className={styles.methodCard}>
-                <div className={styles.methodNumber}>01</div>
-                <h5>Foundation First</h5>
-                <p>
-                  We start with building strong fundamentals - understanding
-                  market basics, terminology, and developing the right trading
-                  mindset.
-                </p>
-              </div>
-            </Col>
-            <Col lg={3} md={6} className="mb-4">
-              <div className={styles.methodCard}>
-                <div className={styles.methodNumber}>02</div>
-                <h5>Practical Application</h5>
-                <p>
-                  Theory meets practice through real-market examples, case
-                  studies, and simulated trading exercises.
-                </p>
-              </div>
-            </Col>
-            <Col lg={3} md={6} className="mb-4">
-              <div className={styles.methodCard}>
-                <div className={styles.methodNumber}>03</div>
-                <h5>Progressive Learning</h5>
-                <p>
-                  Structured curriculum that gradually advances from basic
-                  concepts to sophisticated trading strategies.
-                </p>
-              </div>
-            </Col>
-            <Col lg={3} md={6} className="mb-4">
-              <div className={styles.methodCard}>
-                <div className={styles.methodNumber}>04</div>
-                <h5>Continuous Support</h5>
-                <p>
-                  Ongoing mentorship, community interaction, and regular updates
-                  to keep pace with market changes.
-                </p>
-              </div>
-            </Col>
+              </Col>
+            ))}
           </Row>
         </Container>
       </section>
@@ -352,175 +141,54 @@ const About = () => {
       {/* Why Choose DJIT Trading Section */}
       <section className={styles.whyChooseSection}>
         <Container>
-          <Row className="text-center mb-5">
-            <Col>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>
-                  Why Choose DJIT Trading?
-                </h2>
-                <p className={styles.sectionSubtitle}>
-                  What sets us apart in the world of trading education
-                </p>
-              </div>
-            </Col>
-          </Row>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Why Choose DJIT?</h2>
+            <p className={styles.sectionSubtitle}>
+              What sets us apart in the world of trading education
+            </p>
+          </div>
           <Row>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.featureCard}>
-                <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>
-                    <i className="fa-solid fa-language"></i>
+            {[
+              { icon: "fa-language", title: "Tamil & English", desc: "Learn in your preferred language for better understanding." },
+              { icon: "fa-flag", title: "Indian Market Focus", desc: "Strategies tailored specifically for Indian market conditions." },
+              { icon: "fa-chart-line", title: "Practical Tools", desc: "Access to advanced calculators and analysis resources." },
+              { icon: "fa-infinity", title: "Lifetime Access", desc: "One-time enrollment for lifetime content updates." },
+              { icon: "fa-chalkboard-teacher", title: "Expert Instructors", desc: "Learn from seasoned traders with proven track records." },
+              { icon: "fa-mobile-alt", title: "Mobile Learning", desc: "Dedicated app for learning anytime, anywhere." }
+            ].map((item, idx) => (
+              <Col lg={4} md={6} className="mb-4" key={idx}>
+                <div className={styles.valueCard}>
+                  <div className={styles.valueIcon}>
+                    <i className={`fa-solid ${item.icon}`}></i>
                   </div>
+                  <h5>{item.title}</h5>
+                  <p>{item.desc}</p>
                 </div>
-                <h5>Tamil & English Content</h5>
-                <p>
-                  Learn in the language you're most comfortable with. Our
-                  bilingual approach makes complex concepts easier to understand
-                  and apply.
-                </p>
-              </div>
-            </Col>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.featureCard}>
-                <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>
-                    <i className="fa-solid fa-flag"></i>
-                  </div>
-                </div>
-                <h5>Indian Market Focus</h5>
-                <p>
-                  Strategies and examples specifically tailored for Indian stock
-                  markets, accounting for local regulations and market
-                  behaviors.
-                </p>
-              </div>
-            </Col>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.featureCard}>
-                <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>
-                    <i className="fa-solid fa-chart-line"></i>
-                  </div>
-                </div>
-                <h5>Practical Tools</h5>
-                <p>
-                  Access to advanced calculators, charting tools, and analysis
-                  resources that complement your learning and trading
-                  activities.
-                </p>
-              </div>
-            </Col>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.featureCard}>
-                <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>
-                    <i className="fa-solid fa-infinity"></i>
-                  </div>
-                </div>
-                <h5>Lifetime Access</h5>
-                <p>
-                  Once you enroll, you get lifetime access to course materials,
-                  including future updates and additional content.
-                </p>
-              </div>
-            </Col>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.featureCard}>
-                <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>
-                    <i className="fa-solid fa-chalkboard-teacher"></i>
-                  </div>
-                </div>
-                <h5>Expert Instructors</h5>
-                <p>
-                  Learn from seasoned traders with years of market experience
-                  and a proven track record of success in various market
-                  conditions.
-                </p>
-              </div>
-            </Col>
-            <Col lg={4} md={6} className="mb-4">
-              <div className={styles.featureCard}>
-                <div className={styles.featureIconWrapper}>
-                  <div className={styles.featureIcon}>
-                    <i className="fa-solid fa-mobile-alt"></i>
-                  </div>
-                </div>
-                <h5>Mobile Learning</h5>
-                <p>
-                  Learn on the go with our mobile-optimized platform and
-                  dedicated app, making education accessible anytime, anywhere.
-                </p>
-              </div>
-            </Col>
+              </Col>
+            ))}
           </Row>
         </Container>
       </section>
 
       {/* CTA Section */}
       <section className={styles.ctaSection}>
-        <div className={styles.ctaBackground}>
-          <div className={styles.ctaOverlay}></div>
-        </div>
         <Container>
-          <Row className="text-center">
-            <Col lg={8} className="mx-auto">
-              <div className={styles.ctaContent}>
-                <h2 className={styles.ctaTitle}>
-                  Ready to Begin Your Trading Journey?
-                </h2>
-                <p className={styles.ctaSubtitle}>
-                  Join thousands of successful traders who transformed their
-                  skills and achieved financial independence with DJIT Trading
-                </p>
-                <div className={styles.ctaButtons}>
-                  <Button
-                    as={Link}
-                    to="/courses"
-                    size="lg"
-                    className={styles.primaryCta}
-                  >
-                    <span className={styles.btnIcon}>
-                      <i className="fa-solid fa-rocket"></i>
-                    </span>
-                    Explore Courses
-                  </Button>
-                  <Button
-                    as={Link}
-                    to="/contact"
-                    variant="outline-light"
-                    size="lg"
-                    className={styles.secondaryCta}
-                  >
-                    <span className={styles.btnIcon}>
-                      <i className="fa-solid fa-comments"></i>
-                    </span>
-                    Contact Us
-                  </Button>
-                </div>
-                <div className={styles.trustBadges}>
-                  <span className={styles.trustBadgeItem}>
-                    <span className={styles.badgeIcon}>
-                      <i className="fa-solid fa-graduation-cap"></i>
-                    </span>
-                    10,000+ Students
-                  </span>
-                  <span className={styles.trustBadgeItem}>
-                    <span className={styles.badgeIcon}>
-                      <i className="fa-solid fa-star"></i>
-                    </span>
-                    4.8/5 Rating
-                  </span>
-                  <span className={styles.trustBadgeItem}>
-                    <span className={styles.badgeIcon}>
-                      <i className="fa-solid fa-calendar-alt"></i>
-                    </span>
-                    6 Years Experience
-                  </span>
-                </div>
-              </div>
-            </Col>
-          </Row>
+          <div className={styles.ctaContent}>
+            <h2 className={styles.ctaTitle}>
+              Ready to Begin Your Journey?
+            </h2>
+            <p className={styles.ctaSubtitle}>
+              Join thousands of successful traders who transformed their skills with DJIT Trading.
+            </p>
+            <div className={styles.ctaButtons}>
+              <Link to="/courses" className={styles.primaryCta}>
+                Explore Courses
+              </Link>
+              <Link to="/contact" className={styles.secondaryCta}>
+                Contact Us
+              </Link>
+            </div>
+          </div>
         </Container>
       </section>
     </div>

@@ -97,44 +97,13 @@ const Header = () => {
                 Courses
               </Link>
 
-              {/* Tools Dropdown */}
-              <div className="custom-dropdown-container">
-                <button
-                  className={`custom-nav-item custom-dropdown-btn ${
-                    activeDropdown === "tools" ? "active" : ""
-                  }`}
-                  onClick={() => toggleDropdown("tools")}
-                >
-                  Tools <span className="dropdown-arrow">▼</span>
-                </button>
-                <div
-                  className={`custom-dropdown-menu ${
-                    activeDropdown === "tools" ? "show" : ""
-                  }`}
-                >
-                  <Link
-                    to="/tools/fd-calculator"
-                    className="custom-dropdown-item"
-                    onClick={handleDropdownItemClick}
-                  >
-                    FD Calculator
-                  </Link>
-                  <Link
-                    to="/tools/sip-calculator"
-                    className="custom-dropdown-item"
-                    onClick={handleDropdownItemClick}
-                  >
-                    SIP Calculator
-                  </Link>
-                  <Link
-                    to="/tools/swp-calculator"
-                    className="custom-dropdown-item"
-                    onClick={handleDropdownItemClick}
-                  >
-                    SWP Calculator
-                  </Link>
-                </div>
-              </div>
+              <Link
+                to="/tools"
+                className="custom-nav-item"
+                onClick={handleNavClick}
+              >
+                Tools
+              </Link>
 
               <Link
                 to="/traders"
@@ -161,18 +130,16 @@ const Header = () => {
               {isAuthenticated ? (
                 <div className="custom-dropdown-container">
                   <button
-                    className={`custom-nav-item custom-dropdown-btn ${
-                      activeDropdown === "user" ? "active" : ""
-                    }`}
+                    className={`custom-nav-item custom-dropdown-btn ${activeDropdown === "user" ? "active" : ""
+                      }`}
                     onClick={() => toggleDropdown("user")}
                   >
                     Welcome, {user?.username}{" "}
                     <span className="dropdown-arrow">▼</span>
                   </button>
                   <div
-                    className={`custom-dropdown-menu ${
-                      activeDropdown === "user" ? "show" : ""
-                    }`}
+                    className={`custom-dropdown-menu ${activeDropdown === "user" ? "show" : ""
+                      }`}
                   >
                     <Link
                       to="/traders"

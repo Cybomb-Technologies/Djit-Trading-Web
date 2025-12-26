@@ -898,22 +898,18 @@ const Home = () => {
                   Join 10,000+ successful traders who transformed their skills and achieved financial freedom with DJIT Trading
                 </p>
                 <div className={styles.ctaButtons}>
-                  <Button
-                    as={Link}
+                  <Link
                     to="/courses"
                     className={styles.primaryCta}
                   >
-                    <i className="me-2"></i>
                     Explore All Courses
-                  </Button>
-                  <Button
-                    as={Link}
+                  </Link>
+                  <Link
                     to="/register"
                     className={styles.secondaryCta}
                   >
-                    <i className="me-2"></i>
                     Start Growing Today
-                  </Button>
+                  </Link>
                 </div>
                 <div className={styles.trustBadges}>
                   <span className={styles.trustBadgeItem}>
