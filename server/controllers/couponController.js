@@ -7,7 +7,7 @@ const {
 
 exports.createCoupon = async (req, res) => {
   try {
-    const { code, discountType, discountValue, minPurchase, maxDiscount, validFrom, validUntil, usageLimit } = req.body;
+    const { code, discountType, discountValue, minPurchase, maxDiscount, validFrom, validUntil, usageLimit, courseId } = req.body;
 
     const coupon = await Coupon.create({
       code,
@@ -18,6 +18,7 @@ exports.createCoupon = async (req, res) => {
       validFrom,
       validUntil,
       usageLimit,
+      courseId: courseId || null // Optional course linking
     });
 
     // Create notification for admin
@@ -31,8 +32,55 @@ exports.createCoupon = async (req, res) => {
 
 exports.getAllCoupons = async (req, res) => {
   try {
-    const coupons = await Coupon.find().sort({ createdAt: -1 });
+    const coupons = await Coupon.find()
+      .populate('courseId', 'title') // Populate course title
+      .sort({ createdAt: -1 });
     res.status(200).json({ success: true, coupons });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Update coupon
+exports.updateCoupon = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    // Handle empty courseId
+    if (updateData.courseId === "") {
+      updateData.courseId = null;
+    }
+
+    // Ensure code is uppercase and trimmed
+    if (updateData.code) {
+      updateData.code = updateData.code.toUpperCase().trim();
+    }
+
+    const coupon = await Coupon.findByIdAndUpdate(id, updateData, { new: true, runValidators: true })
+      .populate('courseId', 'title'); // Ensure we populate for the return value
+
+    if (!coupon) {
+      return res.status(404).json({ success: false, message: 'Coupon not found' });
+    }
+
+    res.status(200).json({ success: true, coupon });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Delete coupon
+exports.deleteCoupon = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const coupon = await Coupon.findByIdAndDelete(id);
+
+    if (!coupon) {
+      return res.status(404).json({ success: false, message: 'Coupon not found' });
+    }
+
+    res.status(200).json({ success: true, message: 'Coupon deleted successfully' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -40,9 +88,9 @@ exports.getAllCoupons = async (req, res) => {
 
 exports.validateCoupon = async (req, res) => {
   try {
-    const { code, totalAmount } = req.body;
+    const { code, totalAmount, courseId } = req.body;
     
-    console.log('🔵 Validate coupon called:', { code, totalAmount });
+    console.log('🔵 Validate coupon called:', { code, totalAmount, courseId });
 
     if (!code) {
       return res.status(400).json({ 
@@ -52,12 +100,44 @@ exports.validateCoupon = async (req, res) => {
     }
 
     // Case-insensitive search
-    const coupon = await Coupon.findOne({ 
+    const query = { 
       code: code.toString().toUpperCase().trim(), 
       isActive: true 
-    });
+    };
+    console.log('🔍 Validate Query:', query);
+    
+    const coupon = await Coupon.findOne(query);
 
-    console.log('🎯 Found coupon:', coupon ? coupon.code : 'None');
+    console.log('🎯 Found coupon:', coupon ? {
+      code: coupon.code,
+      id: coupon._id,
+      isActive: coupon.isActive,
+      courseId: coupon.courseId
+    } : 'None');
+
+    if (!coupon) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Invalid coupon code' 
+      });
+    }
+
+    // Check if coupon is linked to a specific course
+    if (coupon.courseId && courseId) {
+      if (coupon.courseId.toString() !== courseId.toString()) {
+        return res.status(400).json({
+          success: false,
+          message: 'This coupon is not valid for this course'
+        });
+      }
+    } else if (coupon.courseId && !courseId) {
+       // If coupon is for a course but no courseId provided (e.g. general cart check), maybe it's invalid?
+       // Depending on business logic. For now, let's assume if it has a courseId it MUST match.
+       return res.status(400).json({
+          success: false,
+          message: 'This coupon is only valid for specific courses'
+        });
+    }
 
     if (!coupon) {
       return res.status(404).json({ 
@@ -180,6 +260,22 @@ exports.applyCoupon = async (req, res) => {
         success: false,
         message: 'Invalid coupon code',
       });
+    }
+
+    // Check if coupon is linked to a specific course
+    const { courseId } = req.body;
+    if (coupon.courseId && courseId) {
+      if (coupon.courseId.toString() !== courseId.toString()) {
+        return res.status(400).json({
+          success: false,
+          message: 'This coupon is not valid for this course'
+        });
+      }
+    } else if (coupon.courseId && !courseId) {
+       return res.status(400).json({
+          success: false,
+          message: 'This coupon is only valid for specific courses'
+        });
     }
 
     // Validate coupon status

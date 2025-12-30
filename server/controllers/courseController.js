@@ -238,6 +238,10 @@ exports.purchaseCourse = async (req, res) => {
         return res.status(400).json({ success: false, message: 'Invalid coupon code' });
       }
 
+      if (coupon.courseId && coupon.courseId.toString() !== courseId.toString()) {
+        return res.status(400).json({ success: false, message: 'This coupon is not valid for this course' });
+      }
+
       const now = new Date();
       if (now < coupon.validFrom || now > coupon.validUntil) {
         return res.status(400).json({ success: false, message: 'Coupon expired or not valid' });
