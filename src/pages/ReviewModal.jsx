@@ -12,7 +12,7 @@ const ReviewModal = ({ show, onHide, user, profile }) => {
   const [success, setSuccess] = useState('');
   const [courses, setCourses] = useState([]);
   const [loadingCourses, setLoadingCourses] = useState(false);
-  
+
   const [reviewData, setReviewData] = useState({
     reviewerName: '',
     rating: 0,
@@ -25,10 +25,10 @@ const ReviewModal = ({ show, onHide, user, profile }) => {
   useEffect(() => {
     if (show && user) {
       // Initialize form with user data
-      const fullName = profile?.profile ? 
-        `${profile.profile.firstName || ''} ${profile.profile.lastName || ''}`.trim() : 
+      const fullName = profile?.profile ?
+        `${profile.profile.firstName || ''} ${profile.profile.lastName || ''}`.trim() :
         '';
-      
+
       setReviewData(prev => ({
         ...prev,
         reviewerName: fullName || user.username || 'Anonymous User'
@@ -60,12 +60,12 @@ const ReviewModal = ({ show, onHide, user, profile }) => {
       setLoadingCourses(true);
       const token = localStorage.getItem('token');
       const userId = user.id || user._id;
-      
+
       const response = await axios.get(
         `${API_URL}/api/enrollments/user/${userId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
+
       const enrollments = response.data.enrollments || response.data || [];
       const completedCourses = enrollments
         .filter(enrollment => enrollment.progress === 100 || enrollment.completed)
@@ -74,7 +74,7 @@ const ReviewModal = ({ show, onHide, user, profile }) => {
           title: enrollment.course?.title || 'Unknown Course',
           instructor: enrollment.course?.instructor || 'Unknown'
         }));
-      
+
       setCourses(completedCourses);
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -99,82 +99,82 @@ const ReviewModal = ({ show, onHide, user, profile }) => {
     if (error) setError('');
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  
-  // Validation
-  if (reviewData.rating === 0) {
-    setError('Please select a rating');
-    return;
-  }
-  
-  if (!reviewData.reviewText.trim()) {
-    setError('Please write your review');
-    return;
-  }
-  
-  if (reviewData.reviewText.length < 20) {
-    setError('Review must be at least 20 characters');
-    return;
-  }
-  
-  if (reviewData.reviewText.length > 500) {
-    setError('Review must be less than 500 characters');
-    return;
-  }
-  
-  try {
-    setSubmitting(true);
-    setError('');
-    
-    const token = localStorage.getItem('token');
-    const userId = user?.id || user?._id;
-    const userEmail = user?.email;
-    
-    const reviewPayload = {
-      reviewerName: reviewData.reviewerName,
-      rating: reviewData.rating,
-      reviewText: reviewData.reviewText,
-      title: reviewData.title,
-      courseName: reviewData.courseName.trim() || 'General Platform Review',
-      anonymous: reviewData.anonymous,
-      // Include these for non-authenticated requests
-      userId: userId || 'guest-user', // Provide a fallback
-      userEmail: userEmail || 'guest@example.com'
-    };
-    
-    // Add Authorization header only if token exists
-    const headers = {
-      'Content-Type': 'application/json'
-    };
-    
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validation
+    if (reviewData.rating === 0) {
+      setError('Please select a rating');
+      return;
     }
-    
-    const response = await axios.post(`${API_URL}/api/reviews`, reviewPayload, {
-      headers: headers
-    });
-    
-    if (response.data.success) {
-      setSuccess('Thank you for your review! It has been submitted successfully.');
-      
-      // Reset form but keep success message for 2 seconds
-      setTimeout(() => {
-        handleClose();
-      }, 2000);
+
+    if (!reviewData.reviewText.trim()) {
+      setError('Please write your review');
+      return;
     }
-    
-  } catch (error) {
-    console.error('Error submitting review:', error);
-    const errorMessage = error.response?.data?.message || 
-      error.response?.data?.error || 
-      'Failed to submit review. Please try again.';
-    setError(errorMessage);
-  } finally {
-    setSubmitting(false);
-  }
-};
+
+    if (reviewData.reviewText.length < 20) {
+      setError('Review must be at least 20 characters');
+      return;
+    }
+
+    if (reviewData.reviewText.length > 500) {
+      setError('Review must be less than 500 characters');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setError('');
+
+      const token = localStorage.getItem('token');
+      const userId = user?.id || user?._id;
+      const userEmail = user?.email;
+
+      const reviewPayload = {
+        reviewerName: reviewData.reviewerName,
+        rating: reviewData.rating,
+        reviewText: reviewData.reviewText,
+        title: reviewData.title,
+        courseName: reviewData.courseName.trim() || 'General Platform Review',
+        anonymous: reviewData.anonymous,
+        // Include these for non-authenticated requests
+        userId: userId || 'guest-user', // Provide a fallback
+        userEmail: userEmail || 'guest@example.com'
+      };
+
+      // Add Authorization header only if token exists
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
+      const response = await axios.post(`${API_URL}/api/reviews`, reviewPayload, {
+        headers: headers
+      });
+
+      if (response.data.success) {
+        setSuccess('Thank you for your review! It has been submitted successfully.');
+
+        // Reset form but keep success message for 2 seconds
+        setTimeout(() => {
+          handleClose();
+        }, 2000);
+      }
+
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      const errorMessage = error.response?.data?.message ||
+        error.response?.data?.error ||
+        'Failed to submit review. Please try again.';
+      setError(errorMessage);
+    } finally {
+      setSubmitting(false);
+    }
+  };
   const handleClose = () => {
     onHide();
     // Reset form after a delay to allow success message to be seen
@@ -196,8 +196,8 @@ const handleSubmit = async (e) => {
   const maxCharacters = 500;
 
   return (
-    <Modal 
-      show={show} 
+    <Modal
+      show={show}
       onHide={handleClose}
       size="lg"
       centered
@@ -205,11 +205,11 @@ const handleSubmit = async (e) => {
       className={styles.reviewModal}
       dialogClassName={styles.modalDialog}
       contentClassName={styles.modalContent}
-      style={{ 
-    position: 'fixed',
-    top: '80px', 
-    zIndex: 1050
-  }}
+      style={{
+        position: 'fixed',
+        top: '80px',
+        zIndex: 1050
+      }}
 
     >
       <Modal.Header closeButton className={`border-0 pb-0 ${styles.modalHeader}`}>
@@ -220,7 +220,7 @@ const handleSubmit = async (e) => {
           </div>
         </Modal.Title>
       </Modal.Header>
-      
+
       <Modal.Body className={`pt-0 ${styles.modalBody}`}>
         {success ? (
           <div className="text-center py-4">
@@ -242,7 +242,7 @@ const handleSubmit = async (e) => {
                 {error}
               </Alert>
             )}
-            
+
             <Form onSubmit={handleSubmit}>
               {/* Reviewer Information */}
               <div className="mb-4">
@@ -260,7 +260,7 @@ const handleSubmit = async (e) => {
                         type="text"
                         name="reviewerName"
                         value={reviewData.reviewerName}
-                        onChange={handleInputChange}
+                        readOnly
                         disabled={reviewData.anonymous}
                         size="sm"
                         placeholder="Your name will appear with the review"
@@ -285,7 +285,7 @@ const handleSubmit = async (e) => {
                   </Col>
                 </Row>
               </div>
-              
+
               {/* Star Rating */}
               <div className="mb-4">
                 <h6 className="fw-bold mb-3 border-bottom pb-2">
@@ -326,14 +326,14 @@ const handleSubmit = async (e) => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Review Details */}
               <div className="mb-4">
                 <h6 className="fw-bold mb-3 border-bottom pb-2">
                   <i className="fas fa-edit me-2"></i>
                   Review Details
                 </h6>
-                
+
                 <Form.Group className="mb-3">
                   <Form.Label className="small fw-medium mb-1">Review Title (Optional)</Form.Label>
                   <Form.Control
@@ -355,7 +355,7 @@ const handleSubmit = async (e) => {
                     </Form.Text>
                   </div>
                 </Form.Group>
-                
+
                 <Form.Group className="mb-3">
                   <Form.Label className="small fw-medium mb-1">
                     Your Review <span className="text-danger">*</span>
@@ -391,7 +391,7 @@ const handleSubmit = async (e) => {
                     </Form.Text>
                   </div>
                 </Form.Group>
-                
+
                 {/* Course Selection - Text box with suggestions */}
                 <Form.Group className="mb-3">
                   <Form.Label className="small fw-medium mb-1">
@@ -426,7 +426,7 @@ const handleSubmit = async (e) => {
                   </Form.Text>
                 </Form.Group>
               </div>
-              
+
               {/* Review Guidelines */}
               <div className={`${styles.guidelines} mb-4 p-3 rounded`}>
                 <h6 className="fw-bold mb-2">
@@ -440,7 +440,7 @@ const handleSubmit = async (e) => {
                   <li>Your review will be visible to other students and instructors</li>
                 </ul>
               </div>
-              
+
               {/* Submit Buttons */}
               <div className="d-flex gap-3 justify-content-end pt-3 border-top">
                 <Button
@@ -476,7 +476,7 @@ const handleSubmit = async (e) => {
           </>
         )}
       </Modal.Body>
-      
+
       <Modal.Footer className={`border-0 pt-0 ${styles.modalFooter}`}>
         <p className="text-muted small text-center w-100 mb-0">
           <i className="fas fa-shield-alt me-1"></i>

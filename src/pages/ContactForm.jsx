@@ -7,8 +7,19 @@ import {
   Form,
   Button,
   Alert,
+  Spinner
 } from "react-bootstrap";
-import "./ContactForm.css";
+import {
+  Mail,
+  Phone,
+  MessageSquare,
+  Send,
+  Clock,
+  MapPin,
+  CheckCircle,
+  AlertCircle
+} from "lucide-react";
+import styles from "./ContactForm.module.css";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -112,175 +123,165 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="contact-page">
-      {/* Background with trading theme */}
-      <div className="contact-background">
-        <div className="contact-overlay"></div>
-        <div className="floating-element contact-float-1"></div>
-        <div className="floating-element contact-float-2"></div>
-        <div className="floating-element contact-float-3"></div>
-      </div>
+    <div className={styles.contactPage}>
+      {/* Hero Section */}
+      <section className={styles.heroSection}>
+        <div className={styles.decorationCircle + ' ' + styles.circle1}></div>
+        <div className={styles.decorationCircle + ' ' + styles.circle2}></div>
+        <Container className={styles.heroContent}>
+          <span className={styles.pageTitle}>Get In Touch</span>
+          <h1 className={styles.mainHeading}>We're Here to Help</h1>
+          <p className={styles.subHeading}>
+            Have questions about our courses, trading strategies, or just want to say hello?
+            Our team is ready to assist you on your trading journey.
+          </p>
+        </Container>
+      </section>
 
-      <Container>
-        <Row className="justify-content-center align-items-center min-vh-100">
-          <Col lg={6} md={8} sm={10}>
-            {/* Trusted Badge */}
-            <div className="contact-trusted-badge">
-              <span className="trusted-text">
-                <span className="check-icon">✓</span>
-                Get Expert Trading Advice
-              </span>
-            </div>
+      {/* Main Content */}
+      <Container className={styles.contentContainer}>
+        <Card className={styles.contactCard}>
+          <div className={styles.cardBody}>
+            <div className={styles.contactGrid}>
 
-            <Card className="contact-card">
-              <Card.Body className="contact-card-body">
-                {/* Header Section */}
-                <div className="contact-header">
-                  <div className="contact-brand">
-                    <h1 className="contact-brand-title">
-                      DJIT <span className="gradient-text">TRADING</span>
-                    </h1>
-                    <p className="contact-brand-subtitle">
-                      Contact Our Trading Experts
-                    </p>
+              {/* Left Column: Contact Info */}
+              <div className={styles.infoColumn}>
+                <h3 className={styles.infoTitle}>Contact Information</h3>
+                <p className={styles.infoDescription}>
+                  Reach out to us through any of these channels. We typically respond within 1 hour during business hours.
+                </p>
+
+                <div className={styles.contactMethods}>
+
+                  {/* Phone */}
+                  <div className={styles.contactMethodItem}>
+                    <div className={styles.methodIconWrapper}>
+                      <Phone size={24} />
+                    </div>
+                    <div className={styles.methodContent}>
+                      <h5>Phone Support</h5>
+                      <p>Mon-Fri from 9am to 6pm</p>
+                      <a href="tel:+919715092104" className={styles.methodLink}>+91 97150 92104</a>
+                    </div>
                   </div>
 
-                  <div className="contact-welcome">
-                    <h2 className="contact-title">Get In Touch</h2>
-                    <p className="contact-subtitle">
-                      Have questions about our trading courses? We're here to
-                      help!
-                    </p>
+                  {/* Email */}
+                  <div className={styles.contactMethodItem}>
+                    <div className={styles.methodIconWrapper}>
+                      <Mail size={24} />
+                    </div>
+                    <div className={styles.methodContent}>
+                      <h5>Email Us</h5>
+                      <p>We'll reply within 24 hours</p>
+                      <a href="mailto:support@djittrading.com" className={styles.methodLink}>support@djittrading.com</a>
+                    </div>
                   </div>
+
+                  {/* Hours */}
+                  <div className={styles.contactMethodItem}>
+                    <div className={styles.methodIconWrapper}>
+                      <Clock size={24} />
+                    </div>
+                    <div className={styles.methodContent}>
+                      <h5>Business Hours</h5>
+                      <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
+                      <p>Weekend Support: Limited Availability</p>
+                    </div>
+                  </div>
+
                 </div>
+              </div>
+
+              {/* Right Column: Form */}
+              <div className={styles.formColumn}>
+                <h3 className={styles.infoTitle}>Send us a Message</h3>
 
                 {alert.show && (
-                  <Alert variant={alert.type} className="contact-alert">
-                    {alert.message}
+                  <Alert variant={alert.type} className={styles.customAlert}>
+                    <div className="d-flex align-items-center">
+                      {alert.type === 'success' ? <CheckCircle size={20} className="me-2" /> : <AlertCircle size={20} className="me-2" />}
+                      {alert.message}
+                    </div>
                   </Alert>
                 )}
 
-                <div className="contact-form-container">
-                  <Form onSubmit={handleSubmit} className="contact-form">
-                    <Form.Group className="mb-4">
-                      <Form.Label className="form-label">
-                        Full Name *
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="Enter your full name"
-                        className={`contact-form-control ${
-                          errors.name ? "is-invalid" : ""
-                        }`}
-                      />
-                      {errors.name && (
-                        <div className="invalid-feedback">{errors.name}</div>
-                      )}
-                    </Form.Group>
+                <Form onSubmit={handleSubmit}>
+                  <Form.Group className="mb-4">
+                    <Form.Label className={styles.formLabel}>Full Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="e.g. John Doe"
+                      className={`${styles.formControl} ${errors.name ? "is-invalid" : ""}`}
+                    />
+                    {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+                  </Form.Group>
 
-                    <Form.Group className="mb-4">
-                      <Form.Label className="form-label">
-                        Email Address *
-                      </Form.Label>
-                      <Form.Control
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="Enter your email"
-                        className={`contact-form-control ${
-                          errors.email ? "is-invalid" : ""
-                        }`}
-                      />
-                      {errors.email && (
-                        <div className="invalid-feedback">{errors.email}</div>
-                      )}
-                    </Form.Group>
+                  <Form.Group className="mb-4">
+                    <Form.Label className={styles.formLabel}>Email Address</Form.Label>
+                    <Form.Control
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="e.g. john@example.com"
+                      className={`${styles.formControl} ${errors.email ? "is-invalid" : ""}`}
+                    />
+                    {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+                  </Form.Group>
 
-                    <Form.Group className="mb-4">
-                      <Form.Label className="form-label">
-                        Phone Number *
-                      </Form.Label>
-                      <Form.Control
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        placeholder="Enter your phone number"
-                        className={`contact-form-control ${
-                          errors.phone ? "is-invalid" : ""
-                        }`}
-                      />
-                      {errors.phone && (
-                        <div className="invalid-feedback">{errors.phone}</div>
-                      )}
-                    </Form.Group>
+                  <Form.Group className="mb-4">
+                    <Form.Label className={styles.formLabel}>Phone Number</Form.Label>
+                    <Form.Control
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder="e.g. +91 98765 43210"
+                      className={`${styles.formControl} ${errors.phone ? "is-invalid" : ""}`}
+                    />
+                    {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
+                  </Form.Group>
 
-                    <Form.Group className="mb-4">
-                      <Form.Label className="form-label">
-                        Your Message *
-                      </Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        rows={5}
-                        name="message"
-                        value={formData.message}
-                        onChange={handleChange}
-                        placeholder="Tell us about your trading goals or questions about our courses..."
-                        className={`contact-form-control ${
-                          errors.message ? "is-invalid" : ""
-                        }`}
-                      />
-                      {errors.message && (
-                        <div className="invalid-feedback">{errors.message}</div>
-                      )}
-                    </Form.Group>
+                  <Form.Group className="mb-4">
+                    <Form.Label className={styles.formLabel}>Message</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={5}
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      placeholder="How can we help you?"
+                      className={`${styles.formControl} ${errors.message ? "is-invalid" : ""}`}
+                    />
+                    {errors.message && <div className="invalid-feedback">{errors.message}</div>}
+                  </Form.Group>
 
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      className="contact-submit-button"
-                      disabled={loading}
-                    >
-                      <span className="btn-icon">📧</span>
-                      {loading ? "Sending Message..." : "Send Message"}
-                    </Button>
-                  </Form>
-                </div>
+                  <Button
+                    type="submit"
+                    className={styles.submitBtn}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <Spinner animation="border" size="sm" className="me-2" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send size={18} />
+                        Send Message
+                      </>
+                    )}
+                  </Button>
+                </Form>
+              </div>
 
-                {/* Quick Stats */}
-                <div className="contact-stats">
-                  <div className="contact-stat">
-                    <div className="stat-icon">⏰</div>
-                    <div className="stat-content">
-                      <strong>24/7</strong>
-                      <span>Support Available</span>
-                    </div>
-                  </div>
-                  <div className="contact-stat">
-                    <div className="stat-icon">💬</div>
-                    <div className="stat-content">
-                      <strong>1 Hour</strong>
-                      <span>Average Response Time</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="contact-footer">
-                  <p className="footer-text">
-                    Prefer to call?{" "}
-                    <a href="tel:+91 9715092104" className="footer-link">
-                      +91 9715092104
-                    </a>
-                  </p>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
+            </div>
+          </div>
+        </Card>
       </Container>
     </div>
   );

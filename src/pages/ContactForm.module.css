@@ -1,0 +1,284 @@
+/* ContactForm.module.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+.contactPage {
+    background-color: #F8F9FA;
+    min-height: 100vh;
+    padding-top: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Hero Section */
+.heroSection {
+    background: linear-gradient(135deg, #182724 0%, #0d1413 100%);
+    padding: 120px 0 80px;
+    position: relative;
+    overflow: hidden;
+    color: white;
+    text-align: center;
+    margin-bottom: -50px;
+}
+
+.heroContent {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.pageTitle {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    color: #03BEA6;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.mainHeading {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.2;
+}
+
+.subHeading {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Content Container */
+.contentContainer {
+    position: relative;
+    z-index: 3;
+    padding-bottom: 80px;
+}
+
+.contactCard {
+    background: white;
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-bottom: 3rem;
+}
+
+.cardBody {
+    padding: 3rem;
+}
+
+/* Contact Info Layout */
+.contactGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+}
+
+@media (min-width: 992px) {
+    .contactGrid {
+        grid-template-columns: 1fr 1.2fr;
+    }
+}
+
+/* Left Column: Contact Info */
+.infoColumn {
+    padding-right: 1rem;
+}
+
+.infoTitle {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #182724;
+    margin-bottom: 1rem;
+}
+
+.infoDescription {
+    color: #666;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+.contactMethods {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.contactMethodItem {
+    display: flex;
+    align-items: flex-start;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.contactMethodItem:hover {
+    background-color: #ffffff;
+    border-color: #e9ecef;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+.methodIconWrapper {
+    width: 50px;
+    height: 50px;
+    background: rgba(3, 190, 166, 0.1);
+    color: #03BEA6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1.5rem;
+    flex-shrink: 0;
+}
+
+.methodContent h5 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+    color: #182724;
+}
+
+.methodContent p {
+    color: #666;
+    margin-bottom: 0;
+    font-size: 0.95rem;
+}
+
+.methodLink {
+    color: #03BEA6;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.methodLink:hover {
+    color: #029a86;
+    text-decoration: underline;
+}
+
+/* Right Column: Form */
+.formColumn {
+    background-color: white;
+    padding-left: 1rem;
+}
+
+@media (min-width: 992px) {
+    .formColumn {
+        border-left: 1px solid #eee;
+        padding-left: 3rem;
+    }
+}
+
+.formLabel {
+    font-weight: 500;
+    color: #182724;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.formControl {
+    padding: 0.8rem 1rem;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s;
+    background-color: #fcfcfc;
+}
+
+.formControl:focus {
+    border-color: #03BEA6;
+    box-shadow: 0 0 0 4px rgba(3, 190, 166, 0.1);
+    background-color: white;
+}
+
+.submitBtn {
+    background-color: #182724;
+    border: none;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 8px;
+    transition: all 0.3s;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.submitBtn:hover:not(:disabled) {
+    background-color: #03BEA6;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(3, 190, 166, 0.3);
+}
+
+.submitBtn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Alerts */
+.customAlert {
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 2rem;
+}
+
+/* Floating Elements for Hero */
+.decorationCircle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.circle1 {
+    width: 300px;
+    height: 300px;
+    background: #03BEA6;
+    top: -100px;
+    right: -50px;
+    filter: blur(50px);
+}
+
+.circle2 {
+    width: 200px;
+    height: 200px;
+    background: #4ECDC4;
+    bottom: -50px;
+    left: -50px;
+    filter: blur(40px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mainHeading {
+        font-size: 2.2rem;
+    }
+
+    .cardBody {
+        padding: 2rem 1.5rem;
+    }
+
+    .contactMethodItem {
+        padding: 1rem;
+    }
+
+    .methodIconWrapper {
+        width: 40px;
+        height: 40px;
+        margin-right: 1rem;
+    }
+}
