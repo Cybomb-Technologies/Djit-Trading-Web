@@ -296,7 +296,7 @@ process.on('SIGTERM', () => {
   });
 });
 
-const PORT = process.env.PORT || 5004;
+const PORT = process.env.PORT;
 
 server.listen(PORT, () => {
   console.log(`\n🚀 Server running on port ${PORT}`);
