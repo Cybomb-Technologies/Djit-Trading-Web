@@ -1,8 +1,23 @@
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 
+// Allowed origins where token is NOT required
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://cybombadmin.cybomb.com"
+];
+
 const adminAuth = async (req, res, next) => {
   try {
+    const origin = req.headers.origin;
+
+    // ⭐ Skip token & set dummy admin
+    if (allowedOrigins.includes(origin)) {
+      console.log("Admin auth skipped for:", origin);
+      req.admin = { _id: "bypass-admin" };
+      return next();
+    }
+
     const token = req.header('Authorization')?.replace('Bearer ', '');
     
     if (!token) {
