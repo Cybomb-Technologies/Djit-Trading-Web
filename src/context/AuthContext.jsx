@@ -53,34 +53,42 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post(`${API_URL}/api/auth/login`, { email, password })
       const { token: newToken, user: userData } = response.data
-      
+
       localStorage.setItem('token', newToken)
       setToken(newToken)
       setUser(userData)
-      
+
       return { success: true }
     } catch (error) {
-      return { 
-        success: false, 
-        message: error.response?.data?.message || 'Login failed' 
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Login failed'
       }
     }
   }
 
-  // Google login with authorization code
-  const loginWithGoogle = async (code) => {
+  // Google login with authorization code or idToken
+  const loginWithGoogle = async ({ code, idToken }) => {
     try {
-      console.log('Sending Google authorization code to backend...');
-      
+      console.log('Sending Google credentials to backend:', {
+        hasCode: !!code,
+        hasIdToken: !!idToken
+      });
+
+      const payload = {};
+      if (code) {
+        payload.code = code;
+        payload.redirect_uri = "postmessage";
+      } else if (idToken) {
+        payload.idToken = idToken;
+      }
+
       const response = await fetch(`${API_URL}/api/auth/google`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          code: code,
-          redirect_uri: "postmessage",
-        }),
+        body: JSON.stringify(payload),
       });
 
       console.log('Backend response status:', response.status);
@@ -95,14 +103,14 @@ export const AuthProvider = ({ children }) => {
       if (data.success) {
         // User exists - login successful
         const { token: newToken, user: userData } = data;
-        
+
         localStorage.setItem('token', newToken);
         setToken(newToken);
         setUser(userData);
-        
-        return { 
+
+        return {
           success: true,
-          message: 'Login successful' 
+          message: 'Login successful'
         };
       } else if (data.needsRegistration) {
         // New user - needs registration
@@ -122,8 +130,8 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Google login error:', error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: error.message || 'Google authentication failed'
       };
     }
@@ -133,11 +141,11 @@ export const AuthProvider = ({ children }) => {
   const register = async (username, email, password, googleId = null) => {
     try {
       const payload = {
-        username, 
-        email, 
+        username,
+        email,
         ...(password && { password }) // Only include password if it exists
       };
-      
+
       // Add googleId if provided
       if (googleId) {
         payload.googleId = googleId;
@@ -147,11 +155,11 @@ export const AuthProvider = ({ children }) => {
 
       const response = await axios.post(`${API_URL}/api/auth/register`, payload);
       const { token: newToken, user: userData } = response.data;
-      
+
       localStorage.setItem('token', newToken);
       setToken(newToken);
       setUser(userData);
-      
+
       return { success: true };
     } catch (error) {
       console.error('Registration error details:', {
@@ -159,12 +167,12 @@ export const AuthProvider = ({ children }) => {
         response: error.response?.data,
         status: error.response?.status
       });
-      
-      return { 
-        success: false, 
-        message: error.response?.data?.message || 
-                 error.response?.data?.error || 
-                 'Registration failed' 
+
+      return {
+        success: false,
+        message: error.response?.data?.message ||
+          error.response?.data?.error ||
+          'Registration failed'
       };
     }
   }

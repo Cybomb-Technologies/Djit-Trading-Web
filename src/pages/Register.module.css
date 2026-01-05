@@ -216,3 +216,10 @@
     color: #1E40AF;
     border: 1px solid #BFDBFE;
 }
+
+.googleContainer {
+    width: 100%;
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+}

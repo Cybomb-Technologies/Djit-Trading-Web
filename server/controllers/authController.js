@@ -18,9 +18,9 @@ exports.register = async (req, res) => {
   try {
     const { username, email, password, googleId } = req.body;
 
-    console.log('📝 REGISTRATION ATTEMPT:', { 
-      username, 
-      email, 
+    console.log('📝 REGISTRATION ATTEMPT:', {
+      username,
+      email,
       hasPassword: !!password,
       googleId: googleId || 'NO_GOOGLE_ID'
     });
@@ -28,7 +28,7 @@ exports.register = async (req, res) => {
     // Check if user exists
     const existingUser = await User.findOne({
       $or: [
-        { email }, 
+        { email },
         { username },
         ...(googleId ? [{ googleId }] : [])
       ]
@@ -169,9 +169,15 @@ exports.googleAuth = async (req, res) => {
     // CASE 1: If idToken is provided directly (from mobile app)
     if (idToken) {
       console.log('Processing ID Token from mobile app...');
+
+      const audience = [process.env.GOOGLE_CLIENT_ID];
+      if (process.env.GOOGLE_ANDROID_CLIENT_ID) {
+        audience.push(process.env.GOOGLE_ANDROID_CLIENT_ID);
+      }
+
       const ticket = await client.verifyIdToken({
         idToken: idToken,
-        audience: process.env.GOOGLE_CLIENT_ID,
+        audience: audience,
       });
       payload = ticket.getPayload();
       console.log('Mobile user payload received:', payload.email);
@@ -179,13 +185,19 @@ exports.googleAuth = async (req, res) => {
     // CASE 2: If authorization code is provided (from web)
     else if (code) {
       console.log('Processing authorization code from web...');
-      
+
       // Detect if code is actually an ID token (from mobile app sending in wrong field)
       if (code.length > 500 && code.includes('.')) {
         console.log('⚠️ Code looks like an ID token (mobile app), processing as ID token...');
+
+        const audience = [process.env.GOOGLE_CLIENT_ID];
+        if (process.env.GOOGLE_ANDROID_CLIENT_ID) {
+          audience.push(process.env.GOOGLE_ANDROID_CLIENT_ID);
+        }
+
         const ticket = await client.verifyIdToken({
           idToken: code,
-          audience: process.env.GOOGLE_CLIENT_ID,
+          audience: audience,
         });
         payload = ticket.getPayload();
       } else {
@@ -224,9 +236,14 @@ exports.googleAuth = async (req, res) => {
         }
 
         // Verify the ID token from the exchanged tokens
+        const audience = [process.env.GOOGLE_CLIENT_ID];
+        if (process.env.GOOGLE_ANDROID_CLIENT_ID) {
+          audience.push(process.env.GOOGLE_ANDROID_CLIENT_ID);
+        }
+
         const ticket = await client.verifyIdToken({
           idToken: tokens.id_token,
-          audience: process.env.GOOGLE_CLIENT_ID,
+          audience: audience,
         });
         payload = ticket.getPayload();
       }
@@ -247,11 +264,11 @@ exports.googleAuth = async (req, res) => {
     console.log('Google user verified:', payload.email);
 
     // Check if user already exists by email or googleId
-    let user = await User.findOne({ 
+    let user = await User.findOne({
       $or: [
         { email: payload.email },
         { googleId: payload.sub }
-      ] 
+      ]
     });
 
     if (user) {
@@ -343,7 +360,7 @@ exports.forgotPassword = async (req, res) => {
 
     // Generate 6-digit code
     const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
-    
+
     // Set expiration time (10 minutes from now)
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
