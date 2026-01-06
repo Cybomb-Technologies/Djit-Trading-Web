@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Form, Row, Col, Container } from "react-bootstrap";
+import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import styles from "./GSTCalculator.module.css";
 
 const GSTCalculator = () => {
@@ -156,6 +157,87 @@ const GSTCalculator = () => {
                                         <div className={`${styles.resultRow} ${styles.finalResult}`}>
                                             <span>Total Amount:</span>
                                             <strong>₹{Math.round(gstResult.totalAmount).toLocaleString()}</strong>
+                                        </div>
+
+                                        {/* Charts Section */}
+                                        <div style={{ marginTop: '30px' }}>
+                                            <h5 style={{ textAlign: 'center', fontSize: '16px', fontWeight: '600', marginBottom: '20px', color: '#182724' }}>
+                                                Tax Breakdown
+                                            </h5>
+
+                                            {/* Pie Chart */}
+                                            <div style={{ width: '100%', height: '250px', marginBottom: '20px' }}>
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <PieChart>
+                                                        <Pie
+                                                            data={[
+                                                                { name: 'Net Amount', value: Math.round(gstResult.netAmount) },
+                                                                { name: 'GST Amount', value: Math.round(gstResult.gstAmount) }
+                                                            ]}
+                                                            cx="50%"
+                                                            cy="50%"
+                                                            innerRadius={60}
+                                                            outerRadius={80}
+                                                            paddingAngle={5}
+                                                            dataKey="value"
+                                                        >
+                                                            <Cell key="cell-0" fill="#182724" />
+                                                            <Cell key="cell-1" fill="#14B8A6" />
+                                                        </Pie>
+                                                        <Tooltip formatter={(value) => `₹${Number(value).toLocaleString()}`} />
+                                                        <Legend verticalAlign="bottom" height={36} />
+                                                    </PieChart>
+                                                </ResponsiveContainer>
+                                            </div>
+
+                                            {/* Bar Chart - Comparative Analysis */}
+                                            <div style={{ width: '100%', height: '300px' }}>
+                                                <h5 style={{ textAlign: 'center', fontSize: '14px', marginBottom: '10px', color: '#666' }}>
+                                                    Component Analysis
+                                                </h5>
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart
+                                                        data={[
+                                                            { name: 'Net', value: Math.round(gstResult.netAmount) },
+                                                            { name: 'GST', value: Math.round(gstResult.gstAmount) },
+                                                            { name: 'Total', value: Math.round(gstResult.totalAmount) }
+                                                        ]}
+                                                        margin={{ top: 20, right: 30, left: 10, bottom: 40 }}
+                                                        barCategoryGap="20%"
+                                                    >
+                                                        <CartesianGrid strokeDasharray="3 3" vertical={true} horizontal={true} stroke="#e0e0e0" />
+                                                        <XAxis
+                                                            dataKey="name"
+                                                            tick={{ fontSize: 12, fill: '#666' }}
+                                                        />
+                                                        <YAxis
+                                                            tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}k`}
+                                                            tick={{ fontSize: 12, fill: '#666' }}
+                                                        />
+                                                        <Tooltip
+                                                            formatter={(value) => [`₹${Number(value).toLocaleString()}`, "Amount"]}
+                                                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                                        />
+
+                                                        <Bar
+                                                            dataKey="value"
+                                                            name="Amount"
+                                                            fill="#14B8A6"
+                                                            radius={[6, 6, 0, 0]}
+                                                        >
+                                                            {
+                                                                [
+                                                                    { name: 'Net', value: Math.round(gstResult.netAmount) },
+                                                                    { name: 'GST', value: Math.round(gstResult.gstAmount) },
+                                                                    { name: 'Total', value: Math.round(gstResult.totalAmount) }
+                                                                ].map((entry, index) => (
+                                                                    <Cell key={`cell-${index}`} fill={index === 1 ? '#FF4D4F' : '#14B8A6'} />
+                                                                ))
+                                                            }
+                                                        </Bar>
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
                                         </div>
                                     </div>
                                 ) : (
