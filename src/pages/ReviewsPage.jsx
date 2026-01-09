@@ -12,6 +12,7 @@ import {
   Badge,
   Pagination,
   Dropdown,
+  Modal,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -202,6 +203,22 @@ const ReviewsPage = () => {
     if (!text) return "";
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + "...";
+  };
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
+
+  const handleShowReview = (review) => {
+    setSelectedReview(review);
+    setShowModal(true);
+  };
+
+  const handleCloseReview = () => {
+    setShowModal(false);
+    // Short delay to clear content after animation
+    setTimeout(() => {
+      setSelectedReview(null);
+    }, 300);
   };
 
   return (
@@ -465,10 +482,7 @@ const ReviewsPage = () => {
                           <Button
                             variant="link"
                             className={styles.readMoreBtn}
-                            onClick={() => {
-                              // Implement modal or expand functionality
-                              alert(review.reviewText);
-                            }}
+                            onClick={() => handleShowReview(review)}
                           >
                             Read full review →
                           </Button>
@@ -543,6 +557,57 @@ const ReviewsPage = () => {
           </Row>
         </Container>
       </section>
+
+      {/* Full Review Modal */}
+      <Modal show={showModal} onHide={handleCloseReview} centered size="lg">
+        {selectedReview && (
+          <>
+            <Modal.Header closeButton>
+              <Modal.Title>
+                <div className="d-flex align-items-center">
+                  <div className={styles.reviewerAvatar} style={{ width: '40px', height: '40px', fontSize: '16px', marginRight: '12px' }}>
+                    {getInitials(selectedReview.reviewerName)}
+                  </div>
+                  <div>
+                    {selectedReview.reviewerName}
+                    {selectedReview.anonymous && (
+                      <Badge bg="secondary" className="ms-2" style={{ fontSize: '12px' }}>
+                        Anonymous
+                      </Badge>
+                    )}
+                    <div style={{ fontSize: '14px', fontWeight: 'normal', color: '#6c757d' }}>
+                      {formatDate(selectedReview.createdAt)}
+                    </div>
+                  </div>
+                </div>
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="mb-3">
+                <Badge bg="primary" className="me-2">
+                  {selectedReview.courseName}
+                </Badge>
+                <div className="d-inline-flex">{renderStars(selectedReview.rating)}</div>
+              </div>
+
+              {selectedReview.title && (
+                <h5 className="mb-3">{selectedReview.title}</h5>
+              )}
+
+              <div className="review-content" style={{ lineHeight: '1.8', fontSize: '16px' }}>
+                {selectedReview.reviewText.split('\n').map((paragraph, idx) => (
+                  <p key={idx}>{paragraph}</p>
+                ))}
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleCloseReview}>
+                Close
+              </Button>
+            </Modal.Footer>
+          </>
+        )}
+      </Modal>
     </div>
   );
 };
