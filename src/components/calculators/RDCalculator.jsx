@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Form, Row, Col, Container } from "react-bootstrap";
+import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import styles from "./RDCalculator.module.css";
 
 const RDCalculator = () => {
@@ -42,10 +43,32 @@ const RDCalculator = () => {
             const totalInvestment = principal * n;
             const maturityAmount = totalInvestment + interestEarned;
 
+
+
+            // Generate Yearly Data for Bar Chart (Growth)
+            const yearlyData = [];
+            const years = Math.ceil(n / 12);
+
+            for (let i = 1; i <= years; i++) {
+                const monthsPassed = Math.min(i * 12, n);
+                // Calculate maturity at this point
+                // Using simple interest approx for display consistency: I = P * N(N+1)/24 * R/100
+                const currentN = monthsPassed;
+                const currentInterest = principal * (currentN * (currentN + 1)) / 24 * (r / 100);
+                const currentTotal = (principal * currentN) + currentInterest;
+
+                yearlyData.push({
+                    name: `Year ${i}`,
+                    value: Math.round(currentTotal),
+                    label: `Year ${i}`
+                });
+            }
+
             setRdResult({
                 totalInvestment,
                 interestEarned,
                 maturityAmount,
+                yearlyData
             });
         }
     };
@@ -138,6 +161,76 @@ const RDCalculator = () => {
                                         <div className={`${styles.resultRow} ${styles.finalResult}`}>
                                             <span>Maturity Amount:</span>
                                             <strong>₹{Math.round(rdResult.maturityAmount).toLocaleString()}</strong>
+                                        </div>
+
+                                        {/* Charts Section */}
+                                        <div style={{ marginTop: '30px' }}>
+                                            <h5 style={{ textAlign: 'center', fontSize: '16px', fontWeight: '600', marginBottom: '20px', color: '#182724' }}>
+                                                Investment Analysis
+                                            </h5>
+
+                                            {/* Pie Chart */}
+                                            <div style={{ width: '100%', height: '250px', marginBottom: '20px' }}>
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <PieChart>
+                                                        <Pie
+                                                            data={[
+                                                                { name: 'Invested', value: Math.round(rdResult.totalInvestment) },
+                                                                { name: 'Interest', value: Math.round(rdResult.interestEarned) }
+                                                            ]}
+                                                            cx="50%"
+                                                            cy="50%"
+                                                            innerRadius={60}
+                                                            outerRadius={80}
+                                                            paddingAngle={5}
+                                                            dataKey="value"
+                                                        >
+                                                            <Cell key="cell-0" fill="#182724" />
+                                                            <Cell key="cell-1" fill="#14B8A6" />
+                                                        </Pie>
+                                                        <Tooltip formatter={(value) => `₹${Number(value).toLocaleString()}`} />
+                                                        <Legend verticalAlign="bottom" height={36} />
+                                                    </PieChart>
+                                                </ResponsiveContainer>
+                                            </div>
+
+                                            {/* Bar Chart - Yearly Growth */}
+                                            <div style={{ width: '100%', height: '300px' }}>
+                                                <h5 style={{ textAlign: 'center', fontSize: '14px', marginBottom: '10px', color: '#666' }}>
+                                                    Yearly Maturity Value
+                                                </h5>
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart
+                                                        data={rdResult.yearlyData}
+                                                        margin={{ top: 20, right: 30, left: 10, bottom: 40 }}
+                                                        barCategoryGap="20%"
+                                                    >
+                                                        <CartesianGrid strokeDasharray="3 3" vertical={true} horizontal={true} stroke="#e0e0e0" />
+                                                        <XAxis
+                                                            dataKey="name"
+                                                            tick={{ fontSize: 12, fill: '#666' }}
+                                                            angle={-45}
+                                                            textAnchor="end"
+                                                            interval="preserveStartEnd"
+                                                        />
+                                                        <YAxis
+                                                            tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}k`}
+                                                            tick={{ fontSize: 12, fill: '#666' }}
+                                                        />
+                                                        <Tooltip
+                                                            formatter={(value) => [`₹${Number(value).toLocaleString()}`, "Maturity Value"]}
+                                                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                                        />
+                                                        <Legend verticalAlign="top" />
+                                                        <Bar
+                                                            dataKey="value"
+                                                            name="Maturity Value"
+                                                            fill="#14B8A6"
+                                                            radius={[6, 6, 0, 0]}
+                                                        />
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
                                         </div>
                                     </div>
                                 ) : (

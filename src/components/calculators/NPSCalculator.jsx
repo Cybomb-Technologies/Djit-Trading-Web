@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Form, Row, Col, Container } from "react-bootstrap";
+import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import styles from "./NPSCalculator.module.css";
 
 const NPSCalculator = () => {
@@ -46,6 +47,20 @@ const NPSCalculator = () => {
             // Estimated Pension (assuming 6% return on annuity)
             const estimatedPension = (annuityAmount * 0.06) / 12;
 
+            // Generate Yearly Data for Bar Chart (Corpus Growth)
+            const yearlyData = [];
+            for (let i = 1; i <= yearsToInvest; i++) {
+                const monthsPassed = i * 12;
+                // SIP Formula for FV at year i
+                const currentCorpus = principal * ((Math.pow(1 + monthlyRate, monthsPassed) - 1) / monthlyRate) * (1 + monthlyRate);
+
+                yearlyData.push({
+                    name: `Year ${i}`,
+                    value: Math.round(currentCorpus),
+                    label: `Year ${i}`
+                });
+            }
+
             setNpsResult({
                 totalInvestment,
                 interestEarned,
@@ -53,7 +68,8 @@ const NPSCalculator = () => {
                 lumpSumAmount,
                 annuityAmount,
                 estimatedPension,
-                yearsToInvest
+                yearsToInvest,
+                yearlyData
             });
         }
     };
@@ -175,6 +191,76 @@ const NPSCalculator = () => {
                                         </div>
                                         <div className="text-center mt-2 text-muted" style={{ fontSize: '11px' }}>
                                             * Pension calculated assuming 6% annuity rate
+                                        </div>
+
+                                        {/* Charts Section */}
+                                        <div style={{ marginTop: '30px' }}>
+                                            <h5 style={{ textAlign: 'center', fontSize: '16px', fontWeight: '600', marginBottom: '20px', color: '#182724' }}>
+                                                Investment Analysis
+                                            </h5>
+
+                                            {/* Pie Chart */}
+                                            <div style={{ width: '100%', height: '250px', marginBottom: '20px' }}>
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <PieChart>
+                                                        <Pie
+                                                            data={[
+                                                                { name: 'Invested', value: Math.round(npsResult.totalInvestment) },
+                                                                { name: 'Interest', value: Math.round(npsResult.interestEarned) }
+                                                            ]}
+                                                            cx="50%"
+                                                            cy="50%"
+                                                            innerRadius={60}
+                                                            outerRadius={80}
+                                                            paddingAngle={5}
+                                                            dataKey="value"
+                                                        >
+                                                            <Cell key="cell-0" fill="#182724" />
+                                                            <Cell key="cell-1" fill="#14B8A6" />
+                                                        </Pie>
+                                                        <Tooltip formatter={(value) => `₹${Number(value).toLocaleString()}`} />
+                                                        <Legend verticalAlign="bottom" height={36} />
+                                                    </PieChart>
+                                                </ResponsiveContainer>
+                                            </div>
+
+                                            {/* Bar Chart - Yearly Growth */}
+                                            <div style={{ width: '100%', height: '300px' }}>
+                                                <h5 style={{ textAlign: 'center', fontSize: '14px', marginBottom: '10px', color: '#666' }}>
+                                                    Yearly Corpus Growth
+                                                </h5>
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart
+                                                        data={npsResult.yearlyData}
+                                                        margin={{ top: 20, right: 30, left: 10, bottom: 40 }}
+                                                        barCategoryGap="20%"
+                                                    >
+                                                        <CartesianGrid strokeDasharray="3 3" vertical={true} horizontal={true} stroke="#e0e0e0" />
+                                                        <XAxis
+                                                            dataKey="name"
+                                                            tick={{ fontSize: 12, fill: '#666' }}
+                                                            angle={-45}
+                                                            textAnchor="end"
+                                                            interval="preserveStartEnd"
+                                                        />
+                                                        <YAxis
+                                                            tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}k`}
+                                                            tick={{ fontSize: 12, fill: '#666' }}
+                                                        />
+                                                        <Tooltip
+                                                            formatter={(value) => [`₹${Number(value).toLocaleString()}`, "Corpus"]}
+                                                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                                        />
+                                                        <Legend verticalAlign="top" />
+                                                        <Bar
+                                                            dataKey="value"
+                                                            name="Accumulated Corpus"
+                                                            fill="#14B8A6"
+                                                            radius={[6, 6, 0, 0]}
+                                                        />
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
                                         </div>
                                     </div>
                                 ) : (

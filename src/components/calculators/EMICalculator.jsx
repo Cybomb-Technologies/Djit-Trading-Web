@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Form, Row, Col, Container } from "react-bootstrap";
+import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import styles from "./EMICalculator.module.css";
 
 const EMICalculator = () => {
@@ -41,11 +42,38 @@ const EMICalculator = () => {
             const totalPayment = emi * n;
             const totalInterest = totalPayment - principal;
 
+            // Generate Yearly Data for Bar Chart (Outstanding Balance)
+            const yearlyData = [];
+            let balance = principal;
+            const years = Math.ceil(n / 12);
+
+            for (let i = 1; i <= years; i++) {
+                // Determine months in this year (usually 12, but last year might be less)
+                // Actually for standard EMI, we just calculate balance at end of year i*12
+                const monthsPassed = i * 12;
+
+                // Balance calculation Formula after p payments: B = P * [(1+r)^n - (1+r)^p] / [(1+r)^n - 1]
+                // p = number of payments made
+                const p = Math.min(monthsPassed, n); // payments made so far
+
+                let balanceAtP = 0;
+                if (p < n) {
+                    balanceAtP = (principal * (Math.pow(1 + r, n) - Math.pow(1 + r, p))) / (Math.pow(1 + r, n) - 1);
+                }
+
+                yearlyData.push({
+                    name: `Year ${i}`,
+                    value: Math.round(balanceAtP),
+                    label: `Year ${i}`
+                });
+            }
+
             setEmiResult({
                 monthlyEMI: emi,
                 totalInterest: totalInterest,
                 totalPayment: totalPayment,
-                principal: principal
+                principal: principal,
+                yearlyData: yearlyData
             });
         }
     };
@@ -156,6 +184,76 @@ const EMICalculator = () => {
                                         <div className={`${styles.resultRow} ${styles.finalResult}`}>
                                             <span>Monthly EMI:</span>
                                             <strong>₹{Math.round(emiResult.monthlyEMI).toLocaleString()}</strong>
+                                        </div>
+
+                                        {/* Charts Section */}
+                                        <div style={{ marginTop: '30px' }}>
+                                            <h5 style={{ textAlign: 'center', fontSize: '16px', fontWeight: '600', marginBottom: '20px', color: '#182724' }}>
+                                                Breakdown
+                                            </h5>
+
+                                            {/* Pie Chart */}
+                                            <div style={{ width: '100%', height: '250px', marginBottom: '20px' }}>
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <PieChart>
+                                                        <Pie
+                                                            data={[
+                                                                { name: 'Principal', value: Math.round(emiResult.principal) },
+                                                                { name: 'Interest', value: Math.round(emiResult.totalInterest) }
+                                                            ]}
+                                                            cx="50%"
+                                                            cy="50%"
+                                                            innerRadius={60}
+                                                            outerRadius={80}
+                                                            paddingAngle={5}
+                                                            dataKey="value"
+                                                        >
+                                                            <Cell key="cell-0" fill="#182724" />
+                                                            <Cell key="cell-1" fill="#14B8A6" />
+                                                        </Pie>
+                                                        <Tooltip formatter={(value) => `₹${Number(value).toLocaleString()}`} />
+                                                        <Legend verticalAlign="bottom" height={36} />
+                                                    </PieChart>
+                                                </ResponsiveContainer>
+                                            </div>
+
+                                            {/* Bar Chart - Yearly Outstanding Balance */}
+                                            <div style={{ width: '100%', height: '300px' }}>
+                                                <h5 style={{ textAlign: 'center', fontSize: '14px', marginBottom: '10px', color: '#666' }}>
+                                                    Outstanding Balance
+                                                </h5>
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart
+                                                        data={emiResult.yearlyData}
+                                                        margin={{ top: 20, right: 30, left: 10, bottom: 40 }}
+                                                        barCategoryGap="20%"
+                                                    >
+                                                        <CartesianGrid strokeDasharray="3 3" vertical={true} horizontal={true} stroke="#e0e0e0" />
+                                                        <XAxis
+                                                            dataKey="name"
+                                                            tick={{ fontSize: 12, fill: '#666' }}
+                                                            angle={-45}
+                                                            textAnchor="end"
+                                                            interval="preserveStartEnd"
+                                                        />
+                                                        <YAxis
+                                                            tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}k`}
+                                                            tick={{ fontSize: 12, fill: '#666' }}
+                                                        />
+                                                        <Tooltip
+                                                            formatter={(value) => [`₹${Number(value).toLocaleString()}`, "Balance"]}
+                                                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                                        />
+                                                        <Legend verticalAlign="top" />
+                                                        <Bar
+                                                            dataKey="value"
+                                                            name="Balance"
+                                                            fill="#14B8A6"
+                                                            radius={[6, 6, 0, 0]}
+                                                        />
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
                                         </div>
                                     </div>
                                 ) : (

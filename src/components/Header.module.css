@@ -40,8 +40,8 @@
 }
 
 .navLink:hover {
-  color: var(--secondary-color);
-  background-color: rgba(52, 152, 219, 0.1);
+  color: #ffffff;
+  background-color: #029a86;
 }
 
 /* DROPDOWN FIXES - MINIMAL INTERFERENCE */
@@ -65,19 +65,19 @@
 }
 
 .navDropdown .dropdown-toggle:hover {
-  color: var(--secondary-color);
-  background-color: rgba(52, 152, 219, 0.1);
+  color: #ffffff;
+  background-color: #029a86;
 }
- 
+
 .navDropdown .dropdown-toggle:focus {
   box-shadow: none !important;
   background-color: transparent !important;
 }
- 
+
 .navDropdown .dropdown-toggle::after {
   margin-left: 6px;
 }
- 
+
 /* Dropdown menu styling */
 .navbar .dropdown-menu {
   display: block !important;
@@ -96,6 +96,7 @@
   min-width: 200px !important;
   transition: all 0.3s ease !important;
 }
+
 .navbar .dropdown-menu.show {
   display: block !important;
   opacity: 1 !important;
@@ -112,8 +113,8 @@
 }
 
 .dropdownItem:hover {
-  background-color: rgba(52, 152, 219, 0.1);
-  color: var(--secondary-color);
+  background-color: #029a86;
+  color: #ffffff;
 }
 
 /* Auth container */
@@ -159,10 +160,12 @@
     margin: 2px 0;
     width: 100%;
   }
- 
+
   .navbar .dropdown-menu {
-    display: none;                     /* Let Bootstrap handle the toggle */
-    opacity: 0;                         /* Hidden by default */
+    display: none;
+    /* Let Bootstrap handle the toggle */
+    opacity: 0;
+    /* Hidden by default */
     visibility: hidden;
     position: absolute !important;
     top: 100% !important;
@@ -177,21 +180,23 @@
     min-width: 200px !important;
     transition: all 0.3s ease !important;
   }
-  
+
   /* 👇 Show menu when dropdown is open */
   .navbar .dropdown-menu.show {
     display: block !important;
     opacity: 1 !important;
     visibility: visible !important;
   }
-  
- 
+
+
   .navbar .dropdown-item {
     display: inline-flex !important;
     justify-content: center !important;
     text-align: center !important;
-    width: auto !important; /* shrink to content */
-    margin: 0 auto !important; /* center inside dropdown menu */
+    width: auto !important;
+    /* shrink to content */
+    margin: 0 auto !important;
+    /* center inside dropdown menu */
   }
 }
 
@@ -205,23 +210,23 @@
     padding: 0.8rem 0;
   }
 }
- 
+
 /* Active state */
-.navbar .show > .navDropdown .dropdown-toggle {
-  color: var(--secondary-color) !important;
-  background-color: rgba(52, 152, 219, 0.1) !important;
+.navbar .show>.navDropdown .dropdown-toggle {
+  color: #ffffff !important;
+  background-color: #029a86 !important;
 }
- 
+
 /* Desktop specific fixes */
 @media (min-width: 992px) {
   .navbar-expand-lg .navbar-nav {
     flex-direction: row !important;
     align-items: center !important;
   }
- 
+
   .navbar-expand-lg .navbar-nav .nav-link {
     padding-right: 16px !important;
     padding-left: 16px !important;
   }
-  
+
 }

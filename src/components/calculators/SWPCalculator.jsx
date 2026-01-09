@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Form, Row, Col, Container } from "react-bootstrap";
+import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import styles from "./SWPCalculator.module.css";
 
 const SWPCalculator = () => {
@@ -39,6 +40,8 @@ const SWPCalculator = () => {
             let totalWithdrawals = 0;
             let isSustainable = true;
             let monthsUntilDepletion = totalPeriods;
+            const yearlyData = [];
+            let periodsInAIYear = periodsPerYear;
 
             for (let period = 1; period <= totalPeriods; period++) {
                 // Returns added first
@@ -52,12 +55,46 @@ const SWPCalculator = () => {
                     isSustainable = false;
                     monthsUntilDepletion = period;
                     remainingAmount = 0; // Cap at 0
+                    // Fill remaining years with 0
+                    const currentYear = Math.ceil(period / periodsPerYear);
+                    if (period % periodsPerYear === 0 || period === totalPeriods) {
+                        yearlyData.push({ name: `Year ${currentYear}`, value: 0, label: `Year ${currentYear}` });
+                    }
+                    else {
+                        // If we break mid-year, push the 0 for this year
+                        // And loop to fill rest?
+                        // Simplification: We handle the loop break, then fill remaining years in yearlyData.
+                    }
                     break;
+                }
+
+                // Track Yearly Data
+                if (period % periodsPerYear === 0) {
+                    const yearNum = period / periodsPerYear;
+                    yearlyData.push({
+                        name: `Year ${yearNum}`,
+                        value: Math.round(remainingAmount),
+                        label: `Year ${yearNum}`
+                    });
                 }
             }
 
-            totalWithdrawals = withdrawalAmount * (isSustainable ? totalPeriods : monthsUntilDepletion);
-            const totalReturns = totalWithdrawals + remainingAmount - initialInvestment;
+            // If depleted, fill the rest of the years with 0
+            if (!isSustainable) {
+                const startYear = yearlyData.length + 1;
+                const endYear = timePeriod;
+                for (let i = startYear; i <= endYear; i++) {
+                    yearlyData.push({ name: `Year ${i}`, value: 0, label: `Year ${i}` });
+                }
+            }
+
+            // Correction if totalPeriods ends but we missed the last push (shouldn't happen if mod 0 works, but handle short years?)
+            // Logic above relies on periodsPerYear being cleaner.
+
+            // Recalculate Totals based on depletion
+            const actualPeriods = isSustainable ? totalPeriods : monthsUntilDepletion;
+            totalWithdrawals = withdrawalAmount * actualPeriods;
+            const totalReturns = (totalWithdrawals + remainingAmount) - initialInvestment;
 
             setSwpResult({
                 initialInvestment,
@@ -65,7 +102,8 @@ const SWPCalculator = () => {
                 finalAmount: remainingAmount,
                 totalReturns: totalReturns > 0 ? totalReturns : 0,
                 isSustainable,
-                monthsUntilDepletion
+                monthsUntilDepletion,
+                yearlyData: yearlyData
             });
         }
     };
@@ -198,6 +236,76 @@ const SWPCalculator = () => {
                                                 Funds will deplete after {swpResult.monthsUntilDepletion} periods.
                                             </p>
                                         )}
+
+                                        {/* Charts Section */}
+                                        <div style={{ marginTop: '30px' }}>
+                                            <h5 style={{ textAlign: 'center', fontSize: '16px', fontWeight: '600', marginBottom: '20px', color: '#182724' }}>
+                                                Investment Analysis
+                                            </h5>
+
+                                            {/* Pie Chart */}
+                                            <div style={{ width: '100%', height: '250px', marginBottom: '20px' }}>
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <PieChart>
+                                                        <Pie
+                                                            data={[
+                                                                { name: 'Initial Investment', value: Math.round(swpResult.initialInvestment) },
+                                                                { name: 'Total Returns', value: Math.round(swpResult.totalReturns) }
+                                                            ]}
+                                                            cx="50%"
+                                                            cy="50%"
+                                                            innerRadius={60}
+                                                            outerRadius={80}
+                                                            paddingAngle={5}
+                                                            dataKey="value"
+                                                        >
+                                                            <Cell key="cell-0" fill="#182724" />
+                                                            <Cell key="cell-1" fill="#14B8A6" />
+                                                        </Pie>
+                                                        <Tooltip formatter={(value) => `₹${Number(value).toLocaleString()}`} />
+                                                        <Legend verticalAlign="bottom" height={36} />
+                                                    </PieChart>
+                                                </ResponsiveContainer>
+                                            </div>
+
+                                            {/* Bar Chart - Yearly Balance */}
+                                            <div style={{ width: '100%', height: '300px' }}>
+                                                <h5 style={{ textAlign: 'center', fontSize: '14px', marginBottom: '10px', color: '#666' }}>
+                                                    Yearly Remaining Balance
+                                                </h5>
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart
+                                                        data={swpResult.yearlyData}
+                                                        margin={{ top: 20, right: 30, left: 10, bottom: 40 }}
+                                                        barCategoryGap="20%"
+                                                    >
+                                                        <CartesianGrid strokeDasharray="3 3" vertical={true} horizontal={true} stroke="#e0e0e0" />
+                                                        <XAxis
+                                                            dataKey="name"
+                                                            tick={{ fontSize: 12, fill: '#666' }}
+                                                            angle={-45}
+                                                            textAnchor="end"
+                                                            interval="preserveStartEnd"
+                                                        />
+                                                        <YAxis
+                                                            tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}k`}
+                                                            tick={{ fontSize: 12, fill: '#666' }}
+                                                        />
+                                                        <Tooltip
+                                                            formatter={(value) => [`₹${Number(value).toLocaleString()}`, "Balance"]}
+                                                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                                        />
+                                                        <Legend verticalAlign="top" />
+                                                        <Bar
+                                                            dataKey="value"
+                                                            name="Yearly Balance"
+                                                            fill="#14B8A6"
+                                                            radius={[6, 6, 0, 0]}
+                                                        />
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </div>
                                     </div>
                                 ) : (
                                     <div className={styles.placeholderContent}>
